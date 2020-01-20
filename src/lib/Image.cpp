@@ -4,7 +4,7 @@
  * Created:
  *   1/20/2020, 3:03:07 PM
  * Last edited:
- *   1/20/2020, 5:10:54 PM
+ *   1/20/2020, 5:56:09 PM
  * Auto updated?
  *   Yes
  *
@@ -22,6 +22,7 @@
 #include <cstring>
 
 #include "include/Image.hpp"
+#include "include/lodepng.h"
 
 using namespace std;
 using namespace RayTracer;
@@ -66,6 +67,7 @@ Pixel ImageRow::operator[](int index) {
 
     // Get a pointer to the correct position in the data
     double* pixel = this->data + 3 * index;
+    return Pixel(pixel);
 }
 
 
@@ -102,36 +104,24 @@ ImageRow Image::operator[](int index) {
     return ImageRow(row, this->width);
 }
 
-void Image::to_ppm(std::string path) {
-    // Get a file handle
-    ofstream out(path);
-    if (!out.is_open()) {
-        cerr << "Could not open file: " << strerror(errno) << endl;
-        exit(1);
-    }
-
-    // Write the header
-    out << "P3" << endl;
-    // Write the size
-    out << this->width << ' ' << this->height << endl;
-    // Write colour max(?)
-    out << 255 << endl;
-    // Write all pixels, row-by-row
+void Image::to_png(std::string path) {
+    // Generate a 0-255, four channel vector
+    std::vector<unsigned char> raw_image;
+    raw_image.resize(this->width * this->height * 4);
     for (std::size_t y = 0; y < this->height; y++) {
         for (std::size_t x = 0; x < this->height; x++) {
-            if (x > 0) {
-                out << ' ';
-            }
-            // Get the three colours as 0-255
-            char red = 255 * this->operator[](y)[x][0];
-            char green = 255 * this->operator[](y)[x][1];
-            char blue = 255 * this->operator[](y)[x][2];
-
-            out << red << ' ' << green << ' ' << blue;
+            // Store the data as 0-255 Red Green Blue Alhpa
+            raw_image[4 * (y * this->width + x) + 0] = 255 * this->operator[](y)[x][0];
+            raw_image[4 * (y * this->width + x) + 1] = 255 * this->operator[](y)[x][1];
+            raw_image[4 * (y * this->width + x) + 2] = 255 * this->operator[](y)[x][2];
+            raw_image[4 * (y * this->width + x) + 3] = 255;
         }
-        out << endl;
     }
 
-    // Close the file and done
-    out.close();
+    // Write that to the output file using LodePNG
+    unsigned result = lodepng::encode(path.c_str(), raw_image, this->width, this->height);
+    if (result != 0) {
+        cerr << "Could not write to PNG file: " << lodepng_error_text(result) << endl;
+        exit(1);
+    }
 }

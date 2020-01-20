@@ -4,7 +4,7 @@
  * Created:
  *   1/20/2020, 3:01:57 PM
  * Last edited:
- *   1/20/2020, 5:08:02 PM
+ *   1/20/2020, 5:53:29 PM
  * Auto updated?
  *   Yes
  *
@@ -68,7 +68,7 @@ namespace RayTracer {
             ImageRow operator[](int index);
 
             /* Saves the image to a .ppm image file. */
-            void to_ppm(std::string path);
+            void to_png(std::string path);
     };
 }
 
