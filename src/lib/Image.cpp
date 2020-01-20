@@ -4,7 +4,7 @@
  * Created:
  *   1/20/2020, 3:03:07 PM
  * Last edited:
- *   1/20/2020, 3:35:17 PM
+ *   1/20/2020, 5:10:54 PM
  * Auto updated?
  *   Yes
  *
@@ -26,8 +26,51 @@
 using namespace std;
 using namespace RayTracer;
 
+/* PIXEL CLASS */
+Pixel::Pixel(double* data) {
+    // Store the values
+    this->data = data;
+}
 
-Image::Image(std::size_t width, std::size_t height)
+double& Pixel::r() {
+    return this->data[0];
+}
+double& Pixel::g() {
+    return this->data[1];
+}
+double& Pixel::b() {
+    return this->data[2];
+}
+
+double& Pixel::operator[](int index) {
+    if (index < 0 || index >= 3) {
+        throw out_of_range("Cannot get colour channel " + to_string(index) + " from Image with 3 channels");
+    }
+
+    return this->data[index];
+}
+
+
+/* IMAGE ROW CLASS */
+ImageRow::ImageRow(double* data, int width)
+    : width(width)
+{
+    this->data = data;
+}
+
+Pixel ImageRow::operator[](int index) {
+    // Check if out of bounds
+    if (index < 0 || index >= this->width) {
+        throw out_of_range("Cannot get element " + to_string(index) + " from Image with width " + to_string(index));
+    }
+
+    // Get a pointer to the correct position in the data
+    double* pixel = this->data + 3 * index;
+}
+
+
+/* IMAGE CLASS */
+Image::Image(int width, int height)
     : width(width),
     height(height)
 {
@@ -37,14 +80,26 @@ Image::~Image() {
     delete[] this->data;
 }
 
-double& Image::pixel(std::size_t row, std::size_t col, std::size_t channel) {
+Pixel Image::pixel(int row, int col) {
     // Check if the indices are within bounds
-    if (row >= this->width || col >= this->height || channel >= 3) {
-        throw out_of_range("Pixel at (" + to_string(col) + ", " + to_string(row) + ", " + to_string(channel) + ") is out of range for Image with size (" + to_string(this->width) + ", " + to_string(this->height) + ", 3)");
+    if (row < 0 || row >= this->width || col < 0 || col >= this->height) {
+        throw out_of_range("Pixel at (" + to_string(col) + ", " + to_string(row) + ") is out of range for Image with size (" + to_string(this->width) + ", " + to_string(this->height) + ")");
     }
 
-    // Get the correct pixel
-    return this->data[row * this->height + col * this->width + channel];
+    // Get a pointer to the data
+    double* pixel = this->data + 3 * (row * this->width + col);
+    return Pixel(pixel);
+}
+
+ImageRow Image::operator[](int index) {
+    // Check if the index is within bounds
+    if (index < 0 || index >= this->height) {
+        throw out_of_range("Cannot get row " + to_string(index) + " from Image with height " + to_string(index));
+    }
+
+    // Get the correct pointer
+    double* row = this->data + 3 * (index * this->width);
+    return ImageRow(row, this->width);
 }
 
 void Image::to_ppm(std::string path) {
@@ -68,9 +123,9 @@ void Image::to_ppm(std::string path) {
                 out << ' ';
             }
             // Get the three colours as 0-255
-            char red = 255 * this->pixel(y, x, 0);
-            char green = 255 * this->pixel(y, x, 1);
-            char blue = 255 * this->pixel(y, x, 2);
+            char red = 255 * this->operator[](y)[x][0];
+            char green = 255 * this->operator[](y)[x][1];
+            char blue = 255 * this->operator[](y)[x][2];
 
             out << red << ' ' << green << ' ' << blue;
         }

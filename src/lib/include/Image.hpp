@@ -4,7 +4,7 @@
  * Created:
  *   1/20/2020, 3:01:57 PM
  * Last edited:
- *   1/20/2020, 3:26:37 PM
+ *   1/20/2020, 5:08:02 PM
  * Auto updated?
  *   Yes
  *
@@ -18,24 +18,54 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
-#include <cstddef>
+#include <memory>
 #include <string>
 
 namespace RayTracer {
+    class Pixel {
+        private:
+            double* data;
+        public:
+            double& r();
+            double& g();
+            double& b();
+
+            /* The pixel class is used to access a pixel in an Image. Should not be used manually. Note that the given pointer is not deallocated. */
+            Pixel(double* colours);
+
+            double& operator[](int index);
+    };
+
+    class ImageRow {
+        private:
+            /* The internal representation of the data. This is aligned as a row of three colour channels. */
+            double* data;
+        public:
+            const int width;
+
+            /* The ImageRow class is only used for operator[] access in a complete Image. Note: Does not deallocate given pointer */
+            ImageRow(double* data, int width);
+            
+            Pixel operator[](int index);
+    };
+
     class Image {
         private:
             /* The internal representation of the data. This is aligned as rows, then columns and then three colour values. */
             double *data;
         public:
-            const std::size_t width;
-            const std::size_t height;
+            const int width;
+            const int height;
 
             /* The Image class is meant to be raw image storage. It is not much more than a wrapped 3D-array (that is allocated in 1D) with the added bonus of easy to-file features. */
-            Image(std::size_t width, std::size_t height);
+            Image(int width, int height);
             ~Image();
 
             /* Provides access to a row inside the array. */
-            double& pixel(std::size_t x, std::size_t y, std::size_t z);
+            Pixel pixel(int row, int col);
+
+            /* Provides array subscript access to a row inside the Image (which is another image) */
+            ImageRow operator[](int index);
 
             /* Saves the image to a .ppm image file. */
             void to_ppm(std::string path);
