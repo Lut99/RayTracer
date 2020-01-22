@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/22/2020, 4:32:07 PM
+ *   1/22/2020, 6:08:58 PM
  * Auto updated?
  *   Yes
  *
@@ -28,36 +28,18 @@
 using namespace std;
 using namespace RayTracer;
 
-int main(int argc, char** argv) {
-    int screen_width, screen_height, number_of_rays;
-    // Parse screen_width and screen_height if given
-    if (argc == 4) {
-        try {
-            screen_width = stoi(argv[1]);
-            screen_height = stoi(argv[2]);
-            number_of_rays = stoi(argv[3]);
-        } catch (invalid_argument& e) {
-            cerr << "Image width, image height and number of rays must be positive integers" << endl;
-            exit(1);
-        } catch (overflow_error& e) {
-            cerr << "Image width, image height or number of rays is too large; try sticking to integers instead" << endl;
-            exit(1);
-        }
-        if (screen_width < 0 || screen_height < 0 || number_of_rays < 0) {
-            cerr << "Image width, image height and number of rays must be positive integers" << endl;
-            exit(1);
-        }
-    } else if (argc == 1) {
-        screen_width = 1000;
-        screen_height = 500;
-        number_of_rays = 100;
-    } else {
-        cerr << "Usage: renderer <image_width> <image_height> <number_of_rays>" << endl;
-        exit(1);
-    }
+int main(int argc, const char** argv) {
+    unsigned int screen_width, screen_height, number_of_rays;
+    bool show_progressbar, correct_gamma;
+
+    screen_width = 200;
+    screen_height = 100;
+    number_of_rays = 100;
+    show_progressbar = true;
+    correct_gamma = false;
 
     // Create the camera
-    Camera cam(screen_width, screen_height, number_of_rays);
+    Camera cam(screen_width, screen_height, number_of_rays, show_progressbar, correct_gamma);
 
     // Create a list of objects
     vector<RenderObject*> objects;

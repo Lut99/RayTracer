@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:28 PM
  * Last edited:
- *   1/22/2020, 4:33:47 PM
+ *   1/22/2020, 5:53:02 PM
  * Auto updated?
  *   Yes
  *
@@ -31,6 +31,8 @@ namespace RayTracer {
             const int width;
             const int height;
             const int rays;
+            const bool progress;
+            const bool gamma;
 
             Vec3 lower_left_corner;
             Vec3 horizontal;
@@ -38,7 +40,7 @@ namespace RayTracer {
             Vec3 origin;
 
             /* The camera class holds information about the viewport of the scene. Note that for now, everything is set, but I suspect that may change later. */
-            Camera(int screen_width, int screen_height, int rays_per_pixel);
+            Camera(int screen_width, int screen_height, int rays_per_pixel, bool show_progressbar, bool correct_gamma);
 
             /* Returns a ray through given u and v through the pixel grid */
             Ray get_ray(double u, double v) const;

@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 4:44:56 PM
  * Last edited:
- *   1/22/2020, 5:33:22 PM
+ *   1/22/2020, 6:11:07 PM
  * Auto updated?
  *   Yes
  *
@@ -33,6 +33,8 @@
 using namespace std;
 
 ProgressBar::ProgressBar() {
+    this->done = false;
+
     this->min = DEFAULT_MIN;
     this->max = DEFAULT_MAX;
     this->progress = this->min;
@@ -63,6 +65,8 @@ ProgressBar::ProgressBar() {
     }
 }
 ProgressBar::ProgressBar(long min_value, long max_value) {
+    this->done = false;
+
     this->min = min_value;
     this->max = max_value;
     this->progress = this->min;
@@ -93,6 +97,8 @@ ProgressBar::ProgressBar(long min_value, long max_value) {
     }
 }
 ProgressBar::ProgressBar(long min_value, long max_value, std::string left_text, std::string right_text) {
+    this->done = false;
+
     this->min = min_value;
     this->max = max_value;
     this->progress = this->min;
@@ -123,6 +129,8 @@ ProgressBar::ProgressBar(long min_value, long max_value, std::string left_text, 
     }
 }
 ProgressBar::ProgressBar(long min_value, long max_value, std::string left_text, std::string right_text, int width) {
+    this->done = false;
+
     this->min = min_value;
     this->max = max_value;
     this->progress = this->min;
@@ -153,6 +161,8 @@ ProgressBar::ProgressBar(long min_value, long max_value, std::string left_text, 
     }
 }
 ProgressBar::ProgressBar(long min_value, long max_value, std::string left_text, std::string right_text, int width, chrono::milliseconds update_interval) {
+    this->done = false;
+
     this->min = min_value;
     this->max = max_value;
     this->progress = this->min;
@@ -214,10 +224,15 @@ void ProgressBar::win() {
     // Do a draw
     this->draw();
     // Print endline to finish it up
-    cout << '\r';
+    cout << endl;
+    this->done = true;
 }
 
 void ProgressBar::update(long amount) {
+    if (this->done) {
+        return;
+    }
+
     // Update the progress
     this->progress += amount;
     

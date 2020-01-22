@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:14 PM
  * Last edited:
- *   1/22/2020, 4:43:25 PM
+ *   1/22/2020, 5:54:11 PM
  * Auto updated?
  *   Yes
  *
@@ -15,6 +15,7 @@
  *   Camera.hpp.
 **/
 
+#include "include/ProgressBar.hpp"
 #include "include/RenderWorld.hpp"
 #include "include/Random.hpp"
 #include "include/Camera.hpp"
@@ -23,10 +24,12 @@ using namespace std;
 using namespace RayTracer;
 
 
-Camera::Camera(int screen_width, int screen_height, int rays_per_pixel)
+Camera::Camera(int screen_width, int screen_height, int rays_per_pixel, bool show_progressbar, bool correct_gamma)
     : width(screen_width),
     height(screen_height),
-    rays(rays_per_pixel)
+    rays(rays_per_pixel),
+    progress(show_progressbar),
+    gamma(correct_gamma)
 {
     double ratio = (double) this->width / (double) this->height;
 
@@ -48,6 +51,7 @@ Vec3 Camera::get_default_background(const Ray& r) {
 
 Image Camera::render(const RenderWorld& world) {
     Image out(this->width, this->height);
+    ProgressBar prgrs(0, this->width * this->height - 1);
     for (int y = this->height-1; y >= 0; y--) {
         for (int x = 0; x < this->width; x++) {
             Vec3 col;
@@ -68,8 +72,17 @@ Image Camera::render(const RenderWorld& world) {
 
             // Compute the colour average
             Vec3 avg_col = col / this->rays;
-            // Gamma-correct the avg_colour
-            out[y][x] = sqrt(avg_col);
+            if (this->gamma) {
+                // Gamma-correct the avg_colour
+                out[y][x] = sqrt(avg_col);
+            } else {
+                out[y][x] = avg_col;
+            }
+
+            // Update the progress bar if needed
+            if (this->progress) {
+                prgrs.update();
+            }
         }
     }
     return out;
