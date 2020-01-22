@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:39:23 PM
  * Last edited:
- *   1/22/2020, 2:42:32 PM
+ *   1/22/2020, 2:43:38 PM
  * Auto updated?
  *   Yes
  *
@@ -24,7 +24,8 @@
 
 namespace RayTracer {
     enum RenderObjectType {
-        sphere
+        sphere,
+        render_object_collection
     };
 
     class RenderObject {
