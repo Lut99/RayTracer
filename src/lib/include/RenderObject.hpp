@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:39:23 PM
  * Last edited:
- *   1/22/2020, 2:18:22 PM
+ *   1/22/2020, 2:40:03 PM
  * Auto updated?
  *   Yes
  *
@@ -39,7 +39,7 @@ namespace RayTracer {
             virtual bool hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const;
 
             /* Virtual for the derived classes to return the colour associated with the hit position. */
-            virtual Vec3 colour(const Vec3& hitpoint) const;
+            virtual Vec3 colour(const HitRecord& record) const;
 
             /* Virtual for the normal of the derived class. */
             virtual Vec3 normal(const Vec3& point) const;

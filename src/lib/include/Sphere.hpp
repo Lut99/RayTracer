@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:37:11 PM
  * Last edited:
- *   1/22/2020, 2:28:36 PM
+ *   1/22/2020, 2:39:33 PM
  * Auto updated?
  *   Yes
  *
@@ -32,7 +32,7 @@ namespace RayTracer {
             virtual bool hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const;
 
             /* Returns the colour at the hitpoint of the Sphere. */
-            virtual Vec3 colour(const Vec3& hitpoint) const;
+            virtual Vec3 colour(const HitRecord& record) const;
 
             /* Returns the normal of the sphere at given point. */
             virtual Vec3 normal(const Vec3& point) const;

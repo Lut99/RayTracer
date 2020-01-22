@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:38:50 PM
  * Last edited:
- *   1/22/2020, 2:18:45 PM
+ *   1/22/2020, 2:40:04 PM
  * Auto updated?
  *   Yes
  *
@@ -32,8 +32,8 @@ bool RenderObject::hit(const Ray& ray, double t_min, double t_max, HitRecord& re
     throw runtime_error("Function RenderObject::hit(const Ray& ray, double t_min, double t_max, HitRecord& record) is not overridden.");
 }
 
-Vec3 RenderObject::colour(const Vec3& hitpoint) const {
-    throw runtime_error("Function RenderObject::colour(const Vec3& hitpoint) is not overridden.");
+Vec3 RenderObject::colour(const HitRecord& record) const {
+    throw runtime_error("Function RenderObject::colour(const HitRecord& record) is not overridden.");
 }
 
 Vec3 RenderObject::normal(const Vec3& point) const {

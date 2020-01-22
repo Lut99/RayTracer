@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:36:39 PM
  * Last edited:
- *   1/22/2020, 2:23:56 PM
+ *   1/22/2020, 2:39:47 PM
  * Auto updated?
  *   Yes
  *
@@ -55,8 +55,8 @@ bool Sphere::hit(const Ray& ray, double t_min, double t_max, HitRecord& record) 
     return false;
 }
 
-Vec3 Sphere::colour(const Vec3& hitpoint) const {
-    Vec3 n = this->normal(hitpoint);
+Vec3 Sphere::colour(const HitRecord& record) const {
+    Vec3 n = this->normal(record.hitpoint);
     return 0.5 * (Vec3(n.x, n.y, n.z) + 1);
 }
 
