@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/22/2020, 9:39:46 PM
+ *   1/22/2020, 9:51:53 PM
  * Auto updated?
  *   Yes
  *
@@ -40,7 +40,7 @@ int main(int argc, const char** argv) {
     correct_gamma = true;
 
     n_threads = 16;
-    use_efficient_camera = true;
+    use_efficient_camera = false;
 
     // Create a list of objects
     vector<RenderObject*> objects;

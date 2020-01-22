@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 9:13:40 PM
  * Last edited:
- *   1/22/2020, 9:36:04 PM
+ *   1/22/2020, 9:43:40 PM
  * Auto updated?
  *   Yes
  *
@@ -43,7 +43,10 @@ namespace RayTracer {
             Ray get_ray(double u, double v) const;
 
             /* Renders a frame from the current camera position */
-            Image render(const RenderObjectCollection& world);  
+            Image render(const RenderObjectCollection& world);
+
+            /* Returns the colour after a ray has been shot */
+            Vec3 shoot_ray(const Ray& ray, const RenderObjectCollection& world);
     };
 }
 

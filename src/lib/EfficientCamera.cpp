@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 9:13:21 PM
  * Last edited:
- *   1/22/2020, 9:37:43 PM
+ *   1/22/2020, 9:50:26 PM
  * Auto updated?
  *   Yes
  *
@@ -14,6 +14,7 @@
  *   implementation file for EfficientCamera.hpp.
 **/
 
+#include <atomic>
 #include <thread>
 #include <pthread.h>
 #include <iostream>
@@ -31,7 +32,7 @@ struct ThreadData {
     int row_end;
     pthread_t tid;
     Image* out;
-    int done;
+    atomic<int> done;
     const RenderObjectCollection* world;
     EfficientCamera* camera;
 };
@@ -58,17 +59,12 @@ Ray EfficientCamera::get_ray(double u, double v) const {
 }
 
 /* Shoots a ray. If it hits something, apply diffusion. Otherwise, return the sky colour. */
-bool check;
-Vec3 shoot_ray(const Ray& ray, const RenderObjectCollection& world) {
+Vec3 EfficientCamera::shoot_ray(const Ray& ray, const RenderObjectCollection& world) {
     HitRecord record;
     if (world.hit(ray, 0.0, numeric_limits<double>::max(), record)) {
-        check = true;
         Vec3 target = record.hitpoint + record.hitpoint.normalize() + random_in_unit_sphere();
         return 0.5 * shoot_ray(Ray(record.hitpoint, (target - record.hitpoint)), world);
     } else {
-        if (!check) {
-            //cout << "Found air" << endl;
-        }
         Vec3 unit = ray.direction.normalize();
         double t = 0.5 * (unit.y + 1.0);
         return (1.0 - t) * Vec3(1, 1, 1) + t * Vec3(0.5, 0.7, 1.0);
@@ -95,8 +91,7 @@ void* render_thread(void* v_args) {
                 Ray ray = cam->get_ray(u, v);
 
                 // Get the colour
-                check = false;
-                col += shoot_ray(ray, *args->world);
+                col += cam->shoot_ray(ray, *args->world);
             }
 
             // Compute the colour average
@@ -107,6 +102,8 @@ void* render_thread(void* v_args) {
             } else {
                 args->out[0][y][x] = avg_col;
             }
+
+            args->done.store(args->done.load() + 1);
         }
 
         // Save the picture very y
@@ -128,7 +125,7 @@ Image EfficientCamera::render(const RenderObjectCollection& world) {
             threads[i].row_end = this->height - 1;
         }
         threads[i].out = &out;
-        threads[i].done = 0;
+        threads[i].done.store(0);
         threads[i].world = &world;
         threads[i].camera = this;
     }
@@ -140,15 +137,15 @@ Image EfficientCamera::render(const RenderObjectCollection& world) {
 
     // Wait for all of them to reap
     int all_done = 0;
-    ProgressBar prgs(0, this->height);
-    while (all_done < this->height) {
+    ProgressBar prgs(0, this->height * this->width);
+    while (all_done < this->height * this->width) {
         // Sleep a second
         this_thread::sleep_for(chrono::milliseconds(500));
 
         // Check if we're done
         all_done = 0;
         for (int i = 0; i < n_threads; i++) {
-            all_done += threads[i].done;
+            all_done += threads[i].done.load();
         }
 
         prgs.set(all_done);
