@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 12:12:44 PM
  * Last edited:
- *   1/22/2020, 1:02:51 PM
+ *   1/22/2020, 1:32:32 PM
  * Auto updated?
  *   Yes
  *
@@ -137,21 +137,21 @@ Vec3 Vec3::normalize() const {
 }
 
 
-Vec3 operator+(const Vec3& v1, const Vec3& v2) {
+Vec3 RayTracer::operator+(const Vec3& v1, const Vec3& v2) {
     return Vec3(
         v1.x + v2.x,
         v1.y + v2.y,
         v1.z + v2.z
     );
 }
-Vec3 operator+(const Vec3& v1, const double n) {
+Vec3 RayTracer::operator+(const Vec3& v1, const double n) {
     return Vec3(
         v1.x + n,
         v1.y + n,
         v1.z + n
     );
 }
-Vec3 operator+(const double n, const Vec3& v2) {
+Vec3 RayTracer::operator+(const double n, const Vec3& v2) {
     return Vec3(
         n + v2.x,
         n + v2.y,
@@ -159,21 +159,21 @@ Vec3 operator+(const double n, const Vec3& v2) {
     );
 }
 
-Vec3 operator-(const Vec3& v1, const Vec3& v2) {
+Vec3 RayTracer::operator-(const Vec3& v1, const Vec3& v2) {
     return Vec3(
         v1.x - v2.x,
         v1.y - v2.y,
         v1.z - v2.z
     );
 }
-Vec3 operator-(const Vec3& v1, const double n) {
+Vec3 RayTracer::operator-(const Vec3& v1, const double n) {
     return Vec3(
         v1.x - n,
         v1.y - n,
         v1.z - n
     );
 }
-Vec3 operator-(const double n, const Vec3& v2) {
+Vec3 RayTracer::operator-(const double n, const Vec3& v2) {
     return Vec3(
         n - v2.x,
         n - v2.y,
@@ -181,21 +181,21 @@ Vec3 operator-(const double n, const Vec3& v2) {
     );
 }
 
-Vec3 operator*(const Vec3& v1, const Vec3& v2) {
+Vec3 RayTracer::operator*(const Vec3& v1, const Vec3& v2) {
     return Vec3(
         v1.x * v2.x,
         v1.y * v2.y,
         v1.z * v2.z
     );
 }
-Vec3 operator*(const Vec3& v1, const double n) {
+Vec3 RayTracer::operator*(const Vec3& v1, const double n) {
     return Vec3(
         v1.x * n,
         v1.y * n,
         v1.z * n
     );
 }
-Vec3 operator*(const double n, const Vec3& v2) {
+Vec3 RayTracer::operator*(const double n, const Vec3& v2) {
     return Vec3(
         n * v2.x,
         n * v2.y,
@@ -203,21 +203,21 @@ Vec3 operator*(const double n, const Vec3& v2) {
     );
 }
 
-Vec3 operator/(const Vec3& v1, const Vec3& v2) {
+Vec3 RayTracer::operator/(const Vec3& v1, const Vec3& v2) {
     return Vec3(
         v1.x / v2.x,
         v1.y / v2.y,
         v1.z / v2.z
     );
 }
-Vec3 operator/(const Vec3& v1, const double n) {
+Vec3 RayTracer::operator/(const Vec3& v1, const double n) {
     return Vec3(
         v1.x / n,
         v1.y / n,
         v1.z / n
     );
 }
-Vec3 operator/(const double n, const Vec3& v2) {
+Vec3 RayTracer::operator/(const double n, const Vec3& v2) {
     return Vec3(
         n / v2.x,
         n / v2.y,
@@ -225,10 +225,10 @@ Vec3 operator/(const double n, const Vec3& v2) {
     );
 }
 
-double dot(const Vec3& v1, const Vec3& v2) {
+double RayTracer::dot(const Vec3& v1, const Vec3& v2) {
     return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 }
-Vec3 cross(const Vec3& v1, const Vec3& v2) {
+Vec3 RayTracer::cross(const Vec3& v1, const Vec3& v2) {
     return Vec3(
         v1.y * v2.z - v1.z * v2.y,
         v1.z * v2.x - v1.x * v2.z,
