@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:36:39 PM
  * Last edited:
- *   1/22/2020, 2:08:05 PM
+ *   1/22/2020, 2:12:35 PM
  * Auto updated?
  *   Yes
  *
@@ -23,7 +23,7 @@ using namespace std;
 using namespace RayTracer;
 
 Sphere::Sphere(const Vec3& origin, double radius)
-    : Shape(origin, sphere)
+    : RenderObject(origin, sphere)
 {
     this->radius = radius;
 }

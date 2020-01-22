@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:37:11 PM
  * Last edited:
- *   1/22/2020, 2:03:04 PM
+ *   1/22/2020, 2:12:31 PM
  * Auto updated?
  *   Yes
  *
@@ -18,10 +18,10 @@
 #ifndef SPHERE_HPP
 #define SPHERE_HPP
 
-#include "Shape.hpp"
+#include "RenderObject.hpp"
 
 namespace RayTracer {
-    class Sphere: public Shape {
+    class Sphere: public RenderObject {
         public:
             double radius;
 

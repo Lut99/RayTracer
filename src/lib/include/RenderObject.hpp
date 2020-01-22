@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:39:23 PM
  * Last edited:
- *   1/22/2020, 1:58:57 PM
+ *   1/22/2020, 2:12:11 PM
  * Auto updated?
  *   Yes
  *
@@ -22,17 +22,17 @@
 #include "Ray.hpp"
 
 namespace RayTracer {
-    enum ShapeType {
+    enum RenderObjectType {
         sphere
     };
 
-    class Shape {
+    class RenderObject {
         public:
-            const ShapeType type;
+            const RenderObjectType type;
             Vec3 origin;
 
             /* The Shape class is virtual, and should not be used by yourself. Only derived classes should call this function. */
-            Shape(const Vec3& origin, const ShapeType type);
+            RenderObject(const Vec3& origin, const RenderObjectType type);
 
             /* Virtual for the derived classes to determine whether they have been hit by a ray or not. */
             virtual double hit(const Ray& ray) const;
