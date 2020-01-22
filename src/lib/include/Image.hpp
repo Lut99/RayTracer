@@ -4,7 +4,7 @@
  * Created:
  *   1/20/2020, 3:01:57 PM
  * Last edited:
- *   1/20/2020, 5:53:29 PM
+ *   1/22/2020, 1:26:55 PM
  * Auto updated?
  *   Yes
  *
@@ -21,6 +21,8 @@
 #include <memory>
 #include <string>
 
+#include "Vec3.hpp"
+
 namespace RayTracer {
     class Pixel {
         private:
@@ -34,6 +36,7 @@ namespace RayTracer {
             Pixel(double* colours);
 
             double& operator[](int index);
+            Pixel& operator=(const Vec3& other);
     };
 
     class ImageRow {
