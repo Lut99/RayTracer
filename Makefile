@@ -36,3 +36,5 @@ Camera.o:
 
 renderer: Ray.o Image.o Vec3.o LodePNG.o RenderObject.o Sphere.o RenderObjectCollection.o Random.o Camera.o ProgressBar.o
 	$(CC) $(ARGS) -o bin/renderer.out src/Renderer.cpp bin/lib/Ray.o bin/lib/Vec3.o bin/lib/Image.o bin/lib/LodePNG.o bin/lib/RenderObject.o bin/lib/Sphere.o bin/lib/RenderObjectCollection.o bin/lib/Random.o bin/lib/Camera.o bin/lib/ProgressBar.o
+renderer_debug: Ray.o Image.o Vec3.o LodePNG.o RenderObject.o Sphere.o RenderObjectCollection.o Random.o Camera.o ProgressBar.o
+	$(CC) $(ARGS) -g -o bin/renderer.out src/Renderer.cpp bin/lib/Ray.o bin/lib/Vec3.o bin/lib/Image.o bin/lib/LodePNG.o bin/lib/RenderObject.o bin/lib/Sphere.o bin/lib/RenderObjectCollection.o bin/lib/Random.o bin/lib/Camera.o bin/lib/ProgressBar.o

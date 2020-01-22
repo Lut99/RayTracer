@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:14 PM
  * Last edited:
- *   1/22/2020, 6:23:44 PM
+ *   1/22/2020, 9:10:39 PM
  * Auto updated?
  *   Yes
  *
@@ -14,6 +14,8 @@
  *   the anti-aliasing. This particular file is the implementation file for
  *   Camera.hpp.
 **/
+
+#include <iostream>
 
 #include "include/ProgressBar.hpp"
 #include "include/Random.hpp"
@@ -43,12 +45,17 @@ Ray Camera::get_ray(double u, double v) const {
 }
 
 /* Shoots a ray. If it hits something, apply diffusion. Otherwise, return the sky colour. */
+bool check;
 Vec3 shoot_ray(const Ray& ray, const RenderObjectCollection& world) {
     HitRecord record;
     if (world.hit(ray, 0.0, numeric_limits<double>::max(), record)) {
+        check = true;
         Vec3 target = record.hitpoint + record.hitpoint.normalize() + random_in_unit_sphere();
-        return 0.5 * shoot_ray(Ray(record.hitpoint, (target - record.hitpoint).normalize()), world);
+        return 0.5 * shoot_ray(Ray(record.hitpoint, (target - record.hitpoint)), world);
     } else {
+        if (!check) {
+            //cout << "Found air" << endl;
+        }
         Vec3 unit = ray.direction.normalize();
         double t = 0.5 * (unit.y + 1.0);
         return (1.0 - t) * Vec3(1, 1, 1) + t * Vec3(0.5, 0.7, 1.0);
@@ -74,6 +81,7 @@ Image Camera::render(const RenderObjectCollection& world) {
                 Ray ray = this->get_ray(u, v);
 
                 // Get the colour
+                check = false;
                 col += shoot_ray(ray, world);
             }
 
@@ -81,7 +89,7 @@ Image Camera::render(const RenderObjectCollection& world) {
             Vec3 avg_col = col / this->rays;
             if (this->gamma) {
                 // Gamma-correct the avg_colour
-                out[y][x] = sqrt(avg_col);
+                out[y][x] = Vec3(sqrt(avg_col.x), sqrt(avg_col.y), sqrt(avg_col.z));
             } else {
                 out[y][x] = avg_col;
             }
@@ -91,6 +99,9 @@ Image Camera::render(const RenderObjectCollection& world) {
                 prgrs.update();
             }
         }
+
+        // Save the picture very y
+        //out.to_png("output/test_" + to_string(y) + ".png");
     }
     return out;
 }
