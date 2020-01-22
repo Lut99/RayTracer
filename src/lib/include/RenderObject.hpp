@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:39:23 PM
  * Last edited:
- *   1/22/2020, 2:12:11 PM
+ *   1/22/2020, 2:18:22 PM
  * Auto updated?
  *   Yes
  *
@@ -20,6 +20,7 @@
 
 #include "Vec3.hpp"
 #include "Ray.hpp"
+#include "HitRecord.hpp"
 
 namespace RayTracer {
     enum RenderObjectType {
@@ -35,7 +36,7 @@ namespace RayTracer {
             RenderObject(const Vec3& origin, const RenderObjectType type);
 
             /* Virtual for the derived classes to determine whether they have been hit by a ray or not. */
-            virtual double hit(const Ray& ray) const;
+            virtual bool hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const;
 
             /* Virtual for the derived classes to return the colour associated with the hit position. */
             virtual Vec3 colour(const Vec3& hitpoint) const;

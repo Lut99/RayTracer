@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:36:39 PM
  * Last edited:
- *   1/22/2020, 2:12:35 PM
+ *   1/22/2020, 2:23:56 PM
  * Auto updated?
  *   Yes
  *
@@ -28,27 +28,31 @@ Sphere::Sphere(const Vec3& origin, double radius)
     this->radius = radius;
 }
 
-double Sphere::hit(const Ray& ray) const {
+bool Sphere::hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const {
     Vec3 d_ray_sphere = ray.origin - this->origin;
     double a = dot(ray.direction, ray.direction);
-    double b = 2.0 * dot(d_ray_sphere, ray.direction);
+    double b = dot(d_ray_sphere, ray.direction);
     double c = dot(d_ray_sphere, d_ray_sphere) - this->radius * this->radius;
 
-    double D = b*b - 4*a*c;
+    double D = b*b - a*c;
 
     // Return the distance the ray has travelled until it hits the closest side of the sphere.
-    if (D < 0) {
-        return -1.0;
-    } else {
+    if (D > 0) {
+        // Compute tboth variations of the t. If t - sqrt(D) is true, take that one. Otherwise, take the other.
         double t1 = (-b - sqrt(D)) / (2.0 * a);
         double t2 = (-b + sqrt(D)) / (2.0 * a);
+        double t;
+        if (t1 < t2) {t = t1;}
+        else {t = t2;}
+        
+        if (t > t_min && t < t_max) {
+            record.t = t;
+            record.hitpoint = ray.point(t);
 
-        if (t1 < t2) {
-            return t1;
-        } else {
-            return t2;
+            return true;
         }
     }
+    return false;
 }
 
 Vec3 Sphere::colour(const Vec3& hitpoint) const {
