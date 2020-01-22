@@ -8,6 +8,11 @@ LodePNG.o:
 test_image: Image.o LodePNG.o
 	$(CC) $(ARGS) -o tests/bin/test_image.out tests/src/test_image.cpp bin/lib/Image.o bin/lib/LodePNG.o
 
+ProgressBar.o:
+	$(CC) $(ARGS) -o bin/lib/ProgressBar.o -c src/lib/ProgressBar.cpp
+test_progressbar: ProgressBar.o
+	$(CC) $(ARGS) -o tests/bin/test_progressbar.out tests/src/test_progressbar.cpp bin/lib/ProgressBar.o
+
 Vec3.o:
 	$(CC) $(ARGS) -o bin/lib/Vec3.o -c src/lib/Vec3.cpp
 
