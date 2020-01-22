@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/22/2020, 3:34:13 PM
+ *   1/22/2020, 3:43:58 PM
  * Auto updated?
  *   Yes
  *
@@ -66,11 +66,6 @@ int main(int argc, char** argv) {
         exit(1);
     }
 
-    Vec3 lower_left_corner(-2, -1, -1);
-    Vec3 horizontal(4, 0, 0);
-    Vec3 vertical(0, 2, 0);
-    Vec3 origin(0, 0, 0);
-
     // Create a list of objects
     vector<RenderObject*> objects;
     objects.resize(2);
@@ -81,7 +76,7 @@ int main(int argc, char** argv) {
     RenderObjectCollection world(objects);
 
     // Create the camera
-    Camera cam;
+    Camera cam(screen_width, screen_height);
 
     Image out(screen_width, screen_height);
     for (int y = screen_height-1; y >= 0; y--) {

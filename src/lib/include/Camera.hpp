@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:28 PM
  * Last edited:
- *   1/22/2020, 3:28:37 PM
+ *   1/22/2020, 3:44:10 PM
  * Auto updated?
  *   Yes
  *
@@ -30,7 +30,7 @@ namespace RayTracer {
             Vec3 origin;
 
             /* The camera class holds information about the viewport of the scene. Note that for now, everything is set, but I suspect that may change later. */
-            Camera();
+            Camera(double screen_width, double screen_height);
 
             /* Returns a ray through given u and v through the pixel grid */
             Ray get_ray(double u, double v) const;
