@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:14 PM
  * Last edited:
- *   1/22/2020, 9:10:39 PM
+ *   1/22/2020, 10:12:22 PM
  * Auto updated?
  *   Yes
  *
@@ -45,56 +45,26 @@ Ray Camera::get_ray(double u, double v) const {
 }
 
 /* Shoots a ray. If it hits something, apply diffusion. Otherwise, return the sky colour. */
-bool check;
-Vec3 shoot_ray(const Ray& ray, const RenderObjectCollection& world) {
+Vec3 Camera::shoot_ray(const Ray& ray, const RenderObjectCollection& world) const {
     HitRecord record;
     if (world.hit(ray, 0.0, numeric_limits<double>::max(), record)) {
-        check = true;
         Vec3 target = record.hitpoint + record.hitpoint.normalize() + random_in_unit_sphere();
         return 0.5 * shoot_ray(Ray(record.hitpoint, (target - record.hitpoint)), world);
     } else {
-        if (!check) {
-            //cout << "Found air" << endl;
-        }
         Vec3 unit = ray.direction.normalize();
         double t = 0.5 * (unit.y + 1.0);
         return (1.0 - t) * Vec3(1, 1, 1) + t * Vec3(0.5, 0.7, 1.0);
     }
 }
 
-Image Camera::render(const RenderObjectCollection& world) {
+Image Camera::render(const RenderObjectCollection& world) const {
     Image out(this->width, this->height);
     ProgressBar prgrs(0, this->width * this->height - 1);
     for (int y = this->height-1; y >= 0; y--) {
         for (int x = 0; x < this->width; x++) {
-            Vec3 col;
-            for (int r = 0; r < this->rays; r++) {
-                double u, v;
-                if (this->rays > 1) {
-                    u = double(x + random_double()) / double(this->width);
-                    v = double(this->height - 1 - y + random_double()) / double(this->height);
-                } else {
-                    u = double(x) / double(this->width);
-                    v = double(this->height - 1 - y) / double(this->height);
-                }
+            // Render the pixel
+            out[y][x] = this->render_pixel(x, y, world);
 
-                Ray ray = this->get_ray(u, v);
-
-                // Get the colour
-                check = false;
-                col += shoot_ray(ray, world);
-            }
-
-            // Compute the colour average
-            Vec3 avg_col = col / this->rays;
-            if (this->gamma) {
-                // Gamma-correct the avg_colour
-                out[y][x] = Vec3(sqrt(avg_col.x), sqrt(avg_col.y), sqrt(avg_col.z));
-            } else {
-                out[y][x] = avg_col;
-            }
-
-            // Update the progress bar if needed
             if (this->progress) {
                 prgrs.update();
             }
@@ -104,4 +74,32 @@ Image Camera::render(const RenderObjectCollection& world) {
         //out.to_png("output/test_" + to_string(y) + ".png");
     }
     return out;
+}
+
+Vec3 Camera::render_pixel(int x, int y, const RenderObjectCollection& world) const {
+    Vec3 col;
+    for (int r = 0; r < this->rays; r++) {
+        double u, v;
+        if (this->rays > 1) {
+            u = double(x + random_double()) / double(this->width);
+            v = double(this->height - 1 - y + random_double()) / double(this->height);
+        } else {
+            u = double(x) / double(this->width);
+            v = double(this->height - 1 - y) / double(this->height);
+        }
+
+        Ray ray = this->get_ray(u, v);
+
+        // Get the colour
+        col += this->shoot_ray(ray, world);
+    }
+
+    // Compute the colour average
+    Vec3 avg_col = col / this->rays;
+    if (this->gamma) {
+        // Gamma-correct the avg_colour
+        return Vec3(sqrt(avg_col.x), sqrt(avg_col.y), sqrt(avg_col.z));
+    } else {
+        return avg_col;
+    }
 }

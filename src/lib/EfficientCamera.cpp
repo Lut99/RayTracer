@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 9:13:21 PM
  * Last edited:
- *   1/22/2020, 9:50:26 PM
+ *   1/22/2020, 10:10:55 PM
  * Auto updated?
  *   Yes
  *
@@ -39,37 +39,10 @@ struct ThreadData {
 
 
 
-EfficientCamera::EfficientCamera(int screen_width, int screen_height, int rays_per_pixel, bool correct_gamma, int num_of_threads)
-    : width(screen_width),
-    height(screen_height),
-    rays(rays_per_pixel),
-    gamma(correct_gamma),
+EfficientCamera::EfficientCamera(int screen_width, int screen_height, int rays_per_pixel, bool show_progressbar, bool correct_gamma, int num_of_threads)
+    : Camera(screen_width, screen_height, rays_per_pixel, show_progressbar, correct_gamma),
     n_threads(num_of_threads)
-{
-    double ratio = (double) this->width / (double) this->height;
-
-    this->lower_left_corner = Vec3(-2.0, -1.0, -1.0);
-    this->horizontal = Vec3(4.0, 0.0, 0.0);
-    this->vertical = Vec3(0.0, 4.0 / ratio, 0.0);
-    this->origin = Vec3(0.0, 0.0, 0.0);
-}
-
-Ray EfficientCamera::get_ray(double u, double v) const {
-    return Ray(this->origin, this->lower_left_corner + u * this->horizontal + v * this->vertical - this->origin);
-}
-
-/* Shoots a ray. If it hits something, apply diffusion. Otherwise, return the sky colour. */
-Vec3 EfficientCamera::shoot_ray(const Ray& ray, const RenderObjectCollection& world) {
-    HitRecord record;
-    if (world.hit(ray, 0.0, numeric_limits<double>::max(), record)) {
-        Vec3 target = record.hitpoint + record.hitpoint.normalize() + random_in_unit_sphere();
-        return 0.5 * shoot_ray(Ray(record.hitpoint, (target - record.hitpoint)), world);
-    } else {
-        Vec3 unit = ray.direction.normalize();
-        double t = 0.5 * (unit.y + 1.0);
-        return (1.0 - t) * Vec3(1, 1, 1) + t * Vec3(0.5, 0.7, 1.0);
-    }
-}
+{}
 
 void* render_thread(void* v_args) {
     ThreadData* args = (ThreadData*) v_args;
@@ -77,31 +50,7 @@ void* render_thread(void* v_args) {
 
     for (int y = args->row_end; y >= args->row_start; y--) {
         for (int x = 0; x < cam->width; x++) {
-            Vec3 col;
-            for (int r = 0; r < cam->rays; r++) {
-                double u, v;
-                if (cam->rays > 1) {
-                    u = double(x + random_double()) / double(cam->width);
-                    v = double(cam->height - 1 - y + random_double()) / double(cam->height);
-                } else {
-                    u = double(x) / double(cam->width);
-                    v = double(cam->height - 1 - y) / double(cam->height);
-                }
-
-                Ray ray = cam->get_ray(u, v);
-
-                // Get the colour
-                col += cam->shoot_ray(ray, *args->world);
-            }
-
-            // Compute the colour average
-            Vec3 avg_col = col / cam->rays;
-            if (cam->gamma) {
-                // Gamma-correct the avg_colour
-                args->out[0][y][x] = Vec3(sqrt(avg_col.x), sqrt(avg_col.y), sqrt(avg_col.z));
-            } else {
-                args->out[0][y][x] = avg_col;
-            }
+            args->out[0][y][x] = args->camera->render_pixel(x, y, *args->world);
 
             args->done.store(args->done.load() + 1);
         }
@@ -148,7 +97,9 @@ Image EfficientCamera::render(const RenderObjectCollection& world) {
             all_done += threads[i].done.load();
         }
 
-        prgs.set(all_done);
+        if (this->progress) {
+            prgs.set(all_done);
+        }
     }
 
     // Reap 'em

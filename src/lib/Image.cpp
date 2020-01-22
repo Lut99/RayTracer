@@ -4,7 +4,7 @@
  * Created:
  *   1/20/2020, 3:03:07 PM
  * Last edited:
- *   1/22/2020, 1:54:50 PM
+ *   1/22/2020, 10:03:18 PM
  * Auto updated?
  *   Yes
  *
@@ -49,6 +49,12 @@ double& Pixel::operator[](int index) {
     }
 
     return this->data[index];
+}
+Pixel& Pixel::operator=(const Pixel& other) {
+    this->data[0] = other.data[0];
+    this->data[1] = other.data[1];
+    this->data[2] = other.data[2];
+    return *this;
 }
 Pixel& Pixel::operator=(const Vec3& other) {
     // Simply set our own data to given vector

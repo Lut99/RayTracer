@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/22/2020, 9:51:53 PM
+ *   1/22/2020, 10:16:51 PM
  * Auto updated?
  *   Yes
  *
@@ -40,7 +40,7 @@ int main(int argc, const char** argv) {
     correct_gamma = true;
 
     n_threads = 16;
-    use_efficient_camera = false;
+    use_efficient_camera = true;
 
     // Create a list of objects
     vector<RenderObject*> objects;
@@ -50,7 +50,7 @@ int main(int argc, const char** argv) {
 
     if (use_efficient_camera) {
         // Create the camera
-        EfficientCamera cam(screen_width, screen_height, number_of_rays, correct_gamma, n_threads);
+        EfficientCamera cam(screen_width, screen_height, number_of_rays, show_progressbar, correct_gamma, n_threads);
 
         // Put these in a RenderObjectCollection
         RenderObjectCollection world(objects);

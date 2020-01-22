@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:28 PM
  * Last edited:
- *   1/22/2020, 6:18:26 PM
+ *   1/22/2020, 10:08:00 PM
  * Auto updated?
  *   Yes
  *
@@ -44,9 +44,13 @@ namespace RayTracer {
 
             /* Returns a ray through given u and v through the pixel grid */
             Ray get_ray(double u, double v) const;
+            /* Computes the colour of a shot ray */
+            Vec3 shoot_ray(const Ray& ray, const RenderObjectCollection& world) const;
 
             /* Renders a frame from the current camera position */
-            Image render(const RenderObjectCollection& world);
+            virtual Image render(const RenderObjectCollection& world) const;
+            /* Renders one pixel from the scene. */
+            Vec3 render_pixel(int x, int y, const RenderObjectCollection& world) const;
     };
 }
 

@@ -4,7 +4,7 @@
  * Created:
  *   1/20/2020, 3:01:57 PM
  * Last edited:
- *   1/22/2020, 1:26:55 PM
+ *   1/22/2020, 10:01:55 PM
  * Auto updated?
  *   Yes
  *
@@ -36,6 +36,7 @@ namespace RayTracer {
             Pixel(double* colours);
 
             double& operator[](int index);
+            Pixel& operator=(const Pixel& other);
             Pixel& operator=(const Vec3& other);
     };
 
