@@ -4,7 +4,7 @@
  * Created:
  *   1/20/2020, 3:39:04 PM
  * Last edited:
- *   1/20/2020, 5:33:33 PM
+ *   1/22/2020, 12:09:33 PM
  * Auto updated?
  *   Yes
  *
@@ -71,16 +71,21 @@ bool test_values() {
 bool test_png() {
     cout << "Writing test image..." << endl;
 
+    int w, h;
+    w = 200;
+    h = 100;
+
     cout << "  Creating image..." << endl;
-    Image img = Image(200, 100);
+    Image img = Image(w, h);
 
     cout << "  Creating gradient..." << endl;
-    for (int y = 0; y < 100; y++) {
-        for (int x = 0; x < 200; x++) {
-            Pixel p = img[y][x];
-            p.r() = float(x) / float(200);
-            p.g() = float(y) / float(100);
-            p.b() = 0.2;
+    for (int y = h - 1; y >= 0; y--) {
+        cout << y << endl;
+        for (int x = 0; x < w; x++) {
+            Pixel p = img[(h - 1) - y][x];
+            p.r() = float(x) / float(w);
+            p.g() = float(y) / float(h);
+            p.b() = 0;
         }
     }
 
