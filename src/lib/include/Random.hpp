@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:20:21 PM
  * Last edited:
- *   1/22/2020, 3:20:55 PM
+ *   1/22/2020, 4:19:56 PM
  * Auto updated?
  *   Yes
  *
@@ -17,8 +17,13 @@
 #ifndef RANDOM_HPP
 #define RANDOM_HPP
 
+#include "Vec3.hpp"
+
 namespace RayTracer {
+    /* Generates a random double such that 0 <= x < 1 */
     double random_double();
+    /* Generates a vector randomly in the unit sphere. Uses a rather ugly method that has undertermined runtime. */
+    Vec3 random_in_unit_sphere();
 }
 
 #endif

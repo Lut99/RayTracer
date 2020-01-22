@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:14 PM
  * Last edited:
- *   1/22/2020, 4:03:21 PM
+ *   1/22/2020, 4:43:25 PM
  * Auto updated?
  *   Yes
  *
@@ -15,18 +15,12 @@
  *   Camera.hpp.
 **/
 
+#include "include/RenderWorld.hpp"
 #include "include/Random.hpp"
 #include "include/Camera.hpp"
 
 using namespace std;
 using namespace RayTracer;
-
-/* Returns a gradient along the y-axis. */
-Vec3 default_colour(const Ray& r) {
-    Vec3 unit = r.direction.normalize();
-    double t = 0.5 * (unit.y + 1.0);
-    return (1.0 - t) * Vec3(1, 1, 1) + t * Vec3(0.5, 0.7, 1.0);
-}
 
 
 Camera::Camera(int screen_width, int screen_height, int rays_per_pixel)
@@ -46,7 +40,13 @@ Ray Camera::get_ray(double u, double v) const {
     return Ray(this->origin, this->lower_left_corner + u * this->horizontal + v * this->vertical - this->origin);
 }
 
-Image Camera::render(const RenderObjectCollection& world) {
+Vec3 Camera::get_default_background(const Ray& r) {
+    Vec3 unit = r.direction.normalize();
+    double t = 0.5 * (unit.y + 1.0);
+    return (1.0 - t) * Vec3(1, 1, 1) + t * Vec3(0.5, 0.7, 1.0);
+}
+
+Image Camera::render(const RenderWorld& world) {
     Image out(this->width, this->height);
     for (int y = this->height-1; y >= 0; y--) {
         for (int x = 0; x < this->width; x++) {
@@ -62,12 +62,14 @@ Image Camera::render(const RenderObjectCollection& world) {
                 if (world.hit(ray, 0.0, numeric_limits<double>::max(), hit)) {
                     col += world.colour(hit);
                 } else {
-                    col += default_colour(ray);
+                    col += this->get_default_background(ray);
                 }
             }
 
-            // Set the colour to the output pixel (but don't forget to average)
-            out[y][x] = col / this->rays;
+            // Compute the colour average
+            Vec3 avg_col = col / this->rays;
+            // Gamma-correct the avg_colour
+            out[y][x] = sqrt(avg_col);
         }
     }
     return out;

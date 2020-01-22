@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 2:17:23 PM
  * Last edited:
- *   1/22/2020, 3:09:00 PM
+ *   1/22/2020, 4:25:53 PM
  * Auto updated?
  *   Yes
  *
@@ -25,6 +25,8 @@ namespace RayTracer {
 
     struct HitRecord {
         double t;
+        double t_min;
+        double t_max;
         Vec3 hitpoint;
         RenderObject* obj;
     };

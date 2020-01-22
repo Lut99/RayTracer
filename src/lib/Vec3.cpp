@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 12:12:44 PM
  * Last edited:
- *   1/22/2020, 1:32:32 PM
+ *   1/22/2020, 4:39:17 PM
  * Auto updated?
  *   Yes
  *
@@ -16,7 +16,6 @@
 **/
 
 #include <stdexcept>
-#include <math.h>
 
 #include "include/Vec3.hpp"
 
@@ -233,5 +232,13 @@ Vec3 RayTracer::cross(const Vec3& v1, const Vec3& v2) {
         v1.y * v2.z - v1.z * v2.y,
         v1.z * v2.x - v1.x * v2.z,
         v1.x * v2.y - v1.y * v2.x
+    );
+}
+
+Vec3 std::sqrt(const Vec3& v) {
+    return Vec3(
+        sqrt(v.x),
+        sqrt(v.y),
+        sqrt(v.z)
     );
 }

@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:20:02 PM
  * Last edited:
- *   1/22/2020, 3:21:34 PM
+ *   1/22/2020, 4:19:07 PM
  * Auto updated?
  *   Yes
  *
@@ -24,4 +24,12 @@ double RayTracer::random_double() {
     static std::mt19937 generator;
     static std::function<double()> rand_generator = std::bind(distribution, generator);
     return rand_generator();
+}
+
+RayTracer::Vec3 RayTracer::random_in_unit_sphere() {
+    Vec3 p;
+    do {
+        p = 2.0 * Vec3(random_double(), random_double(), random_double()) - 1.0;
+    } while (p.squared_length() >= 1.0);
+    return p;
 }

@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/22/2020, 4:03:04 PM
+ *   1/22/2020, 4:32:07 PM
  * Auto updated?
  *   Yes
  *
@@ -56,6 +56,9 @@ int main(int argc, char** argv) {
         exit(1);
     }
 
+    // Create the camera
+    Camera cam(screen_width, screen_height, number_of_rays);
+
     // Create a list of objects
     vector<RenderObject*> objects;
     objects.resize(2);
@@ -63,13 +66,15 @@ int main(int argc, char** argv) {
     objects[1] = (RenderObject*) new Sphere(Vec3(0, -100.5, -1), 100);
 
     // Put these in a RenderObjectCollection
-    RenderObjectCollection world(objects);
-
-    // Create the camera
-    Camera cam(screen_width, screen_height, number_of_rays);
+    RenderWorld world(cam, objects);
 
     Image out = cam.render(world);
 
     // Write the image
     out.to_png("test.png");
+
+    // CLEANUP: Deallocate all objects
+    for (std::size_t i = 0; i < objects.size(); i++) {
+        delete objects[i];
+    }
 }

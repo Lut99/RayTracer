@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:36:39 PM
  * Last edited:
- *   1/22/2020, 2:54:58 PM
+ *   1/22/2020, 4:30:12 PM
  * Auto updated?
  *   Yes
  *
@@ -47,6 +47,8 @@ bool Sphere::hit(const Ray& ray, double t_min, double t_max, HitRecord& record) 
         
         if (t > t_min && t < t_max) {
             record.t = t;
+            record.t_min = t_min;
+            record.t_max = t_max;
             record.hitpoint = ray.point(t);
             record.obj = (RenderObject*) this;
 

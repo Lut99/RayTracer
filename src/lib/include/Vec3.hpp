@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 12:11:32 PM
  * Last edited:
- *   1/22/2020, 1:02:40 PM
+ *   1/22/2020, 4:39:46 PM
  * Auto updated?
  *   Yes
  *
@@ -17,6 +17,8 @@
 
 #ifndef VEC3_HPP
 #define VEC3_HPP
+
+#include <math.h>
 
 namespace RayTracer {
     class Vec3 {
@@ -104,6 +106,10 @@ namespace RayTracer {
     double dot(const Vec3& v1, const Vec3& v2);
     /* Returns the cross product of two vectors. */
     Vec3 cross(const Vec3& v1, const Vec3& v2);
+}
+
+namespace std {
+    RayTracer::Vec3 sqrt(const RayTracer::Vec3& v);
 }
 
 #endif
