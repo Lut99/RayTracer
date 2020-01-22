@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:39:23 PM
  * Last edited:
- *   1/22/2020, 2:40:03 PM
+ *   1/22/2020, 2:42:32 PM
  * Auto updated?
  *   Yes
  *
@@ -30,10 +30,10 @@ namespace RayTracer {
     class RenderObject {
         public:
             const RenderObjectType type;
-            Vec3 origin;
+            Vec3 center;
 
             /* The Shape class is virtual, and should not be used by yourself. Only derived classes should call this function. */
-            RenderObject(const Vec3& origin, const RenderObjectType type);
+            RenderObject(const Vec3& center, const RenderObjectType type);
 
             /* Virtual for the derived classes to determine whether they have been hit by a ray or not. */
             virtual bool hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const;

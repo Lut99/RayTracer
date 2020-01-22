@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:38:50 PM
  * Last edited:
- *   1/22/2020, 2:40:04 PM
+ *   1/22/2020, 2:42:36 PM
  * Auto updated?
  *   Yes
  *
@@ -22,10 +22,10 @@
 using namespace std;
 using namespace RayTracer;
 
-RenderObject::RenderObject(const Vec3& origin, const RenderObjectType type)
+RenderObject::RenderObject(const Vec3& center, const RenderObjectType type)
     :type(type)
 {
-    this->origin = origin;
+    this->center = center;
 }
 
 bool RenderObject::hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const {

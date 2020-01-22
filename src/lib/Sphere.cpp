@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:36:39 PM
  * Last edited:
- *   1/22/2020, 2:39:47 PM
+ *   1/22/2020, 2:42:46 PM
  * Auto updated?
  *   Yes
  *
@@ -29,7 +29,7 @@ Sphere::Sphere(const Vec3& origin, double radius)
 }
 
 bool Sphere::hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const {
-    Vec3 d_ray_sphere = ray.origin - this->origin;
+    Vec3 d_ray_sphere = ray.origin - this->center;
     double a = dot(ray.direction, ray.direction);
     double b = dot(d_ray_sphere, ray.direction);
     double c = dot(d_ray_sphere, d_ray_sphere) - this->radius * this->radius;
@@ -61,5 +61,5 @@ Vec3 Sphere::colour(const HitRecord& record) const {
 }
 
 Vec3 Sphere::normal(const Vec3& point) const {
-    return (point - this->origin).normalize();
+    return (point - this->center).normalize();
 }
