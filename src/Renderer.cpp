@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/22/2020, 1:54:17 PM
+ *   1/22/2020, 2:09:23 PM
  * Auto updated?
  *   Yes
  *
@@ -26,15 +26,15 @@ using namespace RayTracer;
 /* Returns a gradient along the y-axis. */
 Vec3 default_colour(const Ray& r) {
     Vec3 unit = r.direction.normalize();
-    float t = 0.5 * (unit.y + 1.0);
+    double t = 0.5 * (unit.y + 1.0);
     return (1.0 - t) * Vec3(1, 1, 1) + t * Vec3(0.5, 0.7, 1.0);
 }
 
 
 int main() {
     int screen_width, screen_height;
-    screen_width = 200;
-    screen_height = 100;
+    screen_width = 500;
+    screen_height = 250;
 
     Vec3 lower_left_corner(-2, -1, -1);
     Vec3 horizontal(4, 0, 0);
@@ -53,9 +53,11 @@ int main() {
 
             // Check if the Ray hits anything
             Vec3 col;
-            if (obj1.hit(r) != 0.0) {
-                // Draw that pixel
-                col = obj1.colour(Vec3(0, 0, 0));
+            double t = obj1.hit(r);
+            if (t > 0.0) {
+                // Compute the hitpoint
+                Vec3 hitpoint = r.point(t);
+                col = obj1.colour(hitpoint);
             } else {
                 col = default_colour(r);
             }

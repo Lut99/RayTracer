@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:39:23 PM
  * Last edited:
- *   1/22/2020, 1:47:07 PM
+ *   1/22/2020, 1:58:57 PM
  * Auto updated?
  *   Yes
  *
@@ -39,6 +39,9 @@ namespace RayTracer {
 
             /* Virtual for the derived classes to return the colour associated with the hit position. */
             virtual Vec3 colour(const Vec3& hitpoint) const;
+
+            /* Virtual for the normal of the derived class. */
+            virtual Vec3 normal(const Vec3& point) const;
     };
 }
 

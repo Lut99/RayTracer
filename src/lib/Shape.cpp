@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:38:50 PM
  * Last edited:
- *   1/22/2020, 1:44:48 PM
+ *   1/22/2020, 1:59:20 PM
  * Auto updated?
  *   Yes
  *
@@ -34,4 +34,8 @@ double Shape::hit(const Ray& ray) const {
 
 Vec3 Shape::colour(const Vec3& hitpoint) const {
     throw runtime_error("Function Shape::colour(const Vec3& hitpoint) is not overridden.");
+}
+
+Vec3 Shape::normal(const Vec3& point) const {
+    throw runtime_error("Function Shape::normal(const Vec3& point) is not overridden.");
 }

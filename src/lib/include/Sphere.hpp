@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:37:11 PM
  * Last edited:
- *   1/22/2020, 1:51:52 PM
+ *   1/22/2020, 2:03:04 PM
  * Auto updated?
  *   Yes
  *
@@ -25,31 +25,17 @@ namespace RayTracer {
         public:
             double radius;
 
-            Sphere(const Vec3& origin, double radius)
-                : Shape(origin, sphere)
-            {
-                this->radius = radius;
-            }
+            /* The Sphere class computes how a ray interacts with a Sphere object. The Sphere is defined by an origin (vector) and a radius. */
+            Sphere(const Vec3& origin, double radius);
 
-            double hit(const Ray& ray) const {
-                Vec3 d_ray_sphere = ray.origin - this->origin;
-                double a = dot(ray.direction, ray.direction);
-                double b = 2.0 * dot(d_ray_sphere, ray.direction);
-                double c = dot(d_ray_sphere, d_ray_sphere) - this->radius * this->radius;
+            /* Computes whether given Ray hits this Sphere. If it doesn't, return a t of -1. If it does, returns the length of the Ray until it hits the Sphere. */
+            double hit(const Ray& ray) const;
 
-                double D = b*b - 4*a*c;
+            /* Returns the colour at the hitpoint of the Sphere. */
+            Vec3 colour(const Vec3& hitpoint) const;
 
-                // For now, return if there is two hitpoints (e.g., ray travels through sphere)
-                if (D > 0) {
-                    return 1.0;
-                } else {
-                    return 0.0;
-                }
-            }
-
-            Vec3 colour(const Vec3& hitpoint) const {
-                return Vec3(1, 0, 0);
-            }
+            /* Returns the normal of the sphere at given point. */
+            Vec3 normal(const Vec3& point) const;
     };
 }
 

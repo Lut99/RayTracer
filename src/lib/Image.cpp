@@ -4,7 +4,7 @@
  * Created:
  *   1/20/2020, 3:03:07 PM
  * Last edited:
- *   1/22/2020, 1:27:48 PM
+ *   1/22/2020, 1:54:50 PM
  * Auto updated?
  *   Yes
  *
@@ -116,7 +116,6 @@ void Image::to_png(std::string path) {
     std::vector<unsigned char> raw_image;
     raw_image.resize(this->width * this->height * 4);
     for (std::size_t y = 0; y < this->height; y++) {
-        cout << this->operator[](y)[0][1] << endl;
         for (std::size_t x = 0; x < this->width; x++) {
             // Store the data as 0-255 Red Green Blue Alhpa
             raw_image[4 * (y * this->width + x) + 0] = 255 * this->operator[](y)[x][0];
