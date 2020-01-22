@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 12:11:32 PM
  * Last edited:
- *   1/22/2020, 12:48:01 PM
+ *   1/22/2020, 1:02:40 PM
  * Auto updated?
  *   Yes
  *
@@ -64,12 +64,12 @@ namespace RayTracer {
             double& operator[](const int index);
 
             /* Returns the length of the vector. */
-            double length();
+            double length() const;
             /* Returns the length squared of the vector. */
-            double squared_length();
+            double squared_length() const;
 
             /* Returns the normalized version of this vector. */
-            Vec3 normalize();
+            Vec3 normalize() const;
     };
 
     /* Constant addition operator for the Vec3 class (Vec3 + Vec3). */

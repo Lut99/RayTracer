@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 12:12:44 PM
  * Last edited:
- *   1/22/2020, 12:50:05 PM
+ *   1/22/2020, 1:02:51 PM
  * Auto updated?
  *   Yes
  *
@@ -119,15 +119,15 @@ double& Vec3::operator[](int index) {
     throw out_of_range("Index " + to_string(index) + " is out of range for Vec3");
 }
 
-double Vec3::length() {
+double Vec3::length() const {
     return sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
 }
-double Vec3::squared_length() {
+double Vec3::squared_length() const {
     double l = this->length();
     return l * l;
 }
 
-Vec3 Vec3::normalize() {
+Vec3 Vec3::normalize() const {
     double l = this->length();
     return Vec3(
         this->x / l,
