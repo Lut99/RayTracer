@@ -11,3 +11,8 @@ test_image: Image.o LodePNG.o
 Vec3.o:
 	$(CC) $(ARGS) -o bin/lib/Vec3.o -c src/lib/Vec3.cpp
 
+Ray.o:
+	$(CC) $(ARGS) -o bin/lib/Ray.o -c src/lib/Ray.cpp
+
+renderer: Ray.o Image.o Vec3.o LodePNG.o
+	$(CC) $(ARGS) -o bin/renderer.out src/Renderer.cpp bin/lib/Ray.o bin/lib/Vec3.o bin/lib/Image.o bin/lib/LodePNG.o
