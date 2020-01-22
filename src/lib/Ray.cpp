@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 12:51:47 PM
  * Last edited:
- *   1/22/2020, 12:56:32 PM
+ *   1/22/2020, 2:23:17 PM
  * Auto updated?
  *   Yes
  *
@@ -27,6 +27,6 @@ Ray::Ray(const Vec3& origin, const Vec3& direction) {
     this->direction = direction;
 }
 
-Vec3 Ray::point(double t) {
+Vec3 Ray::point(double t) const {
     return this->origin + t * this->direction;
 }

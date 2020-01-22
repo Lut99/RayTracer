@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 12:52:07 PM
  * Last edited:
- *   1/22/2020, 12:55:59 PM
+ *   1/22/2020, 2:23:13 PM
  * Auto updated?
  *   Yes
  *
@@ -30,7 +30,7 @@ namespace RayTracer {
             Ray(const Vec3& origin, const Vec3& direction);
 
             /* Returns a point along the Ray with distance t from the origin. */
-            Vec3 point(double t);
+            Vec3 point(double t) const;
     };
 }
 
