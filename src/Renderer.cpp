@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/22/2020, 3:43:58 PM
+ *   1/22/2020, 4:03:04 PM
  * Auto updated?
  *   Yes
  *
@@ -17,8 +17,6 @@
 #include <iostream>
 #include <limits>
 
-#include "lib/include/Random.hpp"
-
 #include "lib/include/Image.hpp"
 #include "lib/include/Ray.hpp"
 
@@ -29,14 +27,6 @@
 
 using namespace std;
 using namespace RayTracer;
-
-/* Returns a gradient along the y-axis. */
-Vec3 default_colour(const Ray& r) {
-    Vec3 unit = r.direction.normalize();
-    double t = 0.5 * (unit.y + 1.0);
-    return (1.0 - t) * Vec3(1, 1, 1) + t * Vec3(0.5, 0.7, 1.0);
-}
-
 
 int main(int argc, char** argv) {
     int screen_width, screen_height, number_of_rays;
@@ -76,31 +66,9 @@ int main(int argc, char** argv) {
     RenderObjectCollection world(objects);
 
     // Create the camera
-    Camera cam(screen_width, screen_height);
+    Camera cam(screen_width, screen_height, number_of_rays);
 
-    Image out(screen_width, screen_height);
-    for (int y = screen_height-1; y >= 0; y--) {
-        for (int x = 0; x < screen_width; x++) {
-            Vec3 col;
-            for (int r = 0; r < number_of_rays; r++) {
-                double u = double(x + random_double()) / double(screen_width);
-                double v = double(screen_height - 1 - y + random_double()) / double(screen_height);
-
-                Ray ray = cam.get_ray(u, v);
-
-                // Check if the Ray hits anything
-                HitRecord hit;
-                if (world.hit(ray, 0.0, numeric_limits<double>::max(), hit)) {
-                    col += world.colour(hit);
-                } else {
-                    col += default_colour(ray);
-                }
-            }
-
-            // Set the colour to the output pixel (but don't forget to average)
-            out[y][x] = col / number_of_rays;
-        }
-    }
+    Image out = cam.render(world);
 
     // Write the image
     out.to_png("test.png");

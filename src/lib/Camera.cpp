@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:14 PM
  * Last edited:
- *   1/22/2020, 3:46:35 PM
+ *   1/22/2020, 4:03:21 PM
  * Auto updated?
  *   Yes
  *
@@ -15,13 +15,26 @@
  *   Camera.hpp.
 **/
 
+#include "include/Random.hpp"
 #include "include/Camera.hpp"
 
 using namespace std;
 using namespace RayTracer;
 
-Camera::Camera(double screen_width, double screen_height) {
-    double ratio = screen_width / screen_height;
+/* Returns a gradient along the y-axis. */
+Vec3 default_colour(const Ray& r) {
+    Vec3 unit = r.direction.normalize();
+    double t = 0.5 * (unit.y + 1.0);
+    return (1.0 - t) * Vec3(1, 1, 1) + t * Vec3(0.5, 0.7, 1.0);
+}
+
+
+Camera::Camera(int screen_width, int screen_height, int rays_per_pixel)
+    : width(screen_width),
+    height(screen_height),
+    rays(rays_per_pixel)
+{
+    double ratio = (double) this->width / (double) this->height;
 
     this->lower_left_corner = Vec3(-2.0, -1.0, -1.0);
     this->horizontal = Vec3(4.0, 0.0, 0.0);
@@ -31,4 +44,31 @@ Camera::Camera(double screen_width, double screen_height) {
 
 Ray Camera::get_ray(double u, double v) const {
     return Ray(this->origin, this->lower_left_corner + u * this->horizontal + v * this->vertical - this->origin);
+}
+
+Image Camera::render(const RenderObjectCollection& world) {
+    Image out(this->width, this->height);
+    for (int y = this->height-1; y >= 0; y--) {
+        for (int x = 0; x < this->width; x++) {
+            Vec3 col;
+            for (int r = 0; r < this->rays; r++) {
+                double u = double(x + random_double()) / double(this->width);
+                double v = double(this->height - 1 - y + random_double()) / double(this->height);
+
+                Ray ray = this->get_ray(u, v);
+
+                // Check if the Ray hits anything
+                HitRecord hit;
+                if (world.hit(ray, 0.0, numeric_limits<double>::max(), hit)) {
+                    col += world.colour(hit);
+                } else {
+                    col += default_colour(ray);
+                }
+            }
+
+            // Set the colour to the output pixel (but don't forget to average)
+            out[y][x] = col / this->rays;
+        }
+    }
+    return out;
 }

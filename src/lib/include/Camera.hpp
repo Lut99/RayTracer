@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:28 PM
  * Last edited:
- *   1/22/2020, 3:44:10 PM
+ *   1/22/2020, 4:03:14 PM
  * Auto updated?
  *   Yes
  *
@@ -18,22 +18,31 @@
 #ifndef CAMERA_HPP
 #define CAMERA_HPP
 
+#include "Image.hpp"
+#include "RenderObjectCollection.hpp"
 #include "Vec3.hpp"
 #include "Ray.hpp"
 
 namespace RayTracer {
     class Camera {
         public:
+            const int width;
+            const int height;
+            const int rays;
+
             Vec3 lower_left_corner;
             Vec3 horizontal;
             Vec3 vertical;
             Vec3 origin;
 
             /* The camera class holds information about the viewport of the scene. Note that for now, everything is set, but I suspect that may change later. */
-            Camera(double screen_width, double screen_height);
+            Camera(int screen_width, int screen_height, int rays_per_pixel);
 
             /* Returns a ray through given u and v through the pixel grid */
             Ray get_ray(double u, double v) const;
+
+            /* Renders a frame from the current camera position */
+            Image render(const RenderObjectCollection& world);
     };
 }
 
