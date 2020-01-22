@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:37:11 PM
  * Last edited:
- *   1/22/2020, 2:20:58 PM
+ *   1/22/2020, 2:28:36 PM
  * Auto updated?
  *   Yes
  *
@@ -29,13 +29,13 @@ namespace RayTracer {
             Sphere(const Vec3& origin, double radius);
 
             /* Computes whether given Ray hits this Sphere. If it doesn't, return a t of -1. If it does, returns the length of the Ray until it hits the Sphere. Not that t_min and t_max are exclusive. */
-            bool hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const;
+            virtual bool hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const;
 
             /* Returns the colour at the hitpoint of the Sphere. */
-            Vec3 colour(const Vec3& hitpoint) const;
+            virtual Vec3 colour(const Vec3& hitpoint) const;
 
             /* Returns the normal of the sphere at given point. */
-            Vec3 normal(const Vec3& point) const;
+            virtual Vec3 normal(const Vec3& point) const;
     };
 }
 
