@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:28 PM
  * Last edited:
- *   1/22/2020, 5:53:02 PM
+ *   1/22/2020, 6:16:55 PM
  * Auto updated?
  *   Yes
  *
@@ -19,7 +19,7 @@
 #define CAMERA_HPP
 
 #include "Image.hpp"
-#include "RenderWorld.hpp"
+#include "RenderObjectCollection.hpp"
 #include "Vec3.hpp"
 #include "Ray.hpp"
 
@@ -49,7 +49,7 @@ namespace RayTracer {
             Vec3 get_default_background(const Ray& ray);
 
             /* Renders a frame from the current camera position */
-            Image render(const RenderWorld& world);
+            Image render(const RenderObjectCollection& world);
     };
 }
 

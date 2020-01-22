@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/22/2020, 6:12:50 PM
+ *   1/22/2020, 6:16:38 PM
  * Auto updated?
  *   Yes
  *
@@ -34,7 +34,7 @@ int main(int argc, const char** argv) {
 
     screen_width = 200;
     screen_height = 100;
-    number_of_rays = 1;
+    number_of_rays = 1000;
     show_progressbar = true;
     correct_gamma = false;
 
@@ -48,7 +48,7 @@ int main(int argc, const char** argv) {
     objects[1] = (RenderObject*) new Sphere(Vec3(0, -100.5, -1), 100);
 
     // Put these in a RenderObjectCollection
-    RenderWorld world(cam, objects);
+    RenderObjectCollection world(objects);
 
     Image out = cam.render(world);
 

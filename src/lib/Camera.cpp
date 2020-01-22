@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:14 PM
  * Last edited:
- *   1/22/2020, 6:12:47 PM
+ *   1/22/2020, 6:17:00 PM
  * Auto updated?
  *   Yes
  *
@@ -16,7 +16,6 @@
 **/
 
 #include "include/ProgressBar.hpp"
-#include "include/RenderWorld.hpp"
 #include "include/Random.hpp"
 #include "include/Camera.hpp"
 
@@ -49,7 +48,7 @@ Vec3 Camera::get_default_background(const Ray& r) {
     return (1.0 - t) * Vec3(1, 1, 1) + t * Vec3(0.5, 0.7, 1.0);
 }
 
-Image Camera::render(const RenderWorld& world) {
+Image Camera::render(const RenderObjectCollection& world) {
     Image out(this->width, this->height);
     ProgressBar prgrs(0, this->width * this->height - 1);
     for (int y = this->height-1; y >= 0; y--) {
