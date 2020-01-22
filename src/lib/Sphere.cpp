@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:36:39 PM
  * Last edited:
- *   1/22/2020, 9:02:00 PM
+ *   1/22/2020, 11:14:47 PM
  * Auto updated?
  *   Yes
  *
@@ -17,16 +17,21 @@
 
 #include <iostream>
 #include <math.h>
+#include <stdexcept>
 
 #include "include/Sphere.hpp"
 
 using namespace std;
 using namespace RayTracer;
 
-Sphere::Sphere(const Vec3& origin, double radius)
-    : RenderObject(origin, sphere)
+Sphere::Sphere(const Vec3& origin, double radius, Material* material)
+    : RenderObject(origin, sphere),
+    material(material)
 {
     this->radius = radius;
+}
+Sphere::~Sphere() {
+    delete this->material;
 }
 
 bool Sphere::hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const {
@@ -51,7 +56,9 @@ bool Sphere::hit(const Ray& ray, double t_min, double t_max, HitRecord& record) 
             record.t_min = t_min;
             record.t_max = t_max;
             record.hitpoint = ray.point(t);
+            record.normal = this->normal(record);
             record.obj = (RenderObject*) this;
+            record.material = this->material;
 
             return true;
         }

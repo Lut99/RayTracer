@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:14 PM
  * Last edited:
- *   1/22/2020, 10:12:22 PM
+ *   1/22/2020, 11:02:57 PM
  * Auto updated?
  *   Yes
  *
@@ -45,11 +45,16 @@ Ray Camera::get_ray(double u, double v) const {
 }
 
 /* Shoots a ray. If it hits something, apply diffusion. Otherwise, return the sky colour. */
-Vec3 Camera::shoot_ray(const Ray& ray, const RenderObjectCollection& world) const {
+Vec3 Camera::shoot_ray(const Ray& ray, const RenderObjectCollection& world, int depth) const {
     HitRecord record;
     if (world.hit(ray, 0.0, numeric_limits<double>::max(), record)) {
-        Vec3 target = record.hitpoint + record.hitpoint.normalize() + random_in_unit_sphere();
-        return 0.5 * shoot_ray(Ray(record.hitpoint, (target - record.hitpoint)), world);
+        Ray scattered;
+        Vec3 attenuation;
+        if (depth < 50 && record.material->scatter(ray, record, attenuation, scattered)) {
+            return attenuation * shoot_ray(scattered, world, depth + 1);
+        } else {
+            return Vec3(0, 0, 0);
+        }
     } else {
         Vec3 unit = ray.direction.normalize();
         double t = 0.5 * (unit.y + 1.0);

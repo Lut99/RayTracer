@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:37:11 PM
  * Last edited:
- *   1/22/2020, 4:21:51 PM
+ *   1/22/2020, 11:14:55 PM
  * Auto updated?
  *   Yes
  *
@@ -19,14 +19,17 @@
 #define SPHERE_HPP
 
 #include "RenderObject.hpp"
+#include "Material.hpp"
 
 namespace RayTracer {
     class Sphere: public RenderObject {
         public:
+            Material* material;
             double radius;
 
             /* The Sphere class computes how a ray interacts with a Sphere object. The Sphere is defined by an origin (vector) and a radius. */
-            Sphere(const Vec3& origin, double radius);
+            Sphere(const Vec3& origin, double radius, Material* material);
+            ~Sphere();
 
             /* Computes whether given Ray hits this Sphere. If it doesn't, return a t of -1. If it does, returns the length of the Ray until it hits the Sphere. Not that t_min and t_max are exclusive. */
             virtual bool hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const;

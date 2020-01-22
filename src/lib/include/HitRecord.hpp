@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 2:17:23 PM
  * Last edited:
- *   1/22/2020, 4:25:53 PM
+ *   1/22/2020, 11:10:54 PM
  * Auto updated?
  *   Yes
  *
@@ -17,18 +17,26 @@
 #ifndef HITRECORD_HPP
 #define HITRECORD_HPP
 
+namespace RayTracer {
+    struct HitRecord;
+}
+
 #include "RenderObject.hpp"
+#include "Material.hpp"
 #include "Vec3.hpp"
 
 namespace RayTracer {
     class RenderObject;
+    class Material;
 
     struct HitRecord {
         double t;
         double t_min;
         double t_max;
         Vec3 hitpoint;
+        Vec3 normal;
         RenderObject* obj;
+        Material* material;
     };
 }
 
