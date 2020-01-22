@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:36:39 PM
  * Last edited:
- *   1/22/2020, 2:42:46 PM
+ *   1/22/2020, 2:54:58 PM
  * Auto updated?
  *   Yes
  *
@@ -48,6 +48,7 @@ bool Sphere::hit(const Ray& ray, double t_min, double t_max, HitRecord& record) 
         if (t > t_min && t < t_max) {
             record.t = t;
             record.hitpoint = ray.point(t);
+            record.obj = (RenderObject*) this;
 
             return true;
         }
@@ -56,10 +57,10 @@ bool Sphere::hit(const Ray& ray, double t_min, double t_max, HitRecord& record) 
 }
 
 Vec3 Sphere::colour(const HitRecord& record) const {
-    Vec3 n = this->normal(record.hitpoint);
+    Vec3 n = this->normal(record);
     return 0.5 * (Vec3(n.x, n.y, n.z) + 1);
 }
 
-Vec3 Sphere::normal(const Vec3& point) const {
-    return (point - this->center).normalize();
+Vec3 Sphere::normal(const HitRecord& record) const {
+    return (record.hitpoint - this->center).normalize();
 }

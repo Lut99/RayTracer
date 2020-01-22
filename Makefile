@@ -20,5 +20,8 @@ RenderObject.o:
 Sphere.o:
 	$(CC) $(ARGS) -o bin/lib/Sphere.o -c src/lib/Sphere.cpp
 
-renderer: Ray.o Image.o Vec3.o LodePNG.o Sphere.o RenderObject.o
-	$(CC) $(ARGS) -o bin/renderer.out src/Renderer.cpp bin/lib/Ray.o bin/lib/Vec3.o bin/lib/Image.o bin/lib/LodePNG.o bin/lib/Sphere.o  bin/lib/RenderObject.o
+RenderObjectCollection.o:
+	$(CC) $(ARGS) -o bin/lib/RenderObjectCollection.o -c src/lib/RenderObjectCollection.cpp
+
+renderer: Ray.o Image.o Vec3.o LodePNG.o RenderObject.o Sphere.o RenderObjectCollection.o
+	$(CC) $(ARGS) -o bin/renderer.out src/Renderer.cpp bin/lib/Ray.o bin/lib/Vec3.o bin/lib/Image.o bin/lib/LodePNG.o bin/lib/RenderObject.o bin/lib/Sphere.o bin/lib/RenderObjectCollection.o

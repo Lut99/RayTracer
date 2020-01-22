@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/22/2020, 2:09:23 PM
+ *   1/22/2020, 3:15:16 PM
  * Auto updated?
  *   Yes
  *
@@ -14,11 +14,14 @@
  *   more extensive.
 **/
 
+#include <iostream>
+#include <limits>
+
 #include "lib/include/Image.hpp"
 #include "lib/include/Ray.hpp"
-#include "lib/include/Sphere.hpp"
 
-#include <iostream>
+#include "lib/include/RenderObjectCollection.hpp"
+#include "lib/include/Sphere.hpp"
 
 using namespace std;
 using namespace RayTracer;
@@ -31,17 +34,45 @@ Vec3 default_colour(const Ray& r) {
 }
 
 
-int main() {
+int main(int argc, char** argv) {
     int screen_width, screen_height;
-    screen_width = 500;
-    screen_height = 250;
+    // Parse screen_width and screen_height if given
+    if (argc == 3) {
+        try {
+            screen_width = stoi(argv[1]);
+            screen_height = stoi(argv[2]);
+        } catch (invalid_argument& e) {
+            cerr << "Image width and image height must be positive integers" << endl;
+            exit(1);
+        } catch (overflow_error& e) {
+            cerr << "Image width or image height is too large; try sticking to integers instead" << endl;
+            exit(1);
+        }
+        if (screen_width < 0 || screen_height < 0) {
+            cerr << "Image width and image height must be positive integers" << endl;
+            exit(1);
+        }
+    } else if (argc == 1) {
+        screen_width = 1000;
+        screen_height = 500;
+    } else {
+        cerr << "Usage: renderer <image_width> <image_height>" << endl;
+        exit(1);
+    }
 
     Vec3 lower_left_corner(-2, -1, -1);
     Vec3 horizontal(4, 0, 0);
     Vec3 vertical(0, 2, 0);
     Vec3 origin(0, 0, 0);
 
-    Sphere obj1(Vec3(0, 0, -1), 0.5);
+    // Create a list of objects
+    vector<RenderObject*> objects;
+    objects.resize(2);
+    objects[0] = (RenderObject*) new Sphere(Vec3(0, 0, -1), 0.5);
+    objects[1] = (RenderObject*) new Sphere(Vec3(0, -100.5, -1), 100);
+
+    // Put these in a RenderObjectCollection
+    RenderObjectCollection world(objects);
 
     Image out(screen_width, screen_height);
     for (int y = screen_height-1; y >= 0; y--) {
@@ -52,12 +83,10 @@ int main() {
             Ray r(origin, lower_left_corner + u*horizontal + v*vertical);
 
             // Check if the Ray hits anything
+            HitRecord hit;
             Vec3 col;
-            double t = obj1.hit(r);
-            if (t > 0.0) {
-                // Compute the hitpoint
-                Vec3 hitpoint = r.point(t);
-                col = obj1.colour(hitpoint);
+            if (world.hit(r, 0.0, numeric_limits<double>::max(), hit)) {
+                col = world.colour(hit);
             } else {
                 col = default_colour(r);
             }

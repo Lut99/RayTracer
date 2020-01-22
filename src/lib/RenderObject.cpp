@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:38:50 PM
  * Last edited:
- *   1/22/2020, 2:42:36 PM
+ *   1/22/2020, 2:55:15 PM
  * Auto updated?
  *   Yes
  *
@@ -36,6 +36,6 @@ Vec3 RenderObject::colour(const HitRecord& record) const {
     throw runtime_error("Function RenderObject::colour(const HitRecord& record) is not overridden.");
 }
 
-Vec3 RenderObject::normal(const Vec3& point) const {
-    throw runtime_error("Function RenderObject::normal(const Vec3& point) is not overridden.");
+Vec3 RenderObject::normal(const HitRecord& record) const {
+    throw runtime_error("Function RenderObject::normal(const HitRecord& record) is not overridden.");
 }

@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:37:11 PM
  * Last edited:
- *   1/22/2020, 2:39:33 PM
+ *   1/22/2020, 2:54:42 PM
  * Auto updated?
  *   Yes
  *
@@ -35,7 +35,7 @@ namespace RayTracer {
             virtual Vec3 colour(const HitRecord& record) const;
 
             /* Returns the normal of the sphere at given point. */
-            virtual Vec3 normal(const Vec3& point) const;
+            virtual Vec3 normal(const HitRecord& record) const;
     };
 }
 

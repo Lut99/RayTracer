@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:39:23 PM
  * Last edited:
- *   1/22/2020, 2:43:38 PM
+ *   1/22/2020, 3:08:47 PM
  * Auto updated?
  *   Yes
  *
@@ -43,7 +43,7 @@ namespace RayTracer {
             virtual Vec3 colour(const HitRecord& record) const;
 
             /* Virtual for the normal of the derived class. */
-            virtual Vec3 normal(const Vec3& point) const;
+            virtual Vec3 normal(const HitRecord& record) const;
     };
 }
 
