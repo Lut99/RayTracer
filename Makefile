@@ -14,11 +14,11 @@ Vec3.o:
 Ray.o:
 	$(CC) $(ARGS) -o bin/lib/Ray.o -c src/lib/Ray.cpp
 
-Shape.o:
-	$(CC) $(ARGS) -o bin/lib/Shape.o -c src/lib/Shape.cpp
+RenderObject.o:
+	$(CC) $(ARGS) -o bin/lib/RenderObject.o -c src/lib/RenderObject.cpp
 
 Sphere.o:
 	$(CC) $(ARGS) -o bin/lib/Sphere.o -c src/lib/Sphere.cpp
 
-renderer: Ray.o Image.o Vec3.o LodePNG.o Sphere.o Shape.o
-	$(CC) $(ARGS) -o bin/renderer.out src/Renderer.cpp bin/lib/Ray.o bin/lib/Vec3.o bin/lib/Image.o bin/lib/LodePNG.o bin/lib/Sphere.o  bin/lib/Shape.o
+renderer: Ray.o Image.o Vec3.o LodePNG.o Sphere.o RenderObject.o
+	$(CC) $(ARGS) -o bin/renderer.out src/Renderer.cpp bin/lib/Ray.o bin/lib/Vec3.o bin/lib/Image.o bin/lib/LodePNG.o bin/lib/Sphere.o  bin/lib/RenderObject.o
