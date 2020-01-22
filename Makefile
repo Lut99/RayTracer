@@ -23,5 +23,11 @@ Sphere.o:
 RenderObjectCollection.o:
 	$(CC) $(ARGS) -o bin/lib/RenderObjectCollection.o -c src/lib/RenderObjectCollection.cpp
 
-renderer: Ray.o Image.o Vec3.o LodePNG.o RenderObject.o Sphere.o RenderObjectCollection.o
-	$(CC) $(ARGS) -o bin/renderer.out src/Renderer.cpp bin/lib/Ray.o bin/lib/Vec3.o bin/lib/Image.o bin/lib/LodePNG.o bin/lib/RenderObject.o bin/lib/Sphere.o bin/lib/RenderObjectCollection.o
+Random.o:
+	$(CC) $(ARGS) -o bin/lib/Random.o -c src/lib/Random.cpp
+
+Camera.o:
+	$(CC) $(ARGS) -o bin/lib/Camera.o -c src/lib/Camera.cpp
+
+renderer: Ray.o Image.o Vec3.o LodePNG.o RenderObject.o Sphere.o RenderObjectCollection.o Random.o Camera.o
+	$(CC) $(ARGS) -o bin/renderer.out src/Renderer.cpp bin/lib/Ray.o bin/lib/Vec3.o bin/lib/Image.o bin/lib/LodePNG.o bin/lib/RenderObject.o bin/lib/Sphere.o bin/lib/RenderObjectCollection.o bin/lib/Random.o bin/lib/Camera.o
