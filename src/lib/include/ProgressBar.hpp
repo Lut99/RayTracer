@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 4:45:31 PM
  * Last edited:
- *   1/22/2020, 6:10:23 PM
+ *   1/22/2020, 9:31:35 PM
  * Auto updated?
  *   Yes
  *
@@ -59,6 +59,8 @@ namespace std {
 
             /* Updates the progress bar by a specified amount. Note that this does not necessarily call 'draw' as well - that is interval based */
             void update(long amount=1);
+            /* Sets the progress bar to a specified amount. Note that this does not necessarily call 'draw' as well - that is interval based */
+            void set(long value);
     };
 }
 

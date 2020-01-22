@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 4:44:56 PM
  * Last edited:
- *   1/22/2020, 6:11:07 PM
+ *   1/22/2020, 9:32:27 PM
  * Auto updated?
  *   Yes
  *
@@ -229,12 +229,16 @@ void ProgressBar::win() {
 }
 
 void ProgressBar::update(long amount) {
+    this->set(this->progress + amount);
+}
+
+void ProgressBar::set(long value) {
     if (this->done) {
         return;
     }
 
     // Update the progress
-    this->progress += amount;
+    this->progress = value;
     
     // Check if we are done
     if (this->progress >= this->max) {
