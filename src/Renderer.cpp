@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/22/2020, 6:08:58 PM
+ *   1/22/2020, 6:12:50 PM
  * Auto updated?
  *   Yes
  *
@@ -34,7 +34,7 @@ int main(int argc, const char** argv) {
 
     screen_width = 200;
     screen_height = 100;
-    number_of_rays = 100;
+    number_of_rays = 1;
     show_progressbar = true;
     correct_gamma = false;
 

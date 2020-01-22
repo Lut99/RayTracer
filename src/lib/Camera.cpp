@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:14 PM
  * Last edited:
- *   1/22/2020, 5:54:11 PM
+ *   1/22/2020, 6:12:47 PM
  * Auto updated?
  *   Yes
  *
@@ -56,8 +56,14 @@ Image Camera::render(const RenderWorld& world) {
         for (int x = 0; x < this->width; x++) {
             Vec3 col;
             for (int r = 0; r < this->rays; r++) {
-                double u = double(x + random_double()) / double(this->width);
-                double v = double(this->height - 1 - y + random_double()) / double(this->height);
+                double u, v;
+                if (this->rays > 1) {
+                    u = double(x + random_double()) / double(this->width);
+                    v = double(this->height - 1 - y + random_double()) / double(this->height);
+                } else {
+                    u = double(x) / double(this->width);
+                    v = double(this->height - 1 - y) / double(this->height);
+                }
 
                 Ray ray = this->get_ray(u, v);
 
