@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:14 PM
  * Last edited:
- *   1/22/2020, 6:17:00 PM
+ *   1/22/2020, 6:23:44 PM
  * Auto updated?
  *   Yes
  *
@@ -42,10 +42,17 @@ Ray Camera::get_ray(double u, double v) const {
     return Ray(this->origin, this->lower_left_corner + u * this->horizontal + v * this->vertical - this->origin);
 }
 
-Vec3 Camera::get_default_background(const Ray& r) {
-    Vec3 unit = r.direction.normalize();
-    double t = 0.5 * (unit.y + 1.0);
-    return (1.0 - t) * Vec3(1, 1, 1) + t * Vec3(0.5, 0.7, 1.0);
+/* Shoots a ray. If it hits something, apply diffusion. Otherwise, return the sky colour. */
+Vec3 shoot_ray(const Ray& ray, const RenderObjectCollection& world) {
+    HitRecord record;
+    if (world.hit(ray, 0.0, numeric_limits<double>::max(), record)) {
+        Vec3 target = record.hitpoint + record.hitpoint.normalize() + random_in_unit_sphere();
+        return 0.5 * shoot_ray(Ray(record.hitpoint, (target - record.hitpoint).normalize()), world);
+    } else {
+        Vec3 unit = ray.direction.normalize();
+        double t = 0.5 * (unit.y + 1.0);
+        return (1.0 - t) * Vec3(1, 1, 1) + t * Vec3(0.5, 0.7, 1.0);
+    }
 }
 
 Image Camera::render(const RenderObjectCollection& world) {
@@ -66,13 +73,8 @@ Image Camera::render(const RenderObjectCollection& world) {
 
                 Ray ray = this->get_ray(u, v);
 
-                // Check if the Ray hits anything
-                HitRecord hit;
-                if (world.hit(ray, 0.0, numeric_limits<double>::max(), hit)) {
-                    col += world.colour(hit);
-                } else {
-                    col += this->get_default_background(ray);
-                }
+                // Get the colour
+                col += shoot_ray(ray, world);
             }
 
             // Compute the colour average

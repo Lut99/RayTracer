@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/22/2020, 6:16:38 PM
+ *   1/22/2020, 6:23:16 PM
  * Auto updated?
  *   Yes
  *
@@ -36,7 +36,7 @@ int main(int argc, const char** argv) {
     screen_height = 100;
     number_of_rays = 1000;
     show_progressbar = true;
-    correct_gamma = false;
+    correct_gamma = true;
 
     // Create the camera
     Camera cam(screen_width, screen_height, number_of_rays, show_progressbar, correct_gamma);

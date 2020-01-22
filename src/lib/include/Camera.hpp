@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:28 PM
  * Last edited:
- *   1/22/2020, 6:16:55 PM
+ *   1/22/2020, 6:18:26 PM
  * Auto updated?
  *   Yes
  *
@@ -44,9 +44,6 @@ namespace RayTracer {
 
             /* Returns a ray through given u and v through the pixel grid */
             Ray get_ray(double u, double v) const;
-
-            /* Returns the default background value */
-            Vec3 get_default_background(const Ray& ray);
 
             /* Renders a frame from the current camera position */
             Image render(const RenderObjectCollection& world);
