@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 9:13:21 PM
  * Last edited:
- *   1/23/2020, 8:35:48 AM
+ *   1/23/2020, 3:28:30 PM
  * Auto updated?
  *   Yes
  *
@@ -34,7 +34,7 @@ struct ThreadData {
     Image* out;
     atomic<int> done;
     const RenderObject* world;
-    EfficientCamera* camera;
+    const EfficientCamera* camera;
 };
 
 
@@ -46,7 +46,7 @@ EfficientCamera::EfficientCamera(int screen_width, int screen_height, int rays_p
 
 void* render_thread(void* v_args) {
     ThreadData* args = (ThreadData*) v_args;
-    EfficientCamera* cam = args->camera;
+    const EfficientCamera* cam = args->camera;
 
     for (int y = args->row_end; y >= args->row_start; y--) {
         for (int x = 0; x < cam->width; x++) {
@@ -60,7 +60,7 @@ void* render_thread(void* v_args) {
     }
 }
 
-Image EfficientCamera::render(const RenderObject& world) {
+Image EfficientCamera::render(const RenderObject& world) const {
     Image out(this->width, this->height);
 
     // Prepare the structs for the threads
