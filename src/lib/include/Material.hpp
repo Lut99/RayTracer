@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 10:19:23 PM
  * Last edited:
- *   1/22/2020, 11:12:12 PM
+ *   1/23/2020, 8:58:37 AM
  * Auto updated?
  *   Yes
  *
@@ -43,12 +43,13 @@ namespace RayTracer {
 
     class Metal: public Material {
         public:
-            Metal(const Vec3& colour_absorption);
+            Metal(const Vec3& colour_absorption, double fuzziness);
 
             virtual bool scatter(const Ray& ray_in, const HitRecord& record, Vec3& attenuation, Ray& ray_out) const;
             virtual Vec3 reflect(const Vec3& v, const Vec3& n) const;
 
             Vec3 albedo;
+            double fuzz;
     };
 }
 
