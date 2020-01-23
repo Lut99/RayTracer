@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:36:39 PM
  * Last edited:
- *   1/22/2020, 11:14:47 PM
+ *   1/23/2020, 8:48:23 AM
  * Auto updated?
  *   Yes
  *
@@ -45,32 +45,31 @@ bool Sphere::hit(const Ray& ray, double t_min, double t_max, HitRecord& record) 
     // Return the distance the ray has travelled until it hits the closest side of the sphere.
     if (D > 0) {
         // Compute tboth variations of the t. If t - sqrt(D) is true, take that one. Otherwise, take the other.
-        double t1 = (-b - sqrt(D)) / (2.0 * a);
-        double t2 = (-b + sqrt(D)) / (2.0 * a);
-        double t;
-        if (t1 < t2) {t = t1;}
-        else {t = t2;}
-        
-        if (t > t_min && t < t_max) {
-            record.t = t;
-            record.t_min = t_min;
-            record.t_max = t_max;
-            record.hitpoint = ray.point(t);
-            record.normal = this->normal(record);
-            record.obj = (RenderObject*) this;
-            record.material = this->material;
-
-            return true;
+        double t = (-b - sqrt(D)) / a;
+        if (t <= t_min || t >= t_max) {
+            t = (-b + sqrt(D)) / a;
+            if (t <= t_min || t >= t_max) {
+                return false;
+            }
         }
+
+        record.t = t;
+        record.t_min = t_min;
+        record.t_max = t_max;
+        record.hitpoint = ray.point(t);
+        record.normal = this->normal(record);
+        record.obj = (RenderObject*) this;
+        record.material = this->material;
+
+        return true;
     }
     return false;
 }
 
 Vec3 Sphere::colour(const HitRecord& record) const {
-    Vec3 n = this->normal(record);
-    return 0.5 * (Vec3(n.x, n.y, n.z) + 1);
+    return 0.5 * (Vec3(record.normal.x, record.normal.y, record.normal.z) + 1);
 }
 
 Vec3 Sphere::normal(const HitRecord& record) const {
-    return (record.hitpoint - this->center).normalize();
+    return (record.hitpoint - this->center) / this->radius;
 }

@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 9:13:21 PM
  * Last edited:
- *   1/22/2020, 10:10:55 PM
+ *   1/23/2020, 8:35:48 AM
  * Auto updated?
  *   Yes
  *
@@ -33,7 +33,7 @@ struct ThreadData {
     pthread_t tid;
     Image* out;
     atomic<int> done;
-    const RenderObjectCollection* world;
+    const RenderObject* world;
     EfficientCamera* camera;
 };
 
@@ -60,7 +60,7 @@ void* render_thread(void* v_args) {
     }
 }
 
-Image EfficientCamera::render(const RenderObjectCollection& world) {
+Image EfficientCamera::render(const RenderObject& world) {
     Image out(this->width, this->height);
 
     // Prepare the structs for the threads

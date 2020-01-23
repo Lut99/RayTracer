@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:14 PM
  * Last edited:
- *   1/22/2020, 11:02:57 PM
+ *   1/23/2020, 8:51:06 AM
  * Auto updated?
  *   Yes
  *
@@ -45,7 +45,7 @@ Ray Camera::get_ray(double u, double v) const {
 }
 
 /* Shoots a ray. If it hits something, apply diffusion. Otherwise, return the sky colour. */
-Vec3 Camera::shoot_ray(const Ray& ray, const RenderObjectCollection& world, int depth) const {
+Vec3 Camera::shoot_ray(const Ray& ray, const RenderObject& world, int depth) const {
     HitRecord record;
     if (world.hit(ray, 0.0, numeric_limits<double>::max(), record)) {
         Ray scattered;
@@ -62,7 +62,7 @@ Vec3 Camera::shoot_ray(const Ray& ray, const RenderObjectCollection& world, int 
     }
 }
 
-Image Camera::render(const RenderObjectCollection& world) const {
+Image Camera::render(const RenderObject& world) const {
     Image out(this->width, this->height);
     ProgressBar prgrs(0, this->width * this->height - 1);
     for (int y = this->height-1; y >= 0; y--) {
@@ -81,7 +81,7 @@ Image Camera::render(const RenderObjectCollection& world) const {
     return out;
 }
 
-Vec3 Camera::render_pixel(int x, int y, const RenderObjectCollection& world) const {
+Vec3 Camera::render_pixel(int x, int y, const RenderObject& world) const {
     Vec3 col;
     for (int r = 0; r < this->rays; r++) {
         double u, v;

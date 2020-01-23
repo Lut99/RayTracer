@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/22/2020, 11:15:10 PM
+ *   1/23/2020, 8:54:06 AM
  * Auto updated?
  *   Yes
  *
@@ -35,13 +35,13 @@ int main(int argc, const char** argv) {
     unsigned int screen_width, screen_height, number_of_rays, n_threads;
     bool show_progressbar, correct_gamma, use_efficient_camera;
 
-    screen_width = 1000;
-    screen_height = 500;
+    screen_width = 600;
+    screen_height = 300;
     number_of_rays = 500;
     show_progressbar = true;
     correct_gamma = true;
 
-    n_threads = 16;
+    n_threads = 4;
     use_efficient_camera = true;
 
     // Create a list of objects
@@ -52,12 +52,12 @@ int main(int argc, const char** argv) {
     objects[2] = (RenderObject*) new Sphere(Vec3(1, 0, -1), 0.5, new Metal(Vec3(0.8, 0.6, 0.2)));
     objects[3] = (RenderObject*) new Sphere(Vec3(-1, 0, -1), 0.5, new Metal(Vec3(0.8, 0.8, 0.8)));
 
+    // Put these in a RenderObjectCollection
+    RenderObjectCollection world(objects);
+
     if (use_efficient_camera) {
         // Create the camera
         EfficientCamera cam(screen_width, screen_height, number_of_rays, show_progressbar, correct_gamma, n_threads);
-
-        // Put these in a RenderObjectCollection
-        RenderObjectCollection world(objects);
 
         Image out = cam.render(world);
 
@@ -66,9 +66,6 @@ int main(int argc, const char** argv) {
     } else {
         // Create the camera
         Camera cam(screen_width, screen_height, number_of_rays, show_progressbar, correct_gamma);
-
-        // Put these in a RenderObjectCollection
-        RenderObjectCollection world(objects);
 
         Image out = cam.render(world);
 

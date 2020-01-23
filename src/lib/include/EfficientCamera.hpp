@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 9:13:40 PM
  * Last edited:
- *   1/22/2020, 10:09:29 PM
+ *   1/23/2020, 8:35:04 AM
  * Auto updated?
  *   Yes
  *
@@ -28,7 +28,7 @@ namespace RayTracer {
             EfficientCamera(int screen_width, int screen_height, int rays_per_pixel, bool show_progressbar, bool correct_gamma, int num_of_threads);
 
             /* Renders a frame from the current camera position */
-            virtual Image render(const RenderObjectCollection& world);
+            virtual Image render(const RenderObject& world);
     };
 }
 

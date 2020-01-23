@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:28 PM
  * Last edited:
- *   1/22/2020, 11:02:03 PM
+ *   1/23/2020, 8:34:47 AM
  * Auto updated?
  *   Yes
  *
@@ -45,12 +45,12 @@ namespace RayTracer {
             /* Returns a ray through given u and v through the pixel grid */
             Ray get_ray(double u, double v) const;
             /* Computes the colour of a shot ray. The depth variable makes sure that, in the case of very reflective surfaces, we only do this at max 50 times. */
-            Vec3 shoot_ray(const Ray& ray, const RenderObjectCollection& world, int depth=0) const;
+            Vec3 shoot_ray(const Ray& ray, const RenderObject& world, int depth=0) const;
 
             /* Renders a frame from the current camera position */
-            virtual Image render(const RenderObjectCollection& world) const;
+            virtual Image render(const RenderObject& world) const;
             /* Renders one pixel from the scene. */
-            Vec3 render_pixel(int x, int y, const RenderObjectCollection& world) const;
+            Vec3 render_pixel(int x, int y, const RenderObject& world) const;
     };
 }
 
