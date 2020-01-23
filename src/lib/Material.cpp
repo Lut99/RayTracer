@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 10:18:56 PM
  * Last edited:
- *   1/23/2020, 2:48:20 PM
+ *   1/23/2020, 2:54:35 PM
  * Auto updated?
  *   Yes
  *
@@ -67,7 +67,6 @@ Dielectric::Dielectric(const Vec3& colour_absorption, double refrective_index)
 
 bool Dielectric::scatter(const Ray& ray_in, const HitRecord& record, Vec3& attenuation, Ray& ray_out) const {
     Vec3 outward_normal;
-    Vec3 reflected = this->reflect(ray_in.direction, record.normal);
     double ni_over_nt;
     attenuation = this->albedo;
     Vec3 refracted;
@@ -93,7 +92,7 @@ bool Dielectric::scatter(const Ray& ray_in, const HitRecord& record, Vec3& atten
     }
 
     if (random_double() < reflect_prob) {
-        ray_out = Ray(record.hitpoint, reflected);
+        ray_out = Ray(record.hitpoint, this->reflect(ray_in.direction, record.normal));
     } else {
         ray_out = Ray(record.hitpoint, refracted);
     }
