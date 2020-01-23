@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/23/2020, 2:15:26 PM
+ *   1/23/2020, 2:50:23 PM
  * Auto updated?
  *   Yes
  *
@@ -100,11 +100,12 @@ int main(int argc, char** argv) {
 
     // Create a list of objects
     vector<RenderObject*> objects;
-    objects.resize(4);
+    objects.resize(5);
     objects[0] = (RenderObject*) new Sphere(Vec3(0, 0, -1), 0.5, new Lambertian(Vec3(0.8, 0.3, 0.3)));
     objects[1] = (RenderObject*) new Sphere(Vec3(0, -100.5, -1), 100, new Lambertian(Vec3(0.8, 0.8, 0.0)));
-    objects[2] = (RenderObject*) new Sphere(Vec3(1, 0, -1), 0.5, new Metal(Vec3(0.8, 0.6, 0.2), 0.3));
-    objects[3] = (RenderObject*) new Sphere(Vec3(-1, 0, -1), 0.5, new Metal(Vec3(0.8, 0.8, 0.8), 0.1));
+    objects[2] = (RenderObject*) new Sphere(Vec3(1, 0, -1), 0.5, new Metal(Vec3(0.6, 0.6, 0.6), 0.3));
+    objects[3] = (RenderObject*) new Sphere(Vec3(-1, 0, -1), 0.5, new Dielectric(Vec3(1.0, 1.0, 1.0), 1.5));
+    objects[4] = (RenderObject*) new Sphere(Vec3(-1, 0, -1), -0.45, new Dielectric(Vec3(1.0, 1.0, 1.0), 1.5));
 
     // Put these in a RenderObjectCollection
     RenderObjectCollection world(objects);

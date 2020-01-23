@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 10:19:23 PM
  * Last edited:
- *   1/23/2020, 8:58:37 AM
+ *   1/23/2020, 2:47:05 PM
  * Auto updated?
  *   Yes
  *
@@ -50,6 +50,19 @@ namespace RayTracer {
 
             Vec3 albedo;
             double fuzz;
+    };
+
+    class Dielectric: public Material {
+        public:
+            Dielectric(const Vec3& colour_absorption, double ri);
+
+            virtual bool scatter(const Ray& ray_in, const HitRecord& record, Vec3& attenuation, Ray& ray_out) const;
+            virtual Vec3 reflect(const Vec3& v, const Vec3& n) const;
+            virtual bool refract(const Vec3& v, const Vec3& n, double ni_over_nt, Vec3& refracted) const;
+            virtual double schlick(double cosine) const;
+
+            Vec3 albedo;
+            double ref_idx;
     };
 }
 
