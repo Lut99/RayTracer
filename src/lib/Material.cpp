@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 10:18:56 PM
  * Last edited:
- *   1/23/2020, 9:00:03 AM
+ *   1/23/2020, 11:25:10 AM
  * Auto updated?
  *   Yes
  *
@@ -53,7 +53,7 @@ Vec3 Metal::reflect(const Vec3& v, const Vec3& n) const {
 }
 bool Metal::scatter(const Ray& ray_in, const HitRecord& record, Vec3& attenuation, Ray& ray_out) const {
     Vec3 reflected = this->reflect(ray_in.direction.normalize(), record.normal);
-    ray_out = Ray(record.hitpoint, reflected + fuzz*random_in_unit_sphere());
+    ray_out = Ray(record.hitpoint, reflected + this->fuzz*random_in_unit_sphere());
     attenuation = this->albedo;
     return (dot(ray_out.direction, record.normal) > 0);
 }
