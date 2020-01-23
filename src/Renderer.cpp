@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/23/2020, 9:00:19 AM
+ *   1/23/2020, 2:15:26 PM
  * Auto updated?
  *   Yes
  *
@@ -28,21 +28,75 @@
 
 #include "lib/include/Material.hpp"
 
+#include "lib/include/cxxopts.hpp"
+
 using namespace std;
 using namespace RayTracer;
+using namespace cxxopts;
 
-int main(int argc, const char** argv) {
+int main(int argc, char** argv) {
     unsigned int screen_width, screen_height, number_of_rays, n_threads;
-    bool show_progressbar, correct_gamma, use_efficient_camera;
+    bool show_progressbar, correct_gamma;
 
-    screen_width = 600;
-    screen_height = 300;
-    number_of_rays = 500;
-    show_progressbar = true;
-    correct_gamma = true;
+    Options arguments("RayTracer", "Renders images using a custom-written RayTracer.");
+    arguments.add_options()
+        ("W,width", "The width (in pixels) of the output image", value<unsigned int>())
+        ("H,height", "The height (in pixels) of the output image", value<unsigned int>())
+        ("r,rays", "The number of rays shot per pixel", value<unsigned int>())
+        ("t,threads", "The number of threads used to render the image", value<unsigned int>())
+        ("p,progressbar", "If given, shows a progressbar to indice the render process")
+        ("g,gamma", "If given, corrects the gamme before saving")
+        ;
+    
+    auto result = arguments.parse(argc, argv);
+    
+    try {
+        screen_width = result["width"].as<unsigned int>();
+    } catch (domain_error& opt) {
+        screen_width = 1000;
+    } catch (OptionParseException& opt) {
+        cerr << "Could not parse image width: " << opt.what() << endl;
+        exit(-1);
+    }
+    try {
+        screen_height = result["height"].as<unsigned int>();
+    } catch (domain_error& opt) {
+        screen_height = 500;
+    } catch (OptionParseException& opt) {
+        cerr << "Could not parse image height: " << opt.what() << endl;
+        exit(-1);
+    }
+    try {
+        number_of_rays = result["rays"].as<unsigned int>();
+    } catch (domain_error& opt) {
+        number_of_rays = 500;
+    } catch (OptionParseException& opt) {
+        cerr << "Could not parse number of rays: " << opt.what() << endl;
+        exit(-1);
+    }
+    try {
+        n_threads = result["threads"].as<unsigned int>();
+    } catch (domain_error& opt) {
+        n_threads = 16;
+    } catch (OptionParseException& opt) {
+        cerr << "Could not parse number of threads: " << opt.what() << endl;
+        exit(-1);
+    }
+    show_progressbar = result.count("progressbar") != 0;
+    correct_gamma = result.count("gamma") != 0;
 
-    n_threads = 4;
-    use_efficient_camera = true;
+    cout << endl << "*** RayTracer Renderer ***" << endl << endl;
+    cout << "Using options:" << endl;
+    cout << "  Image dimensions : " << screen_width << "x" << screen_height << "px" << endl;
+    cout << "  Number of rays   : " << number_of_rays << endl;
+    cout << "  Number of threads: " << n_threads << endl;
+    cout << "  Correct for gamma? ";
+    if (correct_gamma) {
+        cout << "yes" << endl;
+    } else {
+        cout << "no" << endl;
+    }
+    cout << endl << "Rendering..." << endl;
 
     // Create a list of objects
     vector<RenderObject*> objects;
@@ -55,7 +109,7 @@ int main(int argc, const char** argv) {
     // Put these in a RenderObjectCollection
     RenderObjectCollection world(objects);
 
-    if (use_efficient_camera) {
+    if (n_threads > 1) {
         // Create the camera
         EfficientCamera cam(screen_width, screen_height, number_of_rays, show_progressbar, correct_gamma, n_threads);
 
@@ -77,4 +131,6 @@ int main(int argc, const char** argv) {
     for (std::size_t i = 0; i < objects.size(); i++) {
         delete objects[i];
     }
+
+    cout << "Done." << endl << endl;
 }
