@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/23/2020, 2:50:23 PM
+ *   1/23/2020, 8:47:52 PM
  * Auto updated?
  *   Yes
  *
@@ -35,11 +35,13 @@ using namespace RayTracer;
 using namespace cxxopts;
 
 int main(int argc, char** argv) {
+    std::string filename;
     unsigned int screen_width, screen_height, number_of_rays, n_threads;
     bool show_progressbar, correct_gamma;
 
     Options arguments("RayTracer", "Renders images using a custom-written RayTracer.");
     arguments.add_options()
+        ("f,filename", "The name of the output picture (relative to the run directory)", value<string>())
         ("W,width", "The width (in pixels) of the output image", value<unsigned int>())
         ("H,height", "The height (in pixels) of the output image", value<unsigned int>())
         ("r,rays", "The number of rays shot per pixel", value<unsigned int>())
@@ -50,6 +52,11 @@ int main(int argc, char** argv) {
     
     auto result = arguments.parse(argc, argv);
     
+    if (result.count("filename")) {
+        filename = result["filename"].as<string>();
+    } else {
+        filename = "test.png";
+    }
     try {
         screen_width = result["width"].as<unsigned int>();
     } catch (domain_error& opt) {
@@ -87,6 +94,7 @@ int main(int argc, char** argv) {
 
     cout << endl << "*** RayTracer Renderer ***" << endl << endl;
     cout << "Using options:" << endl;
+    cout << "  Output file      : " << filename << endl;
     cout << "  Image dimensions : " << screen_width << "x" << screen_height << "px" << endl;
     cout << "  Number of rays   : " << number_of_rays << endl;
     cout << "  Number of threads: " << n_threads << endl;
@@ -100,32 +108,31 @@ int main(int argc, char** argv) {
 
     // Create a list of objects
     vector<RenderObject*> objects;
-    objects.resize(5);
+    objects.resize(4);
     objects[0] = (RenderObject*) new Sphere(Vec3(0, 0, -1), 0.5, new Lambertian(Vec3(0.8, 0.3, 0.3)));
     objects[1] = (RenderObject*) new Sphere(Vec3(0, -100.5, -1), 100, new Lambertian(Vec3(0.8, 0.8, 0.0)));
     objects[2] = (RenderObject*) new Sphere(Vec3(1, 0, -1), 0.5, new Metal(Vec3(0.6, 0.6, 0.6), 0.3));
     objects[3] = (RenderObject*) new Sphere(Vec3(-1, 0, -1), 0.5, new Dielectric(Vec3(1.0, 1.0, 1.0), 1.5));
-    objects[4] = (RenderObject*) new Sphere(Vec3(-1, 0, -1), -0.45, new Dielectric(Vec3(1.0, 1.0, 1.0), 1.5));
 
     // Put these in a RenderObjectCollection
     RenderObjectCollection world(objects);
 
     if (n_threads > 1) {
         // Create the camera
-        EfficientCamera cam(screen_width, screen_height, number_of_rays, show_progressbar, correct_gamma, n_threads);
+        EfficientCamera cam(Vec3(0, 0, 0), Vec3(0, 0, -1), Vec3(0, 1, 0), 90, screen_width, screen_height, number_of_rays, show_progressbar, correct_gamma, n_threads);
 
         Image out = cam.render(world);
 
         // Write the image
-        out.to_png("test.png");
+        out.to_png(filename);
     } else {
         // Create the camera
-        Camera cam(screen_width, screen_height, number_of_rays, show_progressbar, correct_gamma);
+        Camera cam(Vec3(0, 0, 0), Vec3(0, 0, -1), Vec3(0, 1, 0), 90, screen_width, screen_height, number_of_rays, show_progressbar, correct_gamma);
 
         Image out = cam.render(world);
 
         // Write the image
-        out.to_png("test.png");
+        out.to_png(filename);
     }
 
     // CLEANUP: Deallocate all objects

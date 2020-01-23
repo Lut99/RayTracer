@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:14 PM
  * Last edited:
- *   1/23/2020, 8:51:06 AM
+ *   1/23/2020, 3:57:20 PM
  * Auto updated?
  *   Yes
  *
@@ -25,7 +25,7 @@ using namespace std;
 using namespace RayTracer;
 
 
-Camera::Camera(int screen_width, int screen_height, int rays_per_pixel, bool show_progressbar, bool correct_gamma)
+Camera::Camera(Vec3 lookfrom, Vec3 lookat, Vec3 up, double vfov, int screen_width, int screen_height, int rays_per_pixel, bool show_progressbar, bool correct_gamma)
     : width(screen_width),
     height(screen_height),
     rays(rays_per_pixel),
@@ -34,10 +34,18 @@ Camera::Camera(int screen_width, int screen_height, int rays_per_pixel, bool sho
 {
     double ratio = (double) this->width / (double) this->height;
 
-    this->lower_left_corner = Vec3(-2.0, -1.0, -1.0);
-    this->horizontal = Vec3(4.0, 0.0, 0.0);
-    this->vertical = Vec3(0.0, 4.0 / ratio, 0.0);
-    this->origin = Vec3(0.0, 0.0, 0.0);
+    double theta = vfov * M_PI / 180;
+    double half_height = tan(theta/2);
+    double half_width = ratio * half_height;
+
+    this->origin = lookfrom;
+    Vec3 w = (lookfrom - lookat).normalize();
+    Vec3 u = cross(up, w).normalize();
+    Vec3 v = cross(w, u);
+
+    this->lower_left_corner = origin - half_width * u - half_height * v - w;
+    this->horizontal = 2 * half_width * u;
+    this->vertical = 2 * half_height * v;
 }
 
 Ray Camera::get_ray(double u, double v) const {

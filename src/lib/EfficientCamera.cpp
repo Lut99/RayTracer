@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 9:13:21 PM
  * Last edited:
- *   1/23/2020, 3:28:30 PM
+ *   1/23/2020, 3:55:33 PM
  * Auto updated?
  *   Yes
  *
@@ -39,8 +39,8 @@ struct ThreadData {
 
 
 
-EfficientCamera::EfficientCamera(int screen_width, int screen_height, int rays_per_pixel, bool show_progressbar, bool correct_gamma, int num_of_threads)
-    : Camera(screen_width, screen_height, rays_per_pixel, show_progressbar, correct_gamma),
+EfficientCamera::EfficientCamera(Vec3 lookfrom, Vec3 lookat, Vec3 up, double vfov, int screen_width, int screen_height, int rays_per_pixel, bool show_progressbar, bool correct_gamma, int num_of_threads)
+    : Camera(lookfrom, lookat, up, vfov, screen_width, screen_height, rays_per_pixel, show_progressbar, correct_gamma),
     n_threads(num_of_threads)
 {}
 
