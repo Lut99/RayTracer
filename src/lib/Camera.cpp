@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:14 PM
  * Last edited:
- *   1/23/2020, 8:51:06 AM
+ *   1/24/2020, 8:21:45 PM
  * Auto updated?
  *   Yes
  *
@@ -15,6 +15,11 @@
  *   Camera.hpp.
 **/
 
+#ifdef CAMERA_THREADS
+#include <atomic>
+#include <thread>
+#include <pthread.h>
+#endif
 #include <iostream>
 
 #include "include/ProgressBar.hpp"
@@ -25,7 +30,39 @@ using namespace std;
 using namespace RayTracer;
 
 
-Camera::Camera(int screen_width, int screen_height, int rays_per_pixel, bool show_progressbar, bool correct_gamma)
+/* Define, if needed, multithread helpers */
+#ifdef CAMERA_THREADS
+
+struct ThreadData {
+    int row_start;
+    int row_end;
+    pthread_t tid;
+    Image* out;
+    atomic<int> done;
+    const RenderObject* world;
+    const Camera* camera;
+};
+
+void* render_thread(void* v_args) {
+    ThreadData* args = (ThreadData*) v_args;
+    const Camera* cam = args->camera;
+
+    for (int y = args->row_end; y >= args->row_start; y--) {
+        for (int x = 0; x < cam->width; x++) {
+            args->out[0][y][x] = args->camera->render_pixel(x, y, *args->world);
+
+            args->done.store(args->done.load() + 1);
+        }
+
+        // Save the picture very y
+        //out.to_png("output/test_" + to_string(y) + ".png");
+    }
+}
+
+#endif
+
+
+Camera::Camera(Vec3 lookfrom, Vec3 lookat, Vec3 up, double vfov, int screen_width, int screen_height, int rays_per_pixel, bool show_progressbar, bool correct_gamma)
     : width(screen_width),
     height(screen_height),
     rays(rays_per_pixel),
@@ -34,10 +71,18 @@ Camera::Camera(int screen_width, int screen_height, int rays_per_pixel, bool sho
 {
     double ratio = (double) this->width / (double) this->height;
 
-    this->lower_left_corner = Vec3(-2.0, -1.0, -1.0);
-    this->horizontal = Vec3(4.0, 0.0, 0.0);
-    this->vertical = Vec3(0.0, 4.0 / ratio, 0.0);
-    this->origin = Vec3(0.0, 0.0, 0.0);
+    double theta = vfov * M_PI / 180;
+    double half_height = tan(theta/2);
+    double half_width = ratio * half_height;
+
+    this->origin = lookfrom;
+    Vec3 w = (lookfrom - lookat).normalize();
+    Vec3 u = cross(up, w).normalize();
+    Vec3 v = cross(w, u);
+
+    this->lower_left_corner = origin - half_width * u - half_height * v - w;
+    this->horizontal = 2 * half_width * u;
+    this->vertical = 2 * half_height * v;
 }
 
 Ray Camera::get_ray(double u, double v) const {
@@ -64,6 +109,9 @@ Vec3 Camera::shoot_ray(const Ray& ray, const RenderObject& world, int depth) con
 
 Image Camera::render(const RenderObject& world) const {
     Image out(this->width, this->height);
+    
+    #ifndef CAMERA_THREADS
+
     ProgressBar prgrs(0, this->width * this->height - 1);
     for (int y = this->height-1; y >= 0; y--) {
         for (int x = 0; x < this->width; x++) {
@@ -78,6 +126,55 @@ Image Camera::render(const RenderObject& world) const {
         // Save the picture very y
         //out.to_png("output/test_" + to_string(y) + ".png");
     }
+
+    #else
+
+    // Prepare the structs for the threads
+    int thread_n_rows = this->height / CAMERA_THREADS;
+    ThreadData threads[CAMERA_THREADS];
+    for (int i = 0; i < CAMERA_THREADS; i++) {
+        threads[i].row_start = i * thread_n_rows;
+        threads[i].row_end = threads[i].row_start + thread_n_rows - 1;
+        if (i == CAMERA_THREADS - 1) {
+            // Give the last thread the rest
+            threads[i].row_end = this->height - 1;
+        }
+        threads[i].out = &out;
+        threads[i].done.store(0);
+        threads[i].world = &world;
+        threads[i].camera = this;
+    }
+
+    // Run the threads
+    for (int i = 0; i < CAMERA_THREADS; i++) {
+        pthread_create(&threads[i].tid, NULL, render_thread, (void*) &threads[i]);
+    }
+
+    // Wait for all of them to reap
+    int all_done = 0;
+    ProgressBar prgs(0, this->height * this->width);
+    while (all_done < this->height * this->width) {
+        // Sleep a second
+        this_thread::sleep_for(chrono::milliseconds(500));
+
+        // Check if we're done
+        all_done = 0;
+        for (int i = 0; i < CAMERA_THREADS; i++) {
+            all_done += threads[i].done.load();
+        }
+
+        if (this->progress) {
+            prgs.set(all_done);
+        }
+    }
+
+    // Reap 'em
+    for (int i = 0; i < CAMERA_THREADS; i++) {
+        pthread_join(threads[i].tid, NULL);
+    }
+
+    #endif
+
     return out;
 }
 
