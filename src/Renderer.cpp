@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/24/2020, 8:20:03 PM
+ *   1/24/2020, 8:31:37 PM
  * Auto updated?
  *   Yes
  *
@@ -74,7 +74,7 @@ int main(int argc, char** argv) {
     try {
         number_of_rays = result["rays"].as<unsigned int>();
     } catch (domain_error& opt) {
-        number_of_rays = 500;
+        number_of_rays = 300;
     } catch (OptionParseException& opt) {
         cerr << "Could not parse number of rays: " << opt.what() << endl;
         exit(-1);
