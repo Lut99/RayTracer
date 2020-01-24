@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 10:18:56 PM
  * Last edited:
- *   1/23/2020, 2:54:35 PM
+ *   1/24/2020, 11:05:59 AM
  * Auto updated?
  *   Yes
  *
@@ -49,7 +49,7 @@ Metal::Metal(const Vec3& colour_absorption, double fuzziness)
 {}
 
 Vec3 Metal::reflect(const Vec3& v, const Vec3& n) const {
-    return v - 2 * dot(v, n) * n;
+    return v - 2 * dot(n, v) * n;
 }
 bool Metal::scatter(const Ray& ray_in, const HitRecord& record, Vec3& attenuation, Ray& ray_out) const {
     Vec3 reflected = this->reflect(ray_in.direction.normalize(), record.normal);
@@ -100,7 +100,7 @@ bool Dielectric::scatter(const Ray& ray_in, const HitRecord& record, Vec3& atten
     return true;
 }
 Vec3 Dielectric::reflect(const Vec3& v, const Vec3& n) const {
-    return v - 2 * dot(v, n) * n;
+    return v - 2 * dot(n, v) * n;
 }
 bool Dielectric::refract(const Vec3& v, const Vec3& n, double ni_over_nt, Vec3& refracted) const {
     Vec3 v_normalized = v.normalize();
