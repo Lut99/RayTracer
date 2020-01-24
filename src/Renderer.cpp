@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/24/2020, 11:23:45 AM
+ *   1/24/2020, 8:20:03 PM
  * Auto updated?
  *   Yes
  *
@@ -46,9 +46,6 @@ int main(int argc, char** argv) {
         ("r,rays", "The number of rays shot per pixel", value<unsigned int>())
         ("p,progressbar", "If given, shows a progressbar to indice the render process")
         ("g,gamma", "If given, corrects the gamme before saving")
-        #ifdef CAMERA_MULTITHREADED
-        ("t,threads", "The number of threads used to render the image", value<unsigned int>())
-        #endif
         ;
     
     auto result = arguments.parse(argc, argv);
@@ -82,16 +79,6 @@ int main(int argc, char** argv) {
         cerr << "Could not parse number of rays: " << opt.what() << endl;
         exit(-1);
     }
-    #ifdef CAMERA_MULTITHREADED
-    try {
-        n_threads = result["threads"].as<unsigned int>();
-    } catch (domain_error& opt) {
-        n_threads = 16;
-    } catch (OptionParseException& opt) {
-        cerr << "Could not parse number of threads: " << opt.what() << endl;
-        exit(-1);
-    }
-    #endif
     show_progressbar = result.count("progressbar") != 0;
     correct_gamma = result.count("gamma") != 0;
 
@@ -100,8 +87,8 @@ int main(int argc, char** argv) {
     cout << "  Output file      : " << filename << endl;
     cout << "  Image dimensions : " << screen_width << "x" << screen_height << "px" << endl;
     cout << "  Number of rays   : " << number_of_rays << endl;
-    #ifdef CAMERA_MULTITHREADED
-    cout << "  Number of threads: " << n_threads << endl;
+    #ifdef CAMERA_THREADS
+    cout << "  Number of threads: " << CAMERA_THREADS << endl;
     #endif
     cout << "  Correct for gamma? ";
     if (correct_gamma) {
@@ -123,11 +110,7 @@ int main(int argc, char** argv) {
     RenderObjectCollection world(objects);
 
     // Initialize the camera
-    #ifndef CAMERA_MULTITHREADED
     Camera cam(Vec3(0, 0, 0), Vec3(0, 0, -1), Vec3(0, 1, 0), 90, screen_width, screen_height, number_of_rays, show_progressbar, correct_gamma);
-    #else
-    Camera cam(Vec3(0, 0, 0), Vec3(0, 0, -1), Vec3(0, 1, 0), 90, screen_width, screen_height, number_of_rays, show_progressbar, correct_gamma, n_threads);
-    #endif
 
     // Render one picture
     Image out = cam.render(world);

@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:28 PM
  * Last edited:
- *   1/24/2020, 11:14:19 AM
+ *   1/24/2020, 8:20:24 PM
  * Auto updated?
  *   Yes
  *
@@ -40,11 +40,7 @@ namespace RayTracer {
             Vec3 origin;
 
             /* The camera class holds information about the viewport of the scene. Note that for now, everything is set, but I suspect that may change later. */
-            #ifndef CAMERA_MULTITHREADED
             Camera(Vec3 lookfrom, Vec3 lookat, Vec3 up, double vfov, int screen_width, int screen_height, int rays_per_pixel, bool show_progressbar, bool correct_gamma);
-            #else
-            Camera(Vec3 lookfrom, Vec3 lookat, Vec3 up, double vfov, int screen_width, int screen_height, int rays_per_pixel, bool show_progressbar, bool correct_gamma, int num_of_threads);
-            #endif
 
             /* Returns a ray through given u and v through the pixel grid */
             Ray get_ray(double u, double v) const;

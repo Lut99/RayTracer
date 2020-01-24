@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:14 PM
  * Last edited:
- *   1/24/2020, 11:45:23 AM
+ *   1/24/2020, 8:21:45 PM
  * Auto updated?
  *   Yes
  *
@@ -15,7 +15,7 @@
  *   Camera.hpp.
 **/
 
-#ifdef CAMERA_MULTITHREADED
+#ifdef CAMERA_THREADS
 #include <atomic>
 #include <thread>
 #include <pthread.h>
@@ -31,7 +31,7 @@ using namespace RayTracer;
 
 
 /* Define, if needed, multithread helpers */
-#ifdef CAMERA_MULTITHREAD
+#ifdef CAMERA_THREADS
 
 struct ThreadData {
     int row_start;
@@ -62,7 +62,6 @@ void* render_thread(void* v_args) {
 #endif
 
 
-#ifndef CAMERA_MULTITHREADED
 Camera::Camera(Vec3 lookfrom, Vec3 lookat, Vec3 up, double vfov, int screen_width, int screen_height, int rays_per_pixel, bool show_progressbar, bool correct_gamma)
     : width(screen_width),
     height(screen_height),
@@ -70,16 +69,6 @@ Camera::Camera(Vec3 lookfrom, Vec3 lookat, Vec3 up, double vfov, int screen_widt
     progress(show_progressbar),
     gamma(correct_gamma)
 {
-#else
-Camera::Camera(Vec3 lookfrom, Vec3 lookat, Vec3 up, double vfov, int screen_width, int screen_height, int rays_per_pixel, bool show_progressbar, bool correct_gamma, int num_of_threads)
-    : width(screen_width),
-    height(screen_height),
-    rays(rays_per_pixel),
-    progress(show_progressbar),
-    gamma(correct_gamma),
-    n_threads(num_of_threads)
-{
-#endif
     double ratio = (double) this->width / (double) this->height;
 
     double theta = vfov * M_PI / 180;
@@ -121,7 +110,7 @@ Vec3 Camera::shoot_ray(const Ray& ray, const RenderObject& world, int depth) con
 Image Camera::render(const RenderObject& world) const {
     Image out(this->width, this->height);
     
-    #ifndef CAMERA_MULTITHREADED
+    #ifndef CAMERA_THREADS
 
     ProgressBar prgrs(0, this->width * this->height - 1);
     for (int y = this->height-1; y >= 0; y--) {
@@ -141,12 +130,12 @@ Image Camera::render(const RenderObject& world) const {
     #else
 
     // Prepare the structs for the threads
-    int thread_n_rows = this->height / n_threads;
-    ThreadData threads[this->n_threads];
-    for (int i = 0; i < n_threads; i++) {
+    int thread_n_rows = this->height / CAMERA_THREADS;
+    ThreadData threads[CAMERA_THREADS];
+    for (int i = 0; i < CAMERA_THREADS; i++) {
         threads[i].row_start = i * thread_n_rows;
         threads[i].row_end = threads[i].row_start + thread_n_rows - 1;
-        if (i == n_threads - 1) {
+        if (i == CAMERA_THREADS - 1) {
             // Give the last thread the rest
             threads[i].row_end = this->height - 1;
         }
@@ -157,7 +146,7 @@ Image Camera::render(const RenderObject& world) const {
     }
 
     // Run the threads
-    for (int i = 0; i < this->n_threads; i++) {
+    for (int i = 0; i < CAMERA_THREADS; i++) {
         pthread_create(&threads[i].tid, NULL, render_thread, (void*) &threads[i]);
     }
 
@@ -170,7 +159,7 @@ Image Camera::render(const RenderObject& world) const {
 
         // Check if we're done
         all_done = 0;
-        for (int i = 0; i < n_threads; i++) {
+        for (int i = 0; i < CAMERA_THREADS; i++) {
             all_done += threads[i].done.load();
         }
 
@@ -180,7 +169,7 @@ Image Camera::render(const RenderObject& world) const {
     }
 
     // Reap 'em
-    for (int i = 0; i < this->n_threads; i++) {
+    for (int i = 0; i < CAMERA_THREADS; i++) {
         pthread_join(threads[i].tid, NULL);
     }
 
