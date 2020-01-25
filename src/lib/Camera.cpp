@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:14 PM
  * Last edited:
- *   1/25/2020, 4:36:44 PM
+ *   1/25/2020, 5:09:24 PM
  * Auto updated?
  *   Yes
  *
@@ -17,8 +17,12 @@
 
 #ifdef CAMERA_THREADS
 #include <atomic>
+#ifdef WINDOWS
+#include <windows.h>
+#else
 #include <thread>
 #include <pthread.h>
+#endif
 #endif
 #include <iostream>
 #define _USE_MATH_DEFINES
@@ -80,12 +84,18 @@ class PixelBatch {
             int x1,y1,x2,y2;
             other.load(x1, y1, x2, y2);
             this->store(x1, y1, x2, y2);
+            return *this;
         }
 };
 
 struct ThreadData {
     int id;
+    #ifndef WINDOWS
     pthread_t tid;
+    #else
+    HANDLE thandle;
+    DWORD tid;
+    #endif
 
     PixelBatch batch;
 
@@ -97,13 +107,19 @@ struct ThreadData {
     const Camera* camera;
 };
 
+#ifndef WINDOWS
 void* render_thread(void* v_args) {
+#else
+DWORD WINAPI render_thread(LPVOID v_args) {
+#endif
     ThreadData* args = (ThreadData*) v_args;
     const Camera* cam = args->camera;
 
     while (!args->main_done.load()) {
         int x1,y1,x2,y2;
         args->batch.load(x1, y1, x2, y2);
+
+        // cout << "Thread #" << args->id << ": new cycle from (" << x1 << "," << y1 << ") to (" << x2 << "," << y2 << ")" << endl;
 
         for (int y = y2; y >= y1; y--) {
             for (int x = x1; x <= x2; x++) {
@@ -113,11 +129,13 @@ void* render_thread(void* v_args) {
 
         args->thread_done.store(true);
 
+        // cout << "Thread #" << args->id << ": waiting...";
+
         // Wait until we can continue
         while (!args->main_done.load() && args->thread_done.load()) {}
     }
 
-    return NULL;
+    return 0;
 }
 
 PixelBatch create_batch(const int w, const int h, unsigned long& batch_index) {
@@ -237,7 +255,11 @@ Image Camera::render(const RenderObject& world) const {
     for (int i = 0; i < CAMERA_THREADS; i++) {
         // Only create them if they have to
         if (!threads[i].main_done.load()) {
+            #ifndef WINDOWS
             pthread_create(&threads[i].tid, NULL, render_thread, (void*) &threads[i]);
+            #else
+            threads[i].thandle = CreateThread(0, 0, render_thread, &threads[i], 0, &threads[i].tid);
+            #endif
         }
     }
 
@@ -263,6 +285,8 @@ Image Camera::render(const RenderObject& world) const {
 
                 // Signal to continue
                 threads[i].thread_done.store(false);
+
+                // cout << "Main: Server thread #" << threads[i].id << endl;
             }
         }
 
@@ -274,7 +298,11 @@ Image Camera::render(const RenderObject& world) const {
 
     // Reap 'em
     for (int i = 0; i < CAMERA_THREADS; i++) {
+        #ifndef WINDOWS
         pthread_join(threads[i].tid, NULL);
+        #else
+        WaitForSingleObject(threads[i].thandle, INFINITE);
+        #endif
     }
 
     #endif

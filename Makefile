@@ -7,6 +7,7 @@ NVCC_ARGS = -std=c++17
 BIN_DIR = bin/linux
 LIB_DIR = $(BIN_DIR)/lib
 SRC_DIR = src
+EXTENSION =out
 
 OPTS =
 EXT_LIBS =
@@ -14,7 +15,8 @@ EXT_LIBS =
 # Check if we're on windows
 ifeq ($(OS),Windows_NT)
 BIN_DIR = bin/win
-LIB_DIR = $(BIN_DIR)
+LIB_DIR = $(BIN_DIR)/lib
+EXTENSION =exe
 OPTS += -D WINDOWS
 endif
 
@@ -45,13 +47,13 @@ $(LIB_DIR)/%.o: $(SRC_DIR)/lib/%.cpp
 	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
 
 test_image: $(LIB_DIR)/Image.o $(LIB_DIR)/LodePNG.o
-	$(CC) $(ARGS) -o tests/bin/test_image.out tests/src/test_image.cpp $(LIB_DIR)/Image.o $(LIB_DIR)/LodePNG.o
+	$(CC) $(ARGS) -o tests/bin/test_image.$(EXTENSION) tests/src/test_image.cpp $(LIB_DIR)/Image.o $(LIB_DIR)/LodePNG.o
 
 test_progressbar: $(LIB_DIR)/ProgressBar.o
-	$(CC) $(ARGS) -o tests/bin/test_progressbar.out tests/src/test_progressbar.cpp $(LIB_DIR)/ProgressBar.o
+	$(CC) $(ARGS) -o tests/bin/test_progressbar.$(EXTENSION) tests/src/test_progressbar.cpp $(LIB_DIR)/ProgressBar.o
 
 renderer: $(LIBRARIES) Camera.o
-	$(CC) $(ARGS) $(OPTS) -o $(BIN_DIR)/renderer.out $(SRC_DIR)/Renderer.cpp ${LIB_DIR}/Camera.o $(LIBRARIES) $(EXT_LIBS)
+	$(CC) $(ARGS) $(OPTS) -o $(BIN_DIR)/renderer.$(EXTENSION) $(SRC_DIR)/Renderer.cpp ${LIB_DIR}/Camera.o $(LIBRARIES) $(EXT_LIBS)
 
 clean:
 	rm -f $(BIN_DIR)/*.out
