@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 4:44:56 PM
  * Last edited:
- *   1/22/2020, 9:32:27 PM
+ *   1/25/2020, 4:35:08 PM
  * Auto updated?
  *   Yes
  *
@@ -15,8 +15,12 @@
  *   ProgressBar.hpp.
 **/
 
+#ifndef WINDOWS
 #include <sys/ioctl.h>
 #include <unistd.h>
+#else
+#include <windows.h>
+#endif
 
 #include <stdexcept>
 #include <iostream>
@@ -33,154 +37,89 @@
 using namespace std;
 
 ProgressBar::ProgressBar() {
-    this->done = false;
-
     this->min = DEFAULT_MIN;
     this->max = DEFAULT_MAX;
-    this->progress = this->min;
     
     this->left = DEFAULT_LEFT;
     this->right = DEFAULT_RIGHT;
 
     this->width = DEFAULT_WIDTH;
-
-    this->last_draw = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch());
     this->interval = DEFAULT_INTERVAL;
 
-    // Fetch the width of the command line if needed
-    if (this->width < 0) {
-        struct winsize size;
-        ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
-
-        this->width = size.ws_col;
-    }
-
-    // Compute the total width of the bar section. This is defined as the width - 7 (for percentage and spaces on either side), - left.length() - right.length().
-    this->bar_width = this->width - 8 - this->left.length() - this->right.length();
-    // The inner width is the same minus to, to account for []
-    this->bar_inner_width = this->bar_width - 2;
-    // Check if this is possible
-    if (this->bar_inner_width < 1) {
-        throw runtime_error("Given width " + to_string(this->width) + " is too small for the progress bar.");
-    }
+    this->init();
 }
 ProgressBar::ProgressBar(long min_value, long max_value) {
-    this->done = false;
-
     this->min = min_value;
     this->max = max_value;
-    this->progress = this->min;
     
     this->left = DEFAULT_LEFT;
     this->right = DEFAULT_RIGHT;
 
     this->width = DEFAULT_WIDTH;
-
-    this->last_draw = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch());
     this->interval = DEFAULT_INTERVAL;
 
-    // Fetch the width of the command line if needed
-    if (this->width < 0) {
-        struct winsize size;
-        ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
-
-        this->width = size.ws_col;
-    }
-
-    // Compute the total width of the bar section. This is defined as the width - 7 (for percentage and spaces on either side), - left.length() - right.length().
-    this->bar_width = this->width - 8 - this->left.length() - this->right.length();
-    // The inner width is the same minus to, to account for []
-    this->bar_inner_width = this->bar_width - 2;
-    // Check if this is possible
-    if (this->bar_inner_width < 1) {
-        throw runtime_error("Given width " + to_string(this->width) + " is too small for the progress bar.");
-    }
+    this->init();
 }
 ProgressBar::ProgressBar(long min_value, long max_value, std::string left_text, std::string right_text) {
-    this->done = false;
-
     this->min = min_value;
     this->max = max_value;
-    this->progress = this->min;
     
     this->left = left_text;
     this->right = right_text;
 
     this->width = DEFAULT_WIDTH;
-
-    this->last_draw = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch());
     this->interval = DEFAULT_INTERVAL;
 
-    // Fetch the width of the command line if needed
-    if (this->width < 0) {
-        struct winsize size;
-        ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
-
-        this->width = size.ws_col;
-    }
-
-    // Compute the total width of the bar section. This is defined as the width - 7 (for percentage and spaces on either side), - left.length() - right.length().
-    this->bar_width = this->width - 8 - this->left.length() - this->right.length();
-    // The inner width is the same minus to, to account for []
-    this->bar_inner_width = this->bar_width - 2;
-    // Check if this is possible
-    if (this->bar_inner_width < 1) {
-        throw runtime_error("Given width " + to_string(this->width) + " is too small for the progress bar.");
-    }
+    this->init();
 }
 ProgressBar::ProgressBar(long min_value, long max_value, std::string left_text, std::string right_text, int width) {
-    this->done = false;
-
     this->min = min_value;
     this->max = max_value;
-    this->progress = this->min;
     
     this->left = left_text;
     this->right = right_text;
 
     this->width = width;
-
-    this->last_draw = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch());
     this->interval = DEFAULT_INTERVAL;
 
-    // Fetch the width of the command line if needed
-    if (this->width < 0) {
-        struct winsize size;
-        ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
-
-        this->width = size.ws_col;
-    }
-
-    // Compute the total width of the bar section. This is defined as the width - 7 (for percentage and spaces on either side), - left.length() - right.length().
-    this->bar_width = this->width - 8 - this->left.length() - this->right.length();
-    // The inner width is the same minus to, to account for []
-    this->bar_inner_width = this->bar_width - 2;
-    // Check if this is possible
-    if (this->bar_inner_width < 1) {
-        throw runtime_error("Given width " + to_string(this->width) + " is too small for the progress bar.");
-    }
+    this->init();
 }
 ProgressBar::ProgressBar(long min_value, long max_value, std::string left_text, std::string right_text, int width, chrono::milliseconds update_interval) {
-    this->done = false;
-
     this->min = min_value;
     this->max = max_value;
-    this->progress = this->min;
     
     this->left = left_text;
     this->right = right_text;
 
     this->width = width;
+    this->interval = update_interval;
+
+    this->init();
+}
+
+void ProgressBar::init() {
+    this->progress = this->min;
+    this->done = false;
 
     this->last_draw = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch());
-    this->interval = update_interval;
 
     // Fetch the width of the command line if needed
     if (this->width < 0) {
+        #ifndef WINDOWS
+
         struct winsize size;
         ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
 
         this->width = size.ws_col;
+
+        #else
+
+        CONSOLE_SCREEN_BUFFER_INFO csbi;
+
+        GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+        this->width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+
+        #endif
     }
 
     // Compute the total width of the bar section. This is defined as the width - 7 (for percentage and spaces on either side), - left.length() - right.length().

@@ -9,7 +9,7 @@ LIB_DIR = $(BIN_DIR)/lib
 SRC_DIR = src
 
 OPTS =
-LIBS =
+EXT_LIBS =
 
 # Check if we're on windows
 ifeq ($(OS),Windows_NT)
@@ -25,7 +25,7 @@ ifdef CUDA
 $(error Cannot run threaded with CUDA)
 endif
 OPTS += -D CAMERA_THREADS=$(THREADS)
-LIBS += -lpthread
+EXT_LIBS += -lpthread
 endif
 
 ifdef CUDA
@@ -51,7 +51,7 @@ test_progressbar: $(LIB_DIR)/ProgressBar.o
 	$(CC) $(ARGS) -o tests/bin/test_progressbar.out tests/src/test_progressbar.cpp $(LIB_DIR)/ProgressBar.o
 
 renderer: $(LIBRARIES) Camera.o
-	$(CC) $(ARGS) $(OPTS) -o $(BIN_DIR)/renderer.out $(SRC_DIR)/Renderer.cpp ${LIB_DIR}/Camera.o $(LIBRARIES) $(LIBS)
+	$(CC) $(ARGS) $(OPTS) -o $(BIN_DIR)/renderer.out $(SRC_DIR)/Renderer.cpp ${LIB_DIR}/Camera.o $(LIBRARIES) $(EXT_LIBS)
 
 clean:
 	rm -f $(BIN_DIR)/*.out

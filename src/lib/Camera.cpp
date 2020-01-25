@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:14 PM
  * Last edited:
- *   1/25/2020, 1:06:36 PM
+ *   1/25/2020, 4:36:44 PM
  * Auto updated?
  *   Yes
  *
@@ -21,6 +21,8 @@
 #include <pthread.h>
 #endif
 #include <iostream>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 #include "include/ProgressBar.hpp"
 #include "include/Random.hpp"

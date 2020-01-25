@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 4:45:31 PM
  * Last edited:
- *   1/22/2020, 9:31:35 PM
+ *   1/25/2020, 4:26:13 PM
  * Auto updated?
  *   Yes
  *
@@ -39,6 +39,9 @@ namespace std {
 
             chrono::milliseconds last_draw;
             chrono::milliseconds interval;
+
+            /* Initializes the ProgressBar beyond the header-dependent functions. */
+            void init();
 
             /* Draws the progress bar. Is called once every this->interval milliseconds from update(). */
             void draw() const;

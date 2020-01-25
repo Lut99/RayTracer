@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 12:12:44 PM
  * Last edited:
- *   1/22/2020, 8:50:57 PM
+ *   1/25/2020, 4:24:31 PM
  * Auto updated?
  *   Yes
  *
@@ -38,6 +38,7 @@ Vec3& Vec3::operator=(const Vec3& other) {
     this->x = other.x;
     this->y = other.y;
     this->z = other.z;
+    return *this;
 }
 
 Vec3 Vec3::operator+() const {
