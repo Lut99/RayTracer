@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:14 PM
  * Last edited:
- *   1/25/2020, 12:06:52 AM
+ *   1/25/2020, 1:02:59 PM
  * Auto updated?
  *   Yes
  *
@@ -187,6 +187,8 @@ Vec3 Camera::shoot_ray(const Ray& ray, const RenderObject& world, int depth) con
 
 Image Camera::render(const RenderObject& world) const {
     Image out(this->width, this->height);
+
+    auto start = chrono::system_clock::now();
     
     #ifndef CAMERA_THREADS
 
@@ -274,6 +276,12 @@ Image Camera::render(const RenderObject& world) const {
     }
 
     #endif
+
+    auto stop = chrono::system_clock::now();
+    auto duration = stop - start;
+    auto duration_ms = chrono::duration_cast<chrono::milliseconds>(duration);
+
+    cout << "Rendered frame in " << ((double) duration_ms.count()) / 1000.0 << " seconds" << endl;
 
     return out;
 }

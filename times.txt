@@ -1,0 +1,17 @@
+ TIMES.txt
+   by Lut99
+
+ Created:
+   1/25/2020, 1:04:11 PM
+ Last edited:
+   1/25/2020, 1:04:29 PM
+ Auto updated?
+   Yes
+
+ Description:
+   This file keeps track of time that certain runs take. Totally not
+   important!
+
+
+MULTITHREADED_BATCHED:
+    35.362 seconds
