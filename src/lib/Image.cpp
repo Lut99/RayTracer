@@ -4,7 +4,7 @@
  * Created:
  *   1/20/2020, 3:03:07 PM
  * Last edited:
- *   1/22/2020, 10:03:18 PM
+ *   1/25/2020, 1:19:03 PM
  * Auto updated?
  *   Yes
  *
@@ -22,7 +22,7 @@
 #include <cstring>
 
 #include "include/Image.hpp"
-#include "include/lodepng.h"
+#include "include/LodePNG.hpp"
 
 using namespace std;
 using namespace RayTracer;

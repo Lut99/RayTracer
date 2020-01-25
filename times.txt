@@ -4,7 +4,7 @@
  Created:
    1/25/2020, 1:04:11 PM
  Last edited:
-   1/25/2020, 1:04:29 PM
+   1/25/2020, 1:49:46 PM
  Auto updated?
    Yes
 
@@ -12,6 +12,9 @@
    This file keeps track of time that certain runs take. Totally not
    important!
 
+SINGLE_THREADED:
+    109.672 seconds
 
 MULTITHREADED_BATCHED:
     35.362 seconds
+
