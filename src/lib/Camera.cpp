@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:14 PM
  * Last edited:
- *   1/25/2020, 5:09:24 PM
+ *   1/26/2020, 6:18:39 PM
  * Auto updated?
  *   Yes
  *
@@ -15,15 +15,6 @@
  *   Camera.hpp.
 **/
 
-#ifdef CAMERA_THREADS
-#include <atomic>
-#ifdef WINDOWS
-#include <windows.h>
-#else
-#include <thread>
-#include <pthread.h>
-#endif
-#endif
 #include <iostream>
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -35,130 +26,6 @@
 using namespace std;
 using namespace RayTracer;
 
-
-/* Define, if needed, multithread helpers */
-#ifdef CAMERA_THREADS
-
-#define BATCH_SIZE 50
-
-class PixelBatch {
-    public:
-        atomic<int> startx;
-        atomic<int> starty;
-        atomic<int> stopx;
-        atomic<int> stopy;
-        atomic<int> size;
-
-        PixelBatch() {}
-        PixelBatch(int x1, int y1, int x2, int y2) {
-            this->startx.store(x1);
-            this->starty.store(y1);
-            this->stopx.store(x2);
-            this->stopy.store(y2);
-            this->size.store((abs(x1 - x2) + 1) * (abs(y1 - y2) + 1));
-        }
-        PixelBatch(const PixelBatch& other) {
-            int x1,y1,x2,y2;
-            other.load(x1, y1, x2, y2);
-            this->store(x1, y1, x2, y2);
-        }
-
-        PixelBatch& store(int& x1, int& y1, int& x2, int& y2) {
-            this->startx.store(x1);
-            this->starty.store(y1);
-            this->stopx.store(x2);
-            this->stopy.store(y2);
-            this->size.store((abs(x1 - x2) + 1) * (abs(y1 - y2) + 1));
-            return *this;
-        }
-
-        const PixelBatch& load(int& x1, int& y1, int& x2, int& y2) const {
-            x1 = this->startx.load();
-            y1 = this->starty.load();
-            x2 = this->stopx.load();
-            y2 = this->stopy.load();
-            return *this;
-        }
-
-        PixelBatch& operator=(const PixelBatch& other) {
-            int x1,y1,x2,y2;
-            other.load(x1, y1, x2, y2);
-            this->store(x1, y1, x2, y2);
-            return *this;
-        }
-};
-
-struct ThreadData {
-    int id;
-    #ifndef WINDOWS
-    pthread_t tid;
-    #else
-    HANDLE thandle;
-    DWORD tid;
-    #endif
-
-    PixelBatch batch;
-
-    atomic<bool> thread_done;
-    atomic<bool> main_done;
-
-    Image* out;
-    const RenderObject* world;
-    const Camera* camera;
-};
-
-#ifndef WINDOWS
-void* render_thread(void* v_args) {
-#else
-DWORD WINAPI render_thread(LPVOID v_args) {
-#endif
-    ThreadData* args = (ThreadData*) v_args;
-    const Camera* cam = args->camera;
-
-    while (!args->main_done.load()) {
-        int x1,y1,x2,y2;
-        args->batch.load(x1, y1, x2, y2);
-
-        // cout << "Thread #" << args->id << ": new cycle from (" << x1 << "," << y1 << ") to (" << x2 << "," << y2 << ")" << endl;
-
-        for (int y = y2; y >= y1; y--) {
-            for (int x = x1; x <= x2; x++) {
-                args->out[0][y][x] = cam->render_pixel(x, y, *args->world);
-            }
-        }
-
-        args->thread_done.store(true);
-
-        // cout << "Thread #" << args->id << ": waiting...";
-
-        // Wait until we can continue
-        while (!args->main_done.load() && args->thread_done.load()) {}
-    }
-
-    return 0;
-}
-
-PixelBatch create_batch(const int w, const int h, unsigned long& batch_index) {
-    int x1,y1,x2,y2;
-
-    x1 = batch_index % w;
-    y1 = batch_index / w;
-
-    batch_index += BATCH_SIZE - 1;
-    // Bind batch_index to a maximum of (w - 1) * (h - 1)
-    if (batch_index > w * h) {
-        batch_index = w * h - 1;
-    }
-
-    x2 = batch_index % w;
-    y2 = batch_index / w;
-
-    batch_index++;
-
-    return PixelBatch(x1, y1, x2, y2);
-}
-
-#endif
 
 Camera::Camera(Vec3 lookfrom, Vec3 lookat, Vec3 up, double vfov, int screen_width, int screen_height, int rays_per_pixel, bool show_progressbar, bool correct_gamma)
     : width(screen_width),
@@ -181,7 +48,17 @@ Camera::Camera(Vec3 lookfrom, Vec3 lookat, Vec3 up, double vfov, int screen_widt
     this->lower_left_corner = origin - half_width * u - half_height * v - w;
     this->horizontal = 2 * half_width * u;
     this->vertical = 2 * half_height * v;
+
+    #ifdef CAMERA_THREADS
+    // Also define the threadpool
+    this->pool = new ThreadPool(500, *this);
+    #endif
 }
+#ifdef CAMERA_THREADS
+Camera::~Camera() {
+    delete this->pool;
+}
+#endif
 
 Ray Camera::get_ray(double u, double v) const {
     return Ray(this->origin, this->lower_left_corner + u * this->horizontal + v * this->vertical - this->origin);
@@ -207,12 +84,12 @@ Vec3 Camera::shoot_ray(const Ray& ray, const RenderObject& world, int depth) con
 
 Image Camera::render(const RenderObject& world) const {
     Image out(this->width, this->height);
+    ProgressBar prgrs(0, this->width * this->height - 1);
 
     auto start = chrono::system_clock::now();
     
     #ifndef CAMERA_THREADS
 
-    ProgressBar prgrs(0, this->width * this->height - 1);
     for (int y = this->height-1; y >= 0; y--) {
         for (int x = 0; x < this->width; x++) {
             // Render the pixel
@@ -226,84 +103,31 @@ Image Camera::render(const RenderObject& world) const {
 
     #else
 
-    // Prepare the structs for the threads
+    // Use the thread pool to render it
     unsigned long batch_index = 0;
-    ThreadData threads[CAMERA_THREADS];
-    for (int i = 0; i < CAMERA_THREADS; i++) {
-        // Start with a batch
-        threads[i].id = i;
-
-        // Check if we should already stop
-        if (batch_index > (this->width - 1) * (this->height - 1)) {
-            threads[i].main_done.store(true);
+    unsigned long to_do = this->width * this->height;
+    cout << "Starting render. Batch_index=" << batch_index << ", to_do=" << to_do << endl;
+    while (batch_index < to_do) {
+        // If a the queue is full, continue
+        if (this->pool->batch_queue_full()) {
+            continue;
         }
 
-        // Create the first batch for this thread
-        threads[i].batch = create_batch(this->width, this->height, batch_index);
-
-        // Init the booleans
-        threads[i].thread_done.store(false);
-        threads[i].main_done.store(false);
-
-        // Init some other variables
-        threads[i].out = &out;
-        threads[i].world = &world;
-        threads[i].camera = this;
-    }
-
-    // Run the threads
-    for (int i = 0; i < CAMERA_THREADS; i++) {
-        // Only create them if they have to
-        if (!threads[i].main_done.load()) {
-            #ifndef WINDOWS
-            pthread_create(&threads[i].tid, NULL, render_thread, (void*) &threads[i]);
-            #else
-            threads[i].thandle = CreateThread(0, 0, render_thread, &threads[i], 0, &threads[i].tid);
-            #endif
-        }
-    }
-
-    // Wait for all of them to reap
-    long all_done = 0;
-    ProgressBar prgs(0, this->height * this->width);
-    while (all_done < this->height * this->width) {
-        // Loop to find a thread that is done
-        for (int i = 0; i < CAMERA_THREADS; i++) {
-            if (!threads[i].main_done.load() && threads[i].thread_done.load()) {
-                // Copy the amount done
-                all_done += threads[i].batch.size.load();
-
-                // Check if we should already stop
-                if (batch_index >= this->width * this->height) {
-                    threads[i].main_done.store(true);
-                    threads[i].thread_done.store(false);
-                    continue;
-                }
-
-                // Create a new batch
-                threads[i].batch = create_batch(this->width, this->height, batch_index);
-
-                // Signal to continue
-                threads[i].thread_done.store(false);
-
-                // cout << "Main: Server thread #" << threads[i].id << endl;
-            }
-        }
+        // Create a new batch and append it
+        PixelBatch batch = this->pool->get_batch(batch_index);
+        batch.world = &world;
+        batch.out = &out;
+        this->pool->add_batch(batch);
 
         // Update the progressbar
         if (this->progress) {
-            prgs.set(all_done);
+            prgrs.set(batch_index);
         }
     }
 
-    // Reap 'em
-    for (int i = 0; i < CAMERA_THREADS; i++) {
-        #ifndef WINDOWS
-        pthread_join(threads[i].tid, NULL);
-        #else
-        WaitForSingleObject(threads[i].thandle, INFINITE);
-        #endif
-    }
+    // Wait until all threads have been reaped
+    this->pool->stop();
+    cout << "Main stopped." << endl;
 
     #endif
 

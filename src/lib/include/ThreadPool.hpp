@@ -4,7 +4,7 @@
  * Created:
  *   1/25/2020, 5:11:12 PM
  * Last edited:
- *   1/25/2020, 6:14:21 PM
+ *   1/26/2020, 6:22:07 PM
  * Auto updated?
  *   Yes
  *
@@ -20,20 +20,27 @@
 
 #include <thread>
 #include <mutex>
+#include <vector>
 #include <condition_variable>
 
 #include "RenderObject.hpp"
 #include "Image.hpp"
 #include "Camera.hpp"
 
+#ifndef CAMERA_THREADS
+#define CAMERA_THREADS 0
+#endif
+
 namespace RayTracer {
+    class Camera;
+
     struct PixelBatch {
         int x1;
         int y1;
         int x2;
         int y2;
 
-        RenderObject* world;
+        const RenderObject* world;
         Image* out;
     };
 
@@ -50,7 +57,7 @@ namespace RayTracer {
             const Camera *cam;
 
             /* The list of thread objects */
-            std::vector<std::thread> pool;
+            std::thread pool[CAMERA_THREADS];
 
             /* Queue for the batches */
             std::vector<PixelBatch> batch_queue;
@@ -60,19 +67,20 @@ namespace RayTracer {
             std::condition_variable batch_cond;
 
             /* Thread worker function */
-            void worker();
+            void worker(int id);
             /* Function for rendering one batch of pixels */
             void render_batch(const PixelBatch& batch) const;
-
-            /* Returns a the indices for a new batch */
-            PixelBatch get_batch(unsigned long& batch_index) const;
         public:
             /* The ThreadPool class is used for multicore rendering. */
             ThreadPool(int batch_size, const Camera& cam, int max_in_queue=5);
             ~ThreadPool();
 
-            /* Render one image */
-            Image render(const RenderObject& world);
+            /* Returns whether the batch queue is full or not. */
+            bool batch_queue_full() const;
+            /* Adds a new batch to the queue, ready for processing. If the queue is full, returns without doing anything. */
+            void add_batch(const PixelBatch& batch);
+            /* Returns a the indices for a new batch */
+            PixelBatch get_batch(unsigned long& batch_index) const;
 
             /* Stops the threadpool and waits until all threads have joined. */
             void stop();

@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:28 PM
  * Last edited:
- *   1/24/2020, 8:20:24 PM
+ *   1/26/2020, 5:45:19 PM
  * Auto updated?
  *   Yes
  *
@@ -22,9 +22,13 @@
 #include "RenderObjectCollection.hpp"
 #include "Vec3.hpp"
 #include "Ray.hpp"
+#ifdef CAMERA_THREADS
+#include "ThreadPool.hpp"
+#endif
 
 namespace RayTracer {
     class RenderWorld;
+    class ThreadPool;
 
     class Camera {
         public:
@@ -39,8 +43,15 @@ namespace RayTracer {
             Vec3 vertical;
             Vec3 origin;
 
+            #ifdef CAMERA_THREADS
+            ThreadPool* pool;
+            #endif
+
             /* The camera class holds information about the viewport of the scene. Note that for now, everything is set, but I suspect that may change later. */
             Camera(Vec3 lookfrom, Vec3 lookat, Vec3 up, double vfov, int screen_width, int screen_height, int rays_per_pixel, bool show_progressbar, bool correct_gamma);
+            #ifdef CAMERA_THREADS
+            ~Camera();
+            #endif
 
             /* Returns a ray through given u and v through the pixel grid */
             Ray get_ray(double u, double v) const;

@@ -4,7 +4,7 @@
  * Created:
  *   1/20/2020, 3:03:07 PM
  * Last edited:
- *   1/25/2020, 1:19:03 PM
+ *   1/26/2020, 5:59:15 PM
  * Auto updated?
  *   Yes
  *
@@ -90,6 +90,12 @@ Image::Image(int width, int height)
     height(height)
 {
     this->data = new double[this->width * this->height * 3];
+}
+Image::Image(const Image& other)
+    : width(other.width),
+    height(other.height)
+{
+    this->data = other.data;
 }
 Image::~Image() {
     delete[] this->data;

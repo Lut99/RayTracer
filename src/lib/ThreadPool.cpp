@@ -4,7 +4,7 @@
  * Created:
  *   1/25/2020, 5:10:34 PM
  * Last edited:
- *   1/25/2020, 6:19:23 PM
+ *   1/26/2020, 6:22:14 PM
  * Auto updated?
  *   Yes
  *
@@ -15,6 +15,8 @@
  *   This particular file is the implementation file for ThreadPool.hpp.
 **/
 
+#include <iostream>
+
 #include "include/ThreadPool.hpp"
 
 using namespace std;
@@ -23,7 +25,9 @@ using namespace RayTracer;
 
 ThreadPool::ThreadPool(int batch_size, const Camera& cam, int max_in_queue)
     : batch_size(batch_size),
-    max_in_queue(max_in_queue)
+    max_in_queue(max_in_queue),
+    width(cam.width),
+    height(cam.height)
 {
     this->cam = &cam;
 
@@ -31,14 +35,14 @@ ThreadPool::ThreadPool(int batch_size, const Camera& cam, int max_in_queue)
 
     // Create the correct amount of threads
     for (int i = 0; i < CAMERA_THREADS; i++) {
-        this->pool.push_back(thread(this->worker));
+        this->pool[i] = thread(&ThreadPool::worker, this, i);
     }
 }
 ThreadPool::~ThreadPool() {
     this->stop();
 }
 
-void ThreadPool::worker() {
+void ThreadPool::worker(int id) {
     // Run while directed to do so
     while (this->working) {
         // Create a scope to indicate the mutex duration
@@ -53,6 +57,7 @@ void ThreadPool::worker() {
             if (this->working) {
                 batch = *this->batch_queue.end();
                 this->batch_queue.pop_back();
+                cout << "Thread #" << id << " received a batch!" << endl;
             }
         }
 
@@ -60,6 +65,7 @@ void ThreadPool::worker() {
         if (this->working) {
             this->render_batch(batch);
         }
+        cout << "Thread #" << id << " completed batch, waiting for new ones" << endl;
     }
 }
 
@@ -91,23 +97,24 @@ PixelBatch ThreadPool::get_batch(unsigned long& batch_index) const {
     return batch;
 }
 
-
-Image ThreadPool::render(const RenderObject& world) {
-    // Keep pumping out batches in queue until we don't need to anymore
-    unsigned long pixels_done = 0;
-    unsigned long batch_index = 0;
-    unsigned long to_do = this->width * this->height;
-    while (pixels_done < to_do) {
-        // If a the queue is full, continue
-        if (this->batch_queue.size() >= this->max_in_queue) {
-            continue;
-        }
-
-        // Create a new batch and append it
-        this->batch_queue
-    }
+bool ThreadPool::batch_queue_full() const {
+    return this->batch_queue.size() == this->max_in_queue;
 }
 
+void ThreadPool::add_batch(const PixelBatch& batch) {
+    // Acquire the lock
+    std::unique_lock<mutex> u_lock(this->batch_lock);
+    if (this->batch_queue.size() >= this->max_in_queue) {
+        return;
+    }
+
+    cout << "Adding new batch to the list" << endl;
+
+    this->batch_queue.push_back(batch);
+
+    // Wake a thread up
+    this->batch_cond.notify_one();
+}
 
 void ThreadPool::stop() {
     // Try to stop the threads

@@ -4,7 +4,7 @@
  * Created:
  *   1/20/2020, 3:01:57 PM
  * Last edited:
- *   1/22/2020, 10:01:55 PM
+ *   1/26/2020, 5:59:16 PM
  * Auto updated?
  *   Yes
  *
@@ -63,6 +63,8 @@ namespace RayTracer {
 
             /* The Image class is meant to be raw image storage. It is not much more than a wrapped 3D-array (that is allocated in 1D) with the added bonus of easy to-file features. */
             Image(int width, int height);
+            /* Copy operator for the Image Class. Does not copy image data itself, just the class values. */
+            Image(const Image& other);
             ~Image();
 
             /* Provides access to a row inside the array. */
