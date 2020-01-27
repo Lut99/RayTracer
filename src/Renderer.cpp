@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/27/2020, 8:40:04 PM
+ *   1/28/2020, 12:50:17 AM
  * Auto updated?
  *   Yes
  *
@@ -81,7 +81,7 @@ int main(int argc, char** argv) {
     try {
         number_of_rays = result["rays"].as<unsigned int>();
     } catch (domain_error& opt) {
-        number_of_rays = 300;
+        number_of_rays = 500;
     } catch (OptionParseException& opt) {
         cerr << "Could not parse number of rays: " << opt.what() << endl;
         exit(-1);
@@ -100,7 +100,7 @@ int main(int argc, char** argv) {
     try {
         batch_size = result["batch_size"].as<unsigned int>();
     } catch (domain_error& opt) {
-        batch_size = 500;
+        batch_size = 1000;
     } catch (OptionParseException& opt) {
         cerr << "Could not parse batch size: " << opt.what() << endl;
         exit(-1);
@@ -122,24 +122,18 @@ int main(int argc, char** argv) {
     } else {
         cout << "no" << endl;
     }
-    cout << "  Showing progressbar? ";
-    if (show_progressbar) {
-        cout << "yes" << endl;
-    } else {
-        cout << "no" << endl;
-    }
 
     cout << endl << "Creating world..." << endl;
     RenderWorld *world = new RenderWorld();
 
     cout << "Appending objects..." << endl;
-    world->add_object(new Sphere(Vec3(0, 0, -1), 0.5, new Lambertian(Vec3(0.8, 0.3, 0.3))));
+    world->add_object(new Sphere(Vec3(0, 0, -1), 0.5, new Lambertian(Vec3(0.1, 0.2, 0.5))));
     world->add_object(new Sphere(Vec3(0, -100.5, -1), 100, new Lambertian(Vec3(0.8, 0.8, 0.0))));
-    world->add_object(new Sphere(Vec3(1, 0, -1), 0.5, new Metal(Vec3(0.6, 0.6, 0.6), 0.3)));
+    world->add_object(new Sphere(Vec3(1, 0, -1), 0.5, new Metal(Vec3(0.8, 0.6, 0.2), 0.0)));
     world->add_object(new Sphere(Vec3(-1, 0, -1), 0.5, new Dielectric(Vec3(1.0, 1.0, 1.0), 1.5)));
 
     cout << "Appending cameras..." << endl;
-    world->add_camera(new Camera(Vec3(0, 0, 0), Vec3(0, 0, -1), Vec3(0, 1, 0), 90, screen_width, screen_height, number_of_rays, correct_gamma));
+    world->add_camera(new Camera(Vec3(-2, 2, 1), Vec3(0, 0, -1), Vec3(0, 1, 0), 45, screen_width, screen_height, number_of_rays, correct_gamma));
 
     // Render one picture
     cout << endl << "Rendering..." << endl;
