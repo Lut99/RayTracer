@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:28 PM
  * Last edited:
- *   1/26/2020, 5:45:19 PM
+ *   1/27/2020, 3:20:37 PM
  * Auto updated?
  *   Yes
  *
@@ -35,7 +35,6 @@ namespace RayTracer {
             const int width;
             const int height;
             const int rays;
-            const bool progress;
             const bool gamma;
 
             Vec3 lower_left_corner;
@@ -43,25 +42,11 @@ namespace RayTracer {
             Vec3 vertical;
             Vec3 origin;
 
-            #ifdef CAMERA_THREADS
-            ThreadPool* pool;
-            #endif
-
             /* The camera class holds information about the viewport of the scene. Note that for now, everything is set, but I suspect that may change later. */
-            Camera(Vec3 lookfrom, Vec3 lookat, Vec3 up, double vfov, int screen_width, int screen_height, int rays_per_pixel, bool show_progressbar, bool correct_gamma);
-            #ifdef CAMERA_THREADS
-            ~Camera();
-            #endif
+            Camera(Vec3 lookfrom, Vec3 lookat, Vec3 up, double vfov, int screen_width, int screen_height, int rays_per_pixel, bool correct_gamma);
 
             /* Returns a ray through given u and v through the pixel grid */
-            Ray get_ray(double u, double v) const;
-            /* Computes the colour of a shot ray. The depth variable makes sure that, in the case of very reflective surfaces, we only do this at max 50 times. */
-            Vec3 shoot_ray(const Ray& ray, const RenderObject& world, int depth=0) const;
-
-            /* Renders a frame from the current camera position */
-            virtual Image render(const RenderObject& world) const;
-            /* Renders one pixel from the scene. */
-            Vec3 render_pixel(int x, int y, const RenderObject& world) const;
+            Ray get_ray(int x, int y) const;
     };
 }
 

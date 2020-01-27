@@ -20,15 +20,15 @@ EXTENSION =exe
 OPTS += -D WINDOWS
 endif
 
-LIBRARIES = $(LIB_DIR)/Ray.o $(LIB_DIR)/Image.o $(LIB_DIR)/Vec3.o $(LIB_DIR)/LodePNG.o $(LIB_DIR)/RenderObject.o $(LIB_DIR)/Sphere.o $(LIB_DIR)/RenderObjectCollection.o $(LIB_DIR)/Random.o $(LIB_DIR)/ProgressBar.o $(LIB_DIR)/Material.o
-SPEC_LIBS = $(LIB_DIR)/Camera.o
-SPEC_LIBS_INCL = Camera.o
+LIBRARIES = $(LIB_DIR)/Ray.o $(LIB_DIR)/Image.o $(LIB_DIR)/Vec3.o $(LIB_DIR)/LodePNG.o $(LIB_DIR)/RenderObject.o $(LIB_DIR)/Sphere.o $(LIB_DIR)/RenderObjectCollection.o $(LIB_DIR)/Random.o $(LIB_DIR)/ProgressBar.o $(LIB_DIR)/Material.o $(LIB_DIR)/Camera.o $(LIB_DIR)/RenderWorld.o
+SPEC_LIBS =
+SPEC_LIBS_INCL =
 
-ifdef THREADS
+ifdef THREADED
 ifdef CUDA
 $(error Cannot run threaded with CUDA)
 endif
-OPTS += -D CAMERA_THREADS=$(THREADS)
+OPTS += -D RENDER_THREADED
 SPEC_LIBS += $(LIB_DIR)/ThreadPool.o
 SPEC_LIBS_INCL += ThreadPool.o
 EXT_LIBS += -lpthread
