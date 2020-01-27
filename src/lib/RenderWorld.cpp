@@ -4,7 +4,7 @@
  * Created:
  *   1/27/2020, 2:30:39 PM
  * Last edited:
- *   1/27/2020, 3:27:54 PM
+ *   1/27/2020, 3:38:08 PM
  * Auto updated?
  *   Yes
  *
@@ -17,6 +17,7 @@
  *   RenderWorld.hpp.
 **/
 
+#include <iostream>
 #include <stdexcept>
 
 #include "include/RenderWorld.hpp"
@@ -127,6 +128,7 @@ Vec3 RenderWorld::bounce_ray(const Ray& ray, int depth) const {
 }
 
 Vec3 RenderWorld::render_pixel(int x, int y, int cam_index) const {
+    cout << "Rendering pixel @ (" << x << "," << y << ")" << endl;
     // Check if the cam_index is within range
     if (cam_index < 0 || cam_index >= this->cameras.size()) {
         throw out_of_range("Camera index " + to_string(cam_index) + " is out of range for World with " + to_string(this->cameras.size()) + " cameras.");
