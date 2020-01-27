@@ -4,7 +4,7 @@
  Created:
    1/25/2020, 1:04:11 PM
  Last edited:
-   1/27/2020, 8:43:50 PM
+   1/27/2020, 8:46:04 PM
  Auto updated?
    Yes
 
@@ -27,4 +27,4 @@ MULTITHREADED_BATCHED (16x,1000):
 MULTITHREADED_BATCHED (12x,1000):
     36.233 seconds
 MULTITHREADED_BATCHED (4x,1000):
-    
+    44.281 seconds
