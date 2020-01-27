@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/27/2020, 3:34:43 PM
+ *   1/27/2020, 8:40:04 PM
  * Auto updated?
  *   Yes
  *
@@ -170,7 +170,6 @@ int main(int argc, char** argv) {
     // Use the thread pool to render it
     unsigned long batch_index = 0;
     unsigned long to_do = screen_width * screen_height;
-    cout << "Starting render. Batch_index=" << batch_index << ", to_do=" << to_do << endl;
     while (batch_index < to_do) {
         // If a the queue is full, continue
         if (pool.batch_queue_full()) {
@@ -190,8 +189,7 @@ int main(int argc, char** argv) {
     }
 
     // Wait until all threads have been reaped
-    pool.stop();
-    cout << "Main stopped." << endl;
+    pool.complete();
 
     #endif
 

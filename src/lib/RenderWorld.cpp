@@ -4,7 +4,7 @@
  * Created:
  *   1/27/2020, 2:30:39 PM
  * Last edited:
- *   1/27/2020, 3:38:08 PM
+ *   1/27/2020, 8:39:56 PM
  * Auto updated?
  *   Yes
  *
@@ -32,10 +32,13 @@ RenderWorld::RenderWorld() {
 RenderWorld::~RenderWorld() {
     // Undeclare everything in the vectors
     for (std::size_t i = 0; i < this->objects.size(); i++) {
-        delete this->objects[i];
+        delete this->objects.at(i);
     }
     for (std::size_t i = 0; i < this->lights.size(); i++) {
-        delete this->lights[i];
+        delete this->lights.at(i);
+    }
+    for (std::size_t i = 0; i < this->cameras.size(); i++) {
+        delete this->cameras.at(i);
     }
 }
 
@@ -74,7 +77,7 @@ RenderObject& RenderWorld::get_object(int obj_index) const {
     }
 
     // Return the object
-    return *this->objects[obj_index];
+    return *this->objects.at(obj_index);
 }
 int& RenderWorld::get_light(int light_index) const {
     // Check if not out of bounds
@@ -83,7 +86,7 @@ int& RenderWorld::get_light(int light_index) const {
     }
 
     // Return the object
-    return *this->lights[light_index];
+    return *this->lights.at(light_index);
 }
 Camera& RenderWorld::get_camera(int cam_index) const {
     // Check if not out of bounds
@@ -92,7 +95,7 @@ Camera& RenderWorld::get_camera(int cam_index) const {
     }
 
     // Return the object
-    return *this->cameras[cam_index];
+    return *this->cameras.at(cam_index);
 }
 
 
@@ -104,7 +107,7 @@ Vec3 RenderWorld::bounce_ray(const Ray& ray, int depth) const {
     double t_best = numeric_limits<double>::max();
     bool hit = false;
     for (std::size_t i = 0; i < this->objects.size(); i++) {
-        if (this->objects[i]->hit(ray, 0.0, t_best, record)) {
+        if (this->objects.at(i)->hit(ray, 0.0, t_best, record)) {
             // Store this hit as the best one
             t_best = record.t;
             hit = true;
@@ -128,13 +131,12 @@ Vec3 RenderWorld::bounce_ray(const Ray& ray, int depth) const {
 }
 
 Vec3 RenderWorld::render_pixel(int x, int y, int cam_index) const {
-    cout << "Rendering pixel @ (" << x << "," << y << ")" << endl;
     // Check if the cam_index is within range
     if (cam_index < 0 || cam_index >= this->cameras.size()) {
         throw out_of_range("Camera index " + to_string(cam_index) + " is out of range for World with " + to_string(this->cameras.size()) + " cameras.");
     }
 
-    Camera* cam = this->cameras[cam_index];
+    Camera* cam = this->cameras.at(cam_index);
     Vec3 col;
     for (int r = 0; r < cam->rays; r++) {
         Ray ray = cam->get_ray(x, y);

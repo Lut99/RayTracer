@@ -4,7 +4,7 @@
  * Created:
  *   1/25/2020, 5:11:12 PM
  * Last edited:
- *   1/27/2020, 3:34:09 PM
+ *   1/27/2020, 8:29:52 PM
  * Auto updated?
  *   Yes
  *
@@ -81,6 +81,8 @@ namespace RayTracer {
 
             /* Stops the threadpool and waits until all threads have joined. */
             void stop();
+            /* Stops the threadpool, but waits until the buffer is empty for it to happen. */
+            void complete();
     };
 }
 

@@ -4,7 +4,7 @@
  * Created:
  *   1/25/2020, 5:10:34 PM
  * Last edited:
- *   1/27/2020, 3:34:21 PM
+ *   1/27/2020, 8:39:49 PM
  * Auto updated?
  *   Yes
  *
@@ -53,9 +53,8 @@ void ThreadPool::worker(int id) {
 
             // Acquire the first batch if and only if we didn't stop because of work
             if (this->working) {
-                batch = *this->batch_queue.end();
+                batch = this->batch_queue.at(this->batch_queue.size() - 1);
                 this->batch_queue.pop_back();
-                cout << "Thread #" << id << " received a batch!" << endl;
             }
         }
 
@@ -63,7 +62,6 @@ void ThreadPool::worker(int id) {
         if (this->working) {
             this->render_batch(batch);
         }
-        cout << "Thread #" << id << " completed batch, waiting for new ones" << endl;
     }
 }
 
@@ -106,8 +104,6 @@ void ThreadPool::add_batch(const PixelBatch& batch) {
         return;
     }
 
-    cout << "Adding new batch to the list" << endl;
-
     this->batch_queue.push_back(batch);
 
     // Wake a thread up
@@ -128,4 +124,15 @@ void ThreadPool::stop() {
             this->pool[i].join();
         }
     }
+}
+void ThreadPool::complete() {
+    while (true) {
+        {
+            unique_lock<mutex> u_lock(this->batch_lock);
+            if (this->batch_queue.empty()) {
+                break;
+            }
+        }
+    }
+    this->stop();
 }
