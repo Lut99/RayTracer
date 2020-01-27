@@ -4,7 +4,7 @@
  * Created:
  *   1/27/2020, 2:30:39 PM
  * Last edited:
- *   1/27/2020, 3:12:09 PM
+ *   1/27/2020, 3:27:54 PM
  * Auto updated?
  *   Yes
  *
@@ -66,7 +66,7 @@ void RenderWorld::add_camera(Camera* cam) {
 
 
 
-RenderObject& RenderWorld::get_object(int obj_index) {
+RenderObject& RenderWorld::get_object(int obj_index) const {
     // Check if not out of bounds
     if (obj_index < 0 || obj_index >= this->objects.size()) {
         throw out_of_range("Object index " + to_string(obj_index) + " is out of range for World with " + to_string(this->objects.size()) + " objects.");
@@ -75,7 +75,7 @@ RenderObject& RenderWorld::get_object(int obj_index) {
     // Return the object
     return *this->objects[obj_index];
 }
-int& RenderWorld::get_light(int light_index) {
+int& RenderWorld::get_light(int light_index) const {
     // Check if not out of bounds
     if (light_index < 0 || light_index >= this->lights.size()) {
         throw out_of_range("Light index " + to_string(light_index) + " is out of range for World with " + to_string(this->lights.size()) + " lights.");
@@ -84,7 +84,7 @@ int& RenderWorld::get_light(int light_index) {
     // Return the object
     return *this->lights[light_index];
 }
-Camera& RenderWorld::get_camera(int cam_index) {
+Camera& RenderWorld::get_camera(int cam_index) const {
     // Check if not out of bounds
     if (cam_index < 0 || cam_index >= this->cameras.size()) {
         throw out_of_range("Camera index " + to_string(cam_index) + " is out of range for World with " + to_string(this->cameras.size()) + " cameras.");
@@ -126,7 +126,7 @@ Vec3 RenderWorld::bounce_ray(const Ray& ray, int depth) const {
     }
 }
 
-Vec3 RenderWorld::render_pixel(int x, int y, int cam_index) {
+Vec3 RenderWorld::render_pixel(int x, int y, int cam_index) const {
     // Check if the cam_index is within range
     if (cam_index < 0 || cam_index >= this->cameras.size()) {
         throw out_of_range("Camera index " + to_string(cam_index) + " is out of range for World with " + to_string(this->cameras.size()) + " cameras.");

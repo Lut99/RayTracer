@@ -4,7 +4,7 @@
  * Created:
  *   1/27/2020, 2:30:56 PM
  * Last edited:
- *   1/27/2020, 3:11:57 PM
+ *   1/27/2020, 3:27:44 PM
  * Auto updated?
  *   Yes
  *
@@ -55,16 +55,16 @@ namespace RayTracer {
             void add_camera(Camera* cam);
 
             /* Returns a reference to an object for modification */
-            RenderObject& get_object(int obj_index);
+            RenderObject& get_object(int obj_index) const;
             /* Returns a reference to a camera object for modification */
-            int& get_light(int light_index);
+            int& get_light(int light_index) const;
             /* Returns a reference to a camera object for modification */
-            Camera& get_camera(int cam_index);
+            Camera& get_camera(int cam_index) const;
 
             /* Computes the colour of a shot ray. The depth variable makes sure that, in the case of very reflective surfaces, we only do this at max 50 times. */
             Vec3 bounce_ray(const Ray& ray, int depth=0) const;
             /* Renders one pixel instead by shooting rays and everything. The optional cam_index can be used to render from another camera if there are multiple given. The index is equal to the order the cameras were added. */
-            Vec3 render_pixel(int x, int y, int cam_index=0);
+            Vec3 render_pixel(int x, int y, int cam_index=0) const;
     };
 }
 

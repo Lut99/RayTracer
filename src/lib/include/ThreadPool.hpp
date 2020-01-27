@@ -4,7 +4,7 @@
  * Created:
  *   1/25/2020, 5:11:12 PM
  * Last edited:
- *   1/26/2020, 6:22:07 PM
+ *   1/27/2020, 3:34:09 PM
  * Auto updated?
  *   Yes
  *
@@ -23,7 +23,7 @@
 #include <vector>
 #include <condition_variable>
 
-#include "RenderObject.hpp"
+#include "RenderWorld.hpp"
 #include "Image.hpp"
 #include "Camera.hpp"
 
@@ -32,15 +32,13 @@
 #endif
 
 namespace RayTracer {
-    class Camera;
-
     struct PixelBatch {
         int x1;
         int y1;
         int x2;
         int y2;
 
-        const RenderObject* world;
+        const RenderWorld* world;
         Image* out;
     };
 
@@ -50,14 +48,13 @@ namespace RayTracer {
             int height;
             
             int max_in_queue;
+            int n_threads;
             int batch_size;
 
             bool working;
 
-            const Camera *cam;
-
             /* The list of thread objects */
-            std::thread pool[CAMERA_THREADS];
+            std::vector<std::thread> pool;
 
             /* Queue for the batches */
             std::vector<PixelBatch> batch_queue;
@@ -72,7 +69,7 @@ namespace RayTracer {
             void render_batch(const PixelBatch& batch) const;
         public:
             /* The ThreadPool class is used for multicore rendering. */
-            ThreadPool(int batch_size, const Camera& cam, int max_in_queue=5);
+            ThreadPool(int num_of_threads, int batch_size, int max_in_queue=5);
             ~ThreadPool();
 
             /* Returns whether the batch queue is full or not. */
@@ -80,7 +77,7 @@ namespace RayTracer {
             /* Adds a new batch to the queue, ready for processing. If the queue is full, returns without doing anything. */
             void add_batch(const PixelBatch& batch);
             /* Returns a the indices for a new batch */
-            PixelBatch get_batch(unsigned long& batch_index) const;
+            PixelBatch get_batch(int width, int height, unsigned long& batch_index) const;
 
             /* Stops the threadpool and waits until all threads have joined. */
             void stop();

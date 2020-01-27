@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/27/2020, 3:22:40 PM
+ *   1/27/2020, 3:34:43 PM
  * Auto updated?
  *   Yes
  *
@@ -24,6 +24,10 @@
 #include "lib/include/Sphere.hpp"
 #include "lib/include/Camera.hpp"
 #include "lib/include/Material.hpp"
+
+#ifdef RENDER_THREADED
+#include "lib/include/ThreadPool.hpp"
+#endif
 
 #include "lib/include/ProgressBar.hpp"
 #include "lib/include/cxxopts.hpp"
@@ -46,8 +50,8 @@ int main(int argc, char** argv) {
         ("p,progressbar", "If given, shows a progressbar to indice the render process")
         ("g,gamma", "If given, corrects the gamme before saving")
         #ifdef RENDER_THREADED
-        ("t,threads", "The number of threads this program runs")
-        ("b,batch_size", "The batch size for the ThreadPool")
+        ("t,threads", "The number of threads this program runs", value<unsigned int>())
+        ("b,batch_size", "The batch size for the ThreadPool", value<unsigned int>())
         #endif
         ;
     
@@ -160,30 +164,33 @@ int main(int argc, char** argv) {
 
     #else
 
+    // Create a thread pool
+    ThreadPool pool(n_threads, batch_size);
+
     // Use the thread pool to render it
     unsigned long batch_index = 0;
-    unsigned long to_do = this->width * this->height;
+    unsigned long to_do = screen_width * screen_height;
     cout << "Starting render. Batch_index=" << batch_index << ", to_do=" << to_do << endl;
     while (batch_index < to_do) {
         // If a the queue is full, continue
-        if (this->pool->batch_queue_full()) {
+        if (pool.batch_queue_full()) {
             continue;
         }
 
         // Create a new batch and append it
-        PixelBatch batch = this->pool->get_batch(batch_index);
-        batch.world = &world;
+        PixelBatch batch = pool.get_batch(screen_width, screen_height, batch_index);
+        batch.world = world;
         batch.out = &out;
-        this->pool->add_batch(batch);
+        pool.add_batch(batch);
 
         // Update the progressbar
-        if (this->progress) {
+        if (show_progressbar) {
             prgrs.set(batch_index);
         }
     }
 
     // Wait until all threads have been reaped
-    this->pool->stop();
+    pool.stop();
     cout << "Main stopped." << endl;
 
     #endif

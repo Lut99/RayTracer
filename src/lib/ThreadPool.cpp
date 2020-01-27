@@ -4,7 +4,7 @@
  * Created:
  *   1/25/2020, 5:10:34 PM
  * Last edited:
- *   1/26/2020, 6:22:14 PM
+ *   1/27/2020, 3:34:21 PM
  * Auto updated?
  *   Yes
  *
@@ -23,18 +23,16 @@ using namespace std;
 using namespace RayTracer;
 
 
-ThreadPool::ThreadPool(int batch_size, const Camera& cam, int max_in_queue)
-    : batch_size(batch_size),
-    max_in_queue(max_in_queue),
-    width(cam.width),
-    height(cam.height)
+ThreadPool::ThreadPool(int num_of_threads, int batch_size, int max_in_queue)
+    : n_threads(num_of_threads),
+    batch_size(batch_size),
+    max_in_queue(max_in_queue)
 {
-    this->cam = &cam;
-
     this->working = true;
 
     // Create the correct amount of threads
-    for (int i = 0; i < CAMERA_THREADS; i++) {
+    this->pool.resize(this->n_threads);
+    for (int i = 0; i < this->n_threads; i++) {
         this->pool[i] = thread(&ThreadPool::worker, this, i);
     }
 }
@@ -72,25 +70,25 @@ void ThreadPool::worker(int id) {
 void ThreadPool::render_batch(const PixelBatch& batch) const {
     for (int y = batch.y2; y >= batch.y1; y--) {
         for (int x = batch.x1; x <= batch.x2; x++) {
-            batch.out[0][y][x] = cam->render_pixel(x, y, *batch.world);
+            batch.out->operator[](y)[x] = batch.world->render_pixel(x, y);
         }
     }
 }
 
-PixelBatch ThreadPool::get_batch(unsigned long& batch_index) const {
+PixelBatch ThreadPool::get_batch(int width, int height, unsigned long& batch_index) const {
     PixelBatch batch;
 
-    batch.x1 = batch_index % this->width;
-    batch.y1 = batch_index / this->width;
+    batch.x1 = batch_index % width;
+    batch.y1 = batch_index / width;
 
     batch_index += this->batch_size - 1;
     // Bind batch_index to a maximum of (w - 1) * (h - 1)
-    if (batch_index > this->width * this->height) {
-        batch_index = this->width *  this->height - 1;
+    if (batch_index > width * height) {
+        batch_index = width *  height - 1;
     }
 
-    batch.x2 = batch_index % this->width;
-    batch.y2 = batch_index / this->width;
+    batch.x2 = batch_index % width;
+    batch.y2 = batch_index / width;
 
     batch_index++;
 
@@ -125,7 +123,7 @@ void ThreadPool::stop() {
 
     this->batch_cond.notify_all();
     
-    for (int i = 0; i < CAMERA_THREADS; i++) {
+    for (int i = 0; i < this->n_threads; i++) {
         if (this->pool[i].joinable()) {
             this->pool[i].join();
         }

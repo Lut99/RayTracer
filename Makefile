@@ -29,8 +29,7 @@ ifdef CUDA
 $(error Cannot run threaded with CUDA)
 endif
 OPTS += -D RENDER_THREADED
-SPEC_LIBS += $(LIB_DIR)/ThreadPool.o
-SPEC_LIBS_INCL += ThreadPool.o
+LIBRARIES += $(LIB_DIR)/ThreadPool.o
 EXT_LIBS += -lpthread
 endif
 
@@ -43,11 +42,6 @@ endif
 ifdef DEBUG
 OPTS += -g
 endif
-
-Camera.o: $(SRC_DIR)/lib/Camera.cpp
-	$(CC) $(ARGS) $(OPTS) -o ${LIB_DIR}/Camera.o -c $(SRC_DIR)/lib/Camera.cpp
-ThreadPool.o: $(SRC_DIR)/lib/ThreadPool.cpp
-	$(CC) $(ARGS) $(OPTS) -o ${LIB_DIR}/ThreadPool.o -c $(SRC_DIR)/lib/ThreadPool.cpp
 
 $(LIB_DIR)/%.o: $(SRC_DIR)/lib/%.cpp
 	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
