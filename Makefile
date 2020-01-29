@@ -20,7 +20,7 @@ EXTENSION =exe
 OPTS += -D WINDOWS
 endif
 
-LIBRARIES = $(LIB_DIR)/Ray.o $(LIB_DIR)/Image.o $(LIB_DIR)/Vec3.o $(LIB_DIR)/LodePNG.o $(LIB_DIR)/RenderObject.o $(LIB_DIR)/objects/Sphere.o $(LIB_DIR)/RenderObjectCollection.o $(LIB_DIR)/Random.o $(LIB_DIR)/ProgressBar.o $(LIB_DIR)/Material.o $(LIB_DIR)/materials/Lambertian.o $(LIB_DIR)/materials/Metal.o $(LIB_DIR)/materials/Dielectric.o $(LIB_DIR)/Camera.o $(LIB_DIR)/RenderWorld.o 
+LIBRARIES = $(LIB_DIR)/Ray.o $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o $(LIB_DIR)/RenderObject.a $(LIB_DIR)/Random.o $(LIB_DIR)/ProgressBar.o $(LIB_DIR)/Camera.o $(LIB_DIR)/RenderWorld.o $(LIB_DIR)/Materials.a
 SPEC_LIBS =
 SPEC_LIBS_INCL =
 
@@ -43,6 +43,8 @@ ifdef DEBUG
 OPTS += -g
 endif
 
+
+# GENERAL OBJECT COMPILE RULES #
 $(LIB_DIR)/%.o: $(SRC_DIR)/lib/%.cpp
 	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
 $(LIB_DIR)/objects/%.o: $(SRC_DIR)/lib/objects/%.cpp
@@ -50,6 +52,22 @@ $(LIB_DIR)/objects/%.o: $(SRC_DIR)/lib/objects/%.cpp
 $(LIB_DIR)/materials/%.o: $(SRC_DIR)/lib/materials/%.cpp
 	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
 
+
+# ARCHIVE RULES #
+$(LIB_DIR)/Image.a: $(LIB_DIR)/Image.o $(LIB_DIR)/LodePNG.o
+	ar rvs $(LIB_DIR)/Image.a $(LIB_DIR)/Image.o $(LIB_DIR)/LodePNG.o
+$(LIB_DIR)/RenderObject.a: $(LIB_DIR)/RenderObject.o $(LIB_DIR)/objects/Sphere.o $(LIB_DIR)/objects/RenderObjectCollection.o 
+	ar rvs $(LIB_DIR)/RenderObject.a $(LIB_DIR)/RenderObject.o $(LIB_DIR)/objects/Sphere.o $(LIB_DIR)/objects/RenderObjectCollection.o
+$(LIB_DIR)/Materials.a: $(LIB_DIR)/Material.o $(LIB_DIR)/materials/Lambertian.o $(LIB_DIR)/materials/Metal.o $(LIB_DIR)/materials/Dielectric.o
+	ar rvs $(LIB_DIR)/Materials.a $(LIB_DIR)/Material.o $(LIB_DIR)/materials/Lambertian.o $(LIB_DIR)/materials/Metal.o $(LIB_DIR)/materials/Dielectric.o
+
+
+# MAIN COMPILATION #
+renderer: $(LIBRARIES) $(SPEC_LIBS_INCL)
+	$(CC) $(ARGS) $(OPTS) -o $(BIN_DIR)/renderer.$(EXTENSION) $(SRC_DIR)/Renderer.cpp $(LIBRARIES) $(SPEC_LIBS) $(EXT_LIBS)
+
+
+# TEST COMPILE RULES #
 test_image: $(LIB_DIR)/Image.o $(LIB_DIR)/LodePNG.o
 	$(CC) $(ARGS) -o tests/bin/test_image.$(EXTENSION) tests/src/test_image.cpp $(LIB_DIR)/Image.o $(LIB_DIR)/LodePNG.o
 
@@ -59,9 +77,9 @@ test_progressbar: $(LIB_DIR)/ProgressBar.o
 test_json: $(LIB_DIR)/Vec3.o
 	$(CC) $(ARGS) -o tests/bin/test_json.$(EXTENSION) tests/src/test_json.cpp $(LIB_DIR)/Vec3.o
 
-renderer: $(LIBRARIES) $(SPEC_LIBS_INCL)
-	$(CC) $(ARGS) $(OPTS) -o $(BIN_DIR)/renderer.$(EXTENSION) $(SRC_DIR)/Renderer.cpp $(LIBRARIES) $(SPEC_LIBS) $(EXT_LIBS)
-
 clean:
 	rm -f $(BIN_DIR)/*.out
 	rm -f $(LIB_DIR)/*.o
+	rm -f $(LIB_DIR)/materials/*.o
+	rm -f $(LIB_DIR)/objects/*.o
+	rm -f $(LIB_DIR)/*.a
