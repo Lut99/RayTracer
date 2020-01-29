@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:20:02 PM
  * Last edited:
- *   1/22/2020, 4:19:07 PM
+ *   1/29/2020, 11:44:57 AM
  * Auto updated?
  *   Yes
  *
@@ -31,5 +31,13 @@ RayTracer::Vec3 RayTracer::random_in_unit_sphere() {
     do {
         p = 2.0 * Vec3(random_double(), random_double(), random_double()) - 1.0;
     } while (p.squared_length() >= 1.0);
+    return p;
+}
+
+RayTracer::Vec3 RayTracer::random_in_unit_disc() {
+    Vec3 p;
+    do {
+        p = 2.0 * Vec3(random_double(), random_double(), 0) - Vec3(1, 1, 0);
+    } while (dot(p, p) >= 1.0);
     return p;
 }

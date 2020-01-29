@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/29/2020, 11:32:35 AM
+ *   1/29/2020, 11:49:03 AM
  * Auto updated?
  *   Yes
  *
@@ -40,6 +40,10 @@ int main(int argc, char** argv) {
     std::string filename;
     unsigned int screen_width, screen_height, number_of_rays, n_threads, batch_size;
     bool show_progressbar, correct_gamma;
+    Vec3 lookfrom(3, 3, 2);
+    Vec3 lookat(0, 0, -1);
+    double dist_to_focus = (lookfrom - lookat).length();
+    double aperture = 2.0;
 
     Options arguments("RayTracer", "Renders images using a custom-written RayTracer.");
     arguments.add_options()
@@ -133,7 +137,7 @@ int main(int argc, char** argv) {
     world->add_object(new Sphere(Vec3(-1, 0, -1), 0.5, new Dielectric(Vec3(1.0, 1.0, 1.0), 1.5)));
 
     cout << "Appending cameras..." << endl;
-    world->add_camera(new Camera(Vec3(-2, 2, 1), Vec3(0, 0, -1), Vec3(0, 1, 0), 45, screen_width, screen_height, number_of_rays, correct_gamma));
+    world->add_camera(new Camera(lookfrom, lookat, Vec3(0, 1, 0), 45, aperture, dist_to_focus, screen_width, screen_height, number_of_rays, correct_gamma));
 
     // Render one picture
     cout << endl << "Rendering..." << endl;

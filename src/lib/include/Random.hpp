@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:20:21 PM
  * Last edited:
- *   1/22/2020, 4:19:56 PM
+ *   1/29/2020, 11:44:18 AM
  * Auto updated?
  *   Yes
  *
@@ -24,6 +24,8 @@ namespace RayTracer {
     double random_double();
     /* Generates a vector randomly in the unit sphere. Uses a rather ugly method that has undertermined runtime. */
     Vec3 random_in_unit_sphere();
+    /* Generates a vector randomly in the unit disc. Basically random_in_unit_sphere() except in 2D. */
+    Vec3 random_in_unit_disc();
 }
 
 #endif
