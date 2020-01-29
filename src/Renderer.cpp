@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/29/2020, 11:54:31 AM
+ *   1/29/2020, 11:55:54 AM
  * Auto updated?
  *   Yes
  *
@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
         ("H,height", "The height (in pixels) of the output image", value<unsigned int>())
         ("r,rays", "The number of rays shot per pixel", value<unsigned int>())
         ("p,progressbar", "If given, shows a progressbar to indice the render process")
-        ("g,gamma", "If given, corrects the gamme before saving")
+        ("g,gamma", "If given, corrects the gamma before saving")
         ("a,aperture", "Determines the aperture of the camera. Determines the amount of blur.", value<double>())
         #ifdef RENDER_THREADED
         ("t,threads", "The number of threads this program runs", value<unsigned int>())
