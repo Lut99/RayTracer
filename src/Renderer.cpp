@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/29/2020, 11:55:54 AM
+ *   1/29/2020, 12:03:25 PM
  * Auto updated?
  *   Yes
  *
@@ -38,7 +38,7 @@ using namespace cxxopts;
 
 int main(int argc, char** argv) {
     std::string filename;
-    unsigned int screen_width, screen_height, number_of_rays, n_threads, batch_size;
+    unsigned int screen_width, screen_height, number_of_rays, n_threads, batch_size, vfov;
     bool show_progressbar, correct_gamma;
     double aperture;
     Vec3 lookfrom(3, 3, 2);
@@ -53,6 +53,7 @@ int main(int argc, char** argv) {
         ("r,rays", "The number of rays shot per pixel", value<unsigned int>())
         ("p,progressbar", "If given, shows a progressbar to indice the render process")
         ("g,gamma", "If given, corrects the gamma before saving")
+        ("v,vfov", "Specifies the field of view for the camera.", value<unsigned int>())
         ("a,aperture", "Determines the aperture of the camera. Determines the amount of blur.", value<double>())
         #ifdef RENDER_THREADED
         ("t,threads", "The number of threads this program runs", value<unsigned int>())
@@ -89,6 +90,14 @@ int main(int argc, char** argv) {
         number_of_rays = 500;
     } catch (OptionParseException& opt) {
         cerr << "Could not parse number of rays: " << opt.what() << endl;
+        exit(-1);
+    }
+    try {
+        vfov = result["vfov"].as<unsigned int>();
+    } catch (domain_error& opt) {
+        vfov = 45;
+    } catch (OptionParseException& opt) {
+        cerr << "Could not parse field of view: " << opt.what() << endl;
         exit(-1);
     }
     try {
@@ -129,6 +138,8 @@ int main(int argc, char** argv) {
     cout << "  Number of threads  : " << n_threads << endl;
     cout << "  Batch size         : " << batch_size << endl;
     #endif
+    cout << "  Field of view      : " << vfov << endl;
+    cout << "  Aperture           : " << aperture << endl;
     cout << "  Correct for gamma  ? ";
     if (correct_gamma) {
         cout << "yes" << endl;
@@ -146,7 +157,7 @@ int main(int argc, char** argv) {
     world->add_object(new Sphere(Vec3(-1, 0, -1), 0.5, new Dielectric(Vec3(1.0, 1.0, 1.0), 1.5)));
 
     cout << "Appending cameras..." << endl;
-    world->add_camera(new Camera(lookfrom, lookat, Vec3(0, 1, 0), 45, aperture, dist_to_focus, screen_width, screen_height, number_of_rays, correct_gamma));
+    world->add_camera(new Camera(lookfrom, lookat, Vec3(0, 1, 0), vfov, aperture, dist_to_focus, screen_width, screen_height, number_of_rays, correct_gamma));
 
     // Render one picture
     cout << endl << "Rendering..." << endl;
