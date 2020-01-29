@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/29/2020, 11:49:03 AM
+ *   1/29/2020, 11:54:31 AM
  * Auto updated?
  *   Yes
  *
@@ -40,10 +40,10 @@ int main(int argc, char** argv) {
     std::string filename;
     unsigned int screen_width, screen_height, number_of_rays, n_threads, batch_size;
     bool show_progressbar, correct_gamma;
+    double aperture;
     Vec3 lookfrom(3, 3, 2);
     Vec3 lookat(0, 0, -1);
     double dist_to_focus = (lookfrom - lookat).length();
-    double aperture = 2.0;
 
     Options arguments("RayTracer", "Renders images using a custom-written RayTracer.");
     arguments.add_options()
@@ -53,6 +53,7 @@ int main(int argc, char** argv) {
         ("r,rays", "The number of rays shot per pixel", value<unsigned int>())
         ("p,progressbar", "If given, shows a progressbar to indice the render process")
         ("g,gamma", "If given, corrects the gamme before saving")
+        ("a,aperture", "Determines the aperture of the camera. Determines the amount of blur.", value<double>())
         #ifdef RENDER_THREADED
         ("t,threads", "The number of threads this program runs", value<unsigned int>())
         ("b,batch_size", "The batch size for the ThreadPool", value<unsigned int>())
@@ -88,6 +89,14 @@ int main(int argc, char** argv) {
         number_of_rays = 500;
     } catch (OptionParseException& opt) {
         cerr << "Could not parse number of rays: " << opt.what() << endl;
+        exit(-1);
+    }
+    try {
+        aperture = result["aperture"].as<double>();
+    } catch (domain_error& opt) {
+        aperture = 1.0;
+    } catch (OptionParseException& opt) {
+        cerr << "Could not parse aperture: " << opt.what() << endl;
         exit(-1);
     }
     show_progressbar = result.count("progressbar") != 0;
