@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/29/2020, 12:03:25 PM
+ *   1/29/2020, 12:04:14 PM
  * Auto updated?
  *   Yes
  *
@@ -103,7 +103,7 @@ int main(int argc, char** argv) {
     try {
         aperture = result["aperture"].as<double>();
     } catch (domain_error& opt) {
-        aperture = 1.0;
+        aperture = 0.5;
     } catch (OptionParseException& opt) {
         cerr << "Could not parse aperture: " << opt.what() << endl;
         exit(-1);
