@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/28/2020, 12:50:17 AM
+ *   1/29/2020, 11:32:35 AM
  * Auto updated?
  *   Yes
  *
@@ -60,7 +60,7 @@ int main(int argc, char** argv) {
     if (result.count("filename")) {
         filename = result["filename"].as<string>();
     } else {
-        filename = "test.png";
+        filename = "output/out1.png";
     }
     try {
         screen_width = result["width"].as<unsigned int>();
