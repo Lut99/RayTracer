@@ -4,7 +4,7 @@
  * Created:
  *   1/25/2020, 5:10:34 PM
  * Last edited:
- *   1/27/2020, 8:39:49 PM
+ *   1/29/2020, 4:12:32 PM
  * Auto updated?
  *   Yes
  *
@@ -68,7 +68,7 @@ void ThreadPool::worker(int id) {
 void ThreadPool::render_batch(const PixelBatch& batch) const {
     for (int y = batch.y2; y >= batch.y1; y--) {
         for (int x = batch.x1; x <= batch.x2; x++) {
-            batch.out->operator[](y)[x] = batch.world->render_pixel(x, y);
+            batch.out->operator[](y)[x] = batch.world->render_pixel(x, y, *batch.camera);
         }
     }
 }
@@ -108,6 +108,14 @@ void ThreadPool::add_batch(const PixelBatch& batch) {
 
     // Wake a thread up
     this->batch_cond.notify_one();
+}
+void ThreadPool::add_batch(int width, int height, const Camera& cam, const RenderWorld& world, Image& out, unsigned long& batch_index) {
+    PixelBatch batch = this->get_batch(width, height, batch_index);
+    batch.camera = &cam;
+    batch.world = &world;
+    batch.out = &out;
+
+    this->add_batch(batch);
 }
 
 void ThreadPool::stop() {

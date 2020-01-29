@@ -4,7 +4,7 @@
  * Created:
  *   1/27/2020, 2:30:39 PM
  * Last edited:
- *   1/28/2020, 12:44:12 AM
+ *   1/29/2020, 4:06:51 PM
  * Auto updated?
  *   Yes
  *
@@ -37,9 +37,6 @@ RenderWorld::~RenderWorld() {
     for (std::size_t i = 0; i < this->lights.size(); i++) {
         delete this->lights.at(i);
     }
-    for (std::size_t i = 0; i < this->cameras.size(); i++) {
-        delete this->cameras.at(i);
-    }
 }
 
 
@@ -60,15 +57,6 @@ void RenderWorld::add_light(int* light) {
     
 }
 
-void RenderWorld::add_camera(Camera cam) {
-    this->cameras.push_back(new Camera(cam));
-}
-
-void RenderWorld::add_camera(Camera* cam) {
-    this->cameras.push_back(cam);
-}
-
-
 
 RenderObject& RenderWorld::get_object(int obj_index) const {
     // Check if not out of bounds
@@ -87,15 +75,6 @@ int& RenderWorld::get_light(int light_index) const {
 
     // Return the object
     return *this->lights.at(light_index);
-}
-Camera& RenderWorld::get_camera(int cam_index) const {
-    // Check if not out of bounds
-    if (cam_index < 0 || cam_index >= this->cameras.size()) {
-        throw out_of_range("Camera index " + to_string(cam_index) + " is out of range for World with " + to_string(this->cameras.size()) + " cameras.");
-    }
-
-    // Return the object
-    return *this->cameras.at(cam_index);
 }
 
 
@@ -130,24 +109,18 @@ Vec3 RenderWorld::bounce_ray(const Ray& ray, int depth) const {
     }
 }
 
-Vec3 RenderWorld::render_pixel(int x, int y, int cam_index) const {
-    // Check if the cam_index is within range
-    if (cam_index < 0 || cam_index >= this->cameras.size()) {
-        throw out_of_range("Camera index " + to_string(cam_index) + " is out of range for World with " + to_string(this->cameras.size()) + " cameras.");
-    }
-
-    Camera* cam = this->cameras.at(cam_index);
+Vec3 RenderWorld::render_pixel(int x, int y, const Camera& cam) const {
     Vec3 col;
-    for (int r = 0; r < cam->rays; r++) {
-        Ray ray = cam->get_ray(x, y);
+    for (int r = 0; r < cam.rays; r++) {
+        Ray ray = cam.get_ray(x, y);
 
         // Get the colour
         col += this->bounce_ray(ray);
     }
 
     // Compute the colour average
-    Vec3 avg_col = col / cam->rays;
-    if (cam->gamma) {
+    Vec3 avg_col = col / cam.rays;
+    if (cam.gamma) {
         // Gamma-correct the avg_colour
         return Vec3(sqrt(avg_col.x), sqrt(avg_col.y), sqrt(avg_col.z));
     } else {

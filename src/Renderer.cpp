@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/29/2020, 12:04:14 PM
+ *   1/29/2020, 4:13:20 PM
  * Auto updated?
  *   Yes
  *
@@ -148,16 +148,16 @@ int main(int argc, char** argv) {
     }
 
     cout << endl << "Creating world..." << endl;
-    RenderWorld *world = new RenderWorld();
+    RenderWorld world;
 
     cout << "Appending objects..." << endl;
-    world->add_object(new Sphere(Vec3(0, 0, -1), 0.5, new Lambertian(Vec3(0.1, 0.2, 0.5))));
-    world->add_object(new Sphere(Vec3(0, -100.5, -1), 100, new Lambertian(Vec3(0.8, 0.8, 0.0))));
-    world->add_object(new Sphere(Vec3(1, 0, -1), 0.5, new Metal(Vec3(0.8, 0.6, 0.2), 0.0)));
-    world->add_object(new Sphere(Vec3(-1, 0, -1), 0.5, new Dielectric(Vec3(1.0, 1.0, 1.0), 1.5)));
+    world.add_object(new Sphere(Vec3(0, 0, -1), 0.5, new Lambertian(Vec3(0.1, 0.2, 0.5))));
+    world.add_object(new Sphere(Vec3(0, -100.5, -1), 100, new Lambertian(Vec3(0.8, 0.8, 0.0))));
+    world.add_object(new Sphere(Vec3(1, 0, -1), 0.5, new Metal(Vec3(0.8, 0.6, 0.2), 0.0)));
+    world.add_object(new Sphere(Vec3(-1, 0, -1), 0.5, new Dielectric(Vec3(1.0, 1.0, 1.0), 1.5)));
 
-    cout << "Appending cameras..." << endl;
-    world->add_camera(new Camera(lookfrom, lookat, Vec3(0, 1, 0), vfov, aperture, dist_to_focus, screen_width, screen_height, number_of_rays, correct_gamma));
+    cout << "Creating camera..." << endl;
+    Camera cam(lookfrom, lookat, Vec3(0, 1, 0), vfov, aperture, dist_to_focus, screen_width, screen_height, number_of_rays, correct_gamma);
 
     // Render one picture
     cout << endl << "Rendering..." << endl;
@@ -172,7 +172,7 @@ int main(int argc, char** argv) {
     for (int y = screen_height-1; y >= 0; y--) {
         for (int x = 0; x < screen_width; x++) {
             // Render the pixel
-            out[y][x] = world->render_pixel(x, y);
+            out[y][x] = world.render_pixel(x, y, cam);
 
             if (show_progressbar) {
                 prgrs.update();
@@ -196,7 +196,8 @@ int main(int argc, char** argv) {
 
         // Create a new batch and append it
         PixelBatch batch = pool.get_batch(screen_width, screen_height, batch_index);
-        batch.world = world;
+        batch.camera = &cam;
+        batch.world = &world;
         batch.out = &out;
         pool.add_batch(batch);
 
@@ -220,9 +221,6 @@ int main(int argc, char** argv) {
     // Write the image
     cout << "Writing output..." << endl;
     out.to_png(filename);
-
-    // CLEANUP: Deallocate the world
-    delete world;
 
     cout << endl <<  "Done." << endl << endl;
 }

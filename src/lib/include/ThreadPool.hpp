@@ -4,7 +4,7 @@
  * Created:
  *   1/25/2020, 5:11:12 PM
  * Last edited:
- *   1/27/2020, 8:29:52 PM
+ *   1/29/2020, 4:12:02 PM
  * Auto updated?
  *   Yes
  *
@@ -38,6 +38,7 @@ namespace RayTracer {
         int x2;
         int y2;
 
+        const Camera* camera;
         const RenderWorld* world;
         Image* out;
     };
@@ -76,6 +77,8 @@ namespace RayTracer {
             bool batch_queue_full() const;
             /* Adds a new batch to the queue, ready for processing. If the queue is full, returns without doing anything. */
             void add_batch(const PixelBatch& batch);
+            /* Adds a new batch to the queue. Instead of supplying the batch, it is created and then populated using the given values. */
+            void add_batch(int width, int height, const Camera& cam, const RenderWorld& world, Image& out, unsigned long& batch_index);
             /* Returns a the indices for a new batch */
             PixelBatch get_batch(int width, int height, unsigned long& batch_index) const;
 

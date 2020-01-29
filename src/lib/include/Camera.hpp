@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:28 PM
  * Last edited:
- *   1/29/2020, 11:47:30 AM
+ *   1/29/2020, 4:09:08 PM
  * Auto updated?
  *   Yes
  *
@@ -22,9 +22,6 @@
 #include "RenderObjectCollection.hpp"
 #include "Vec3.hpp"
 #include "Ray.hpp"
-#ifdef CAMERA_THREADS
-#include "ThreadPool.hpp"
-#endif
 
 namespace RayTracer {
     class RenderWorld;
