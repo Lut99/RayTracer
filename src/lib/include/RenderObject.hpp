@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:39:23 PM
  * Last edited:
- *   1/22/2020, 3:08:47 PM
+ *   1/29/2020, 7:20:02 PM
  * Auto updated?
  *   Yes
  *
@@ -18,14 +18,21 @@
 #ifndef SHAPE_HPP
 #define SHAPE_HPP
 
+#include <string>
+
 #include "Vec3.hpp"
 #include "Ray.hpp"
 #include "HitRecord.hpp"
+#include "Material.hpp"
 
 namespace RayTracer {
     enum RenderObjectType {
         sphere,
         render_object_collection
+    };
+    static std::string RenderObjectTypeNames[] {
+        "sphere",
+        "render_object_collection"
     };
 
     class RenderObject {
@@ -33,7 +40,7 @@ namespace RayTracer {
             const RenderObjectType type;
             Vec3 center;
 
-            /* The Shape class is virtual, and should not be used by yourself. Only derived classes should call this function. */
+            /* The RenderObject class is virtual, and should not be used by yourself. Only derived classes should call this function. */
             RenderObject(const Vec3& center, const RenderObjectType type);
 
             /* Virtual for the derived classes to determine whether they have been hit by a ray or not. */

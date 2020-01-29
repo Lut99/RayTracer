@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 12:12:44 PM
  * Last edited:
- *   1/25/2020, 4:24:31 PM
+ *   1/29/2020, 7:04:13 PM
  * Auto updated?
  *   Yes
  *
@@ -135,6 +135,9 @@ Vec3 Vec3::normalize() const {
         this->z / l
     );
 }
+
+
+
 
 
 Vec3 RayTracer::operator+(const Vec3& v1, const Vec3& v2) {

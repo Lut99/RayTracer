@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:38:50 PM
  * Last edited:
- *   1/22/2020, 2:55:15 PM
+ *   1/29/2020, 7:03:55 PM
  * Auto updated?
  *   Yes
  *
@@ -23,7 +23,7 @@ using namespace std;
 using namespace RayTracer;
 
 RenderObject::RenderObject(const Vec3& center, const RenderObjectType type)
-    :type(type)
+    : type(type)
 {
     this->center = center;
 }
