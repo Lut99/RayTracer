@@ -20,7 +20,7 @@ EXTENSION =exe
 OPTS += -D WINDOWS
 endif
 
-LIBRARIES = $(LIB_DIR)/Ray.o $(LIB_DIR)/Image.o $(LIB_DIR)/Vec3.o $(LIB_DIR)/LodePNG.o $(LIB_DIR)/RenderObject.o $(LIB_DIR)/Sphere.o $(LIB_DIR)/RenderObjectCollection.o $(LIB_DIR)/Random.o $(LIB_DIR)/ProgressBar.o $(LIB_DIR)/Material.o $(LIB_DIR)/Camera.o $(LIB_DIR)/RenderWorld.o
+LIBRARIES = $(LIB_DIR)/Ray.o $(LIB_DIR)/Image.o $(LIB_DIR)/Vec3.o $(LIB_DIR)/LodePNG.o $(LIB_DIR)/RenderObject.o $(LIB_DIR)/objects/Sphere.o $(LIB_DIR)/RenderObjectCollection.o $(LIB_DIR)/Random.o $(LIB_DIR)/ProgressBar.o $(LIB_DIR)/Material.o $(LIB_DIR)/materials/Lambertian.o $(LIB_DIR)/materials/Metal.o $(LIB_DIR)/materials/Dielectric.o $(LIB_DIR)/Camera.o $(LIB_DIR)/RenderWorld.o 
 SPEC_LIBS =
 SPEC_LIBS_INCL =
 
@@ -45,12 +45,19 @@ endif
 
 $(LIB_DIR)/%.o: $(SRC_DIR)/lib/%.cpp
 	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
+$(LIB_DIR)/objects/%.o: $(SRC_DIR)/lib/objects/%.cpp
+	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
+$(LIB_DIR)/materials/%.o: $(SRC_DIR)/lib/materials/%.cpp
+	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
 
 test_image: $(LIB_DIR)/Image.o $(LIB_DIR)/LodePNG.o
 	$(CC) $(ARGS) -o tests/bin/test_image.$(EXTENSION) tests/src/test_image.cpp $(LIB_DIR)/Image.o $(LIB_DIR)/LodePNG.o
 
 test_progressbar: $(LIB_DIR)/ProgressBar.o
 	$(CC) $(ARGS) -o tests/bin/test_progressbar.$(EXTENSION) tests/src/test_progressbar.cpp $(LIB_DIR)/ProgressBar.o
+
+test_json: $(LIB_DIR)/Vec3.o
+	$(CC) $(ARGS) -o tests/bin/test_json.$(EXTENSION) tests/src/test_json.cpp $(LIB_DIR)/Vec3.o
 
 renderer: $(LIBRARIES) $(SPEC_LIBS_INCL)
 	$(CC) $(ARGS) $(OPTS) -o $(BIN_DIR)/renderer.$(EXTENSION) $(SRC_DIR)/Renderer.cpp $(LIBRARIES) $(SPEC_LIBS) $(EXT_LIBS)

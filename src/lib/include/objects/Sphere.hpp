@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:37:11 PM
  * Last edited:
- *   1/22/2020, 11:14:55 PM
+ *   1/29/2020, 7:05:24 PM
  * Auto updated?
  *   Yes
  *
@@ -18,14 +18,14 @@
 #ifndef SPHERE_HPP
 #define SPHERE_HPP
 
-#include "RenderObject.hpp"
-#include "Material.hpp"
+#include "../RenderObject.hpp"
+#include "../Material.hpp"
 
 namespace RayTracer {
     class Sphere: public RenderObject {
         public:
-            Material* material;
             double radius;
+            Material* material;
 
             /* The Sphere class computes how a ray interacts with a Sphere object. The Sphere is defined by an origin (vector) and a radius. */
             Sphere(const Vec3& origin, double radius, Material* material);

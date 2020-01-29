@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:36:39 PM
  * Last edited:
- *   1/23/2020, 8:48:23 AM
+ *   1/29/2020, 7:20:27 PM
  * Auto updated?
  *   Yes
  *
@@ -19,16 +19,16 @@
 #include <math.h>
 #include <stdexcept>
 
-#include "include/Sphere.hpp"
+#include "../include/objects/Sphere.hpp"
 
 using namespace std;
 using namespace RayTracer;
 
 Sphere::Sphere(const Vec3& origin, double radius, Material* material)
-    : RenderObject(origin, sphere),
-    material(material)
+    : RenderObject(origin, sphere)
 {
     this->radius = radius;
+    this->material = material;
 }
 Sphere::~Sphere() {
     delete this->material;
