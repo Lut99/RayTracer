@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 10:19:23 PM
  * Last edited:
- *   1/23/2020, 2:47:05 PM
+ *   1/29/2020, 7:19:22 PM
  * Auto updated?
  *   Yes
  *
@@ -18,51 +18,31 @@
 #ifndef MATERIAL_HPP
 #define MATERIAL_HPP
 
+#include <string>
+
 #include "Ray.hpp"
 #include "HitRecord.hpp"
 
 namespace RayTracer {
     enum MaterialType {
         lambertian,
-        metal
+        metal,
+        dielectric
     };
+    static std::string MaterialTypeNames[] = {
+        "lambertian",
+        "metal",
+        "dielectric"
+    };
+
 
     class Material {
         public:
+            const MaterialType type;
+            Material(MaterialType material_type);
+
+            /* Computes how a ray reflects from or travels through the surface of the material. */
             virtual bool scatter(const Ray& ray_in, const HitRecord& record, Vec3& attenuation, Ray& ray_out) const;
-    };
-
-    class Lambertian: public Material {
-        public:
-            Lambertian(const Vec3& colour_absorption);
-
-            virtual bool scatter(const Ray& ray_in, const HitRecord& record, Vec3& attenuation, Ray& ray_out) const;
-
-            Vec3 albedo;
-    };
-
-    class Metal: public Material {
-        public:
-            Metal(const Vec3& colour_absorption, double fuzziness);
-
-            virtual bool scatter(const Ray& ray_in, const HitRecord& record, Vec3& attenuation, Ray& ray_out) const;
-            virtual Vec3 reflect(const Vec3& v, const Vec3& n) const;
-
-            Vec3 albedo;
-            double fuzz;
-    };
-
-    class Dielectric: public Material {
-        public:
-            Dielectric(const Vec3& colour_absorption, double ri);
-
-            virtual bool scatter(const Ray& ray_in, const HitRecord& record, Vec3& attenuation, Ray& ray_out) const;
-            virtual Vec3 reflect(const Vec3& v, const Vec3& n) const;
-            virtual bool refract(const Vec3& v, const Vec3& n, double ni_over_nt, Vec3& refracted) const;
-            virtual double schlick(double cosine) const;
-
-            Vec3 albedo;
-            double ref_idx;
     };
 }
 

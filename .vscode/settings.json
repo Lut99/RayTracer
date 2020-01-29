@@ -49,6 +49,12 @@
         "ratio": "cpp",
         "thread": "cpp",
         "bitset": "cpp",
-        "regex": "cpp"
+        "regex": "cpp",
+        "condition_variable": "cpp",
+        "forward_list": "cpp",
+        "unordered_set": "cpp",
+        "map": "cpp",
+        "mutex": "cpp",
+        "valarray": "cpp"
     }
 }

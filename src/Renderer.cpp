@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/29/2020, 4:13:20 PM
+ *   1/29/2020, 7:16:52 PM
  * Auto updated?
  *   Yes
  *
@@ -12,6 +12,15 @@
  *   This file is the renderer for the RayTracer. For now, it is a very
  *   simple version that only does some basic tracing. This edition now
  *   also implements anti-aliasing.
+ * 
+ * Dependencies:
+ *   This project depends on the following libraries:
+ *     - LodePNG.cpp, for writing to PNG files
+ *       (https://lodev.org/lodepng/)
+ *     - cxxopts.hpp, for parsing arguments
+ *       (https://github.com/jarro2783/cxxopts)
+ *     - json.hpp, for reading the scene files
+ *       (https://github.com/nlohmann/json)
 **/
 
 #include <iostream>
@@ -21,9 +30,12 @@
 #include "lib/include/Image.hpp"
 
 #include "lib/include/RenderWorld.hpp"
-#include "lib/include/Sphere.hpp"
+#include "lib/include/objects/Sphere.hpp"
 #include "lib/include/Camera.hpp"
-#include "lib/include/Material.hpp"
+
+#include "lib/include/materials/Lambertian.hpp"
+#include "lib/include/materials/Metal.hpp"
+#include "lib/include/materials/Dielectric.hpp"
 
 #ifdef RENDER_THREADED
 #include "lib/include/ThreadPool.hpp"
