@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:28 PM
  * Last edited:
- *   1/29/2020, 4:09:08 PM
+ *   1/29/2020, 7:35:39 PM
  * Auto updated?
  *   Yes
  *
@@ -19,7 +19,6 @@
 #define CAMERA_HPP
 
 #include "Image.hpp"
-#include "RenderObjectCollection.hpp"
 #include "Vec3.hpp"
 #include "Ray.hpp"
 

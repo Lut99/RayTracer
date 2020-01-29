@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 2:26:08 PM
  * Last edited:
- *   1/22/2020, 2:54:34 PM
+ *   1/29/2020, 7:35:16 PM
  * Auto updated?
  *   Yes
  *
@@ -15,7 +15,7 @@
  *   implementation file for RenderObjectCollection.hpp.
 **/
 
-#include "include/RenderObjectCollection.hpp"
+#include "../include/objects/RenderObjectCollection.hpp"
 
 using namespace std;
 using namespace RayTracer;

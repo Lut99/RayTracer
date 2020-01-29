@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 2:26:30 PM
  * Last edited:
- *   1/22/2020, 2:55:11 PM
+ *   1/29/2020, 7:34:13 PM
  * Auto updated?
  *   Yes
  *
@@ -20,7 +20,7 @@
 
 #include <vector>
 
-#include "RenderObject.hpp"
+#include "../RenderObject.hpp"
 
 namespace RayTracer {
     class RenderObjectCollection: public RenderObject {
