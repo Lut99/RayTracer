@@ -4,7 +4,7 @@
  * Created:
  *   1/27/2020, 2:30:39 PM
  * Last edited:
- *   1/29/2020, 4:46:23 PM
+ *   1/29/2020, 9:49:59 PM
  * Auto updated?
  *   Yes
  *
@@ -27,6 +27,10 @@ using namespace RayTracer;
 
 RenderWorld::RenderWorld() {
     // Nothing much, really
+}
+RenderWorld::RenderWorld(const RenderWorld& other) {
+    this->objects = other.objects;
+    this->lights = other.lights;
 }
 
 RenderWorld::~RenderWorld() {
@@ -75,6 +79,13 @@ int& RenderWorld::get_light(int light_index) const {
 
     // Return the object
     return *this->lights.at(light_index);
+}
+
+const std::size_t RenderWorld::get_object_count() const {
+    return this->objects.size();
+}
+const std::size_t RenderWorld::get_light_count() const {
+    return this->lights.size();
 }
 
 
@@ -126,4 +137,10 @@ Vec3 RenderWorld::render_pixel(int x, int y, const Camera& cam) const {
     } else {
         return avg_col;
     }
+}
+
+RenderWorld& RenderWorld::operator=(const RenderWorld& other) {
+    this->objects = other.objects;
+    this->lights = other.lights;
+    return *this;
 }

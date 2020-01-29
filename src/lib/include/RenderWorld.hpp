@@ -4,7 +4,7 @@
  * Created:
  *   1/27/2020, 2:30:56 PM
  * Last edited:
- *   1/29/2020, 4:07:09 PM
+ *   1/29/2020, 9:28:25 PM
  * Auto updated?
  *   Yes
  *
@@ -37,6 +37,8 @@ namespace RayTracer {
         public:
             /* The RenderWorld class describes the world, and serves as the root for the object hiearchy. */
             RenderWorld();
+            /* Copy operator for the RenderWorld class. */
+            RenderWorld(const RenderWorld& other);
             ~RenderWorld();
 
             /* Adds a RenderObject to the world. Note that internally, this will copy the given object instead of reference it. */
@@ -53,10 +55,18 @@ namespace RayTracer {
             /* Returns a reference to a camera object for modification */
             int& get_light(int light_index) const;
 
+            /* Returns the number of objects defined in the RenderWorld. */
+            const std::size_t get_object_count() const;
+            /* Returns the number of light objects defined in the RenderWorld. */
+            const std::size_t get_light_count() const;
+
             /* Computes the colour of a shot ray. The depth variable makes sure that, in the case of very reflective surfaces, we only do this at max 50 times. */
             Vec3 bounce_ray(const Ray& ray, int depth=0) const;
             /* Renders one pixel instead by shooting rays and everything. The optional cam_index can be used to render from another camera if there are multiple given. The index is equal to the order the cameras were added. */
             Vec3 render_pixel(int x, int y, const Camera& cam) const;
+
+            /* Copy operator for the RenderWorld class. */
+            RenderWorld& operator=(const RenderWorld& other);
     };
 }
 

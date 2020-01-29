@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 2:26:30 PM
  * Last edited:
- *   1/29/2020, 7:34:13 PM
+ *   1/29/2020, 8:59:48 PM
  * Auto updated?
  *   Yes
  *
@@ -26,7 +26,6 @@ namespace RayTracer {
     class RenderObjectCollection: public RenderObject {
         private:
             std::vector<RenderObject*> objects;
-            std::size_t n_objects;
 
             /* Computers the center of the RenderObjectCollection by averaging all centers */
             Vec3 compute_center(std::vector<RenderObject*> objects) const;
@@ -44,7 +43,9 @@ namespace RayTracer {
             virtual Vec3 normal(const HitRecord& record) const;
 
             /* Returns the number of objects in the collection. */
-            std::size_t size();
+            const std::size_t size() const;
+            /* Returns a reference to an object at given index in the vector. */
+            RenderObject* get_object(std::size_t index) const;
     };
 }
 

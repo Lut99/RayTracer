@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/29/2020, 7:16:52 PM
+ *   1/29/2020, 9:58:13 PM
  * Auto updated?
  *   Yes
  *
@@ -23,9 +23,12 @@
  *       (https://github.com/nlohmann/json)
 **/
 
+#include <fstream>
 #include <iostream>
 #include <limits>
 #include <chrono>
+#include <cerrno>
+#include <cstring>
 
 #include "lib/include/Image.hpp"
 
@@ -43,13 +46,14 @@
 
 #include "lib/include/ProgressBar.hpp"
 #include "lib/include/cxxopts.hpp"
+#include "lib/include/WorldIO.hpp"
 
 using namespace std;
 using namespace RayTracer;
 using namespace cxxopts;
 
 int main(int argc, char** argv) {
-    std::string filename;
+    std::string filename, scenename;
     unsigned int screen_width, screen_height, number_of_rays, n_threads, batch_size, vfov;
     bool show_progressbar, correct_gamma;
     double aperture;
@@ -60,6 +64,7 @@ int main(int argc, char** argv) {
     Options arguments("RayTracer", "Renders images using a custom-written RayTracer.");
     arguments.add_options()
         ("f,filename", "The name of the output picture (relative to the run directory)", value<string>())
+        ("s,scenename", "Path to the JSON file that will be used to create a RenderWorld", value<string>())
         ("W,width", "The width (in pixels) of the output image", value<unsigned int>())
         ("H,height", "The height (in pixels) of the output image", value<unsigned int>())
         ("r,rays", "The number of rays shot per pixel", value<unsigned int>())
@@ -79,6 +84,11 @@ int main(int argc, char** argv) {
         filename = result["filename"].as<string>();
     } else {
         filename = "output/out1.png";
+    }
+    if (result.count("scenename")) {
+        scenename = result["scenename"].as<string>();
+    } else {
+        scenename = "";
     }
     try {
         screen_width = result["width"].as<unsigned int>();
@@ -159,14 +169,30 @@ int main(int argc, char** argv) {
         cout << "no" << endl;
     }
 
-    cout << endl << "Creating world..." << endl;
-    RenderWorld world;
+    RenderWorld* world;
+    if (scenename.empty()) {
+        cout << endl << "Generating world..." << endl;
+        world = new RenderWorld();
+        world->add_object(new Sphere(Vec3(0, 0, -1), 0.5, new Lambertian(Vec3(0.1, 0.2, 0.5))));
+        world->add_object(new Sphere(Vec3(0, -100.5, -1), 100, new Lambertian(Vec3(0.8, 0.8, 0.0))));
+        world->add_object(new Sphere(Vec3(1, 0, -1), 0.5, new Metal(Vec3(0.8, 0.6, 0.2), 0.0)));
+        world->add_object(new Sphere(Vec3(-1, 0, -1), 0.5, new Dielectric(Vec3(1.0, 1.0, 1.0), 1.5)));
+    } else {
+        // Open a file to the input scene
+        cout << endl << "Loading world..." << endl;
+        ifstream scene_file(scenename);
+        if (!scene_file.is_open()) {
+            cerr << "Could not open file: " << strerror(errno) << endl;
+            exit(-1);
+        }
+        nlohmann::json j;
+        scene_file >> j;
+        scene_file.close();
 
-    cout << "Appending objects..." << endl;
-    world.add_object(new Sphere(Vec3(0, 0, -1), 0.5, new Lambertian(Vec3(0.1, 0.2, 0.5))));
-    world.add_object(new Sphere(Vec3(0, -100.5, -1), 100, new Lambertian(Vec3(0.8, 0.8, 0.0))));
-    world.add_object(new Sphere(Vec3(1, 0, -1), 0.5, new Metal(Vec3(0.8, 0.6, 0.2), 0.0)));
-    world.add_object(new Sphere(Vec3(-1, 0, -1), 0.5, new Dielectric(Vec3(1.0, 1.0, 1.0), 1.5)));
+        world = WorldIO::from_json(j);
+
+        cout << "Loaded " << world->get_object_count() << " objects" << endl;
+    }
 
     cout << "Creating camera..." << endl;
     Camera cam(lookfrom, lookat, Vec3(0, 1, 0), vfov, aperture, dist_to_focus, screen_width, screen_height, number_of_rays, correct_gamma);
@@ -184,7 +210,7 @@ int main(int argc, char** argv) {
     for (int y = screen_height-1; y >= 0; y--) {
         for (int x = 0; x < screen_width; x++) {
             // Render the pixel
-            out[y][x] = world.render_pixel(x, y, cam);
+            out[y][x] = world->render_pixel(x, y, cam);
 
             if (show_progressbar) {
                 prgrs.update();
@@ -209,7 +235,7 @@ int main(int argc, char** argv) {
         // Create a new batch and append it
         PixelBatch batch = pool.get_batch(screen_width, screen_height, batch_index);
         batch.camera = &cam;
-        batch.world = &world;
+        batch.world = world;
         batch.out = &out;
         pool.add_batch(batch);
 
