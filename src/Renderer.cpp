@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/31/2020, 12:47:37 PM
+ *   1/31/2020, 1:08:21 PM
  * Auto updated?
  *   Yes
  *
@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
     unsigned int screen_width, screen_height, number_of_rays, n_threads, batch_size, vfov;
     bool show_progressbar, correct_gamma;
     double aperture;
-    Vec3 lookfrom(0, 0, 0);
+    Vec3 lookfrom(7, 2, 2);
     Vec3 lookat(0, 0, -1);
     double dist_to_focus = (lookfrom - lookat).length();
 
@@ -117,7 +117,7 @@ int main(int argc, char** argv) {
     try {
         vfov = result["vfov"].as<unsigned int>();
     } catch (domain_error& opt) {
-        vfov = 45;
+        vfov = 90;
     } catch (OptionParseException& opt) {
         cerr << "Could not parse field of view: " << opt.what() << endl;
         exit(-1);
