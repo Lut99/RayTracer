@@ -21,8 +21,6 @@ OPTS += -D WINDOWS
 endif
 
 LIBRARIES = $(LIB_DIR)/Ray.o $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o $(LIB_DIR)/RenderObject.a $(LIB_DIR)/Random.o $(LIB_DIR)/ProgressBar.o $(LIB_DIR)/Camera.o $(LIB_DIR)/RenderWorld.o $(LIB_DIR)/Materials.a $(LIB_DIR)/WorldIO.o $(LIB_DIR)/objects/RenderObjectCollection.o $(LIB_DIR)/scenes/RandomScene.o
-SPEC_LIBS =
-SPEC_LIBS_INCL =
 
 ifdef THREADED
 ifdef CUDA
@@ -55,6 +53,11 @@ $(LIB_DIR)/scenes/%.o: $(SRC_DIR)/lib/scenes/%.cpp
 	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
 
 
+# SPECIAL OBJECT COMPILE RULES #
+Renderer.o: $(SRC_DIR)/lib/Renderer.cpp
+	$(CC) $(ARGS) $(OPTS) -o $(LIB_DIR)/Renderer.o -c $(SRC_DIR)/lib/Renderer.cpp
+
+
 # ARCHIVE RULES #
 $(LIB_DIR)/Image.a: $(LIB_DIR)/Image.o $(LIB_DIR)/LodePNG.o
 	ar rvs $(LIB_DIR)/Image.a $(LIB_DIR)/Image.o $(LIB_DIR)/LodePNG.o
@@ -65,8 +68,8 @@ $(LIB_DIR)/Materials.a: $(LIB_DIR)/Material.o $(LIB_DIR)/materials/Lambertian.o 
 
 
 # MAIN COMPILATION #
-renderer: $(LIBRARIES) $(SPEC_LIBS_INCL)
-	$(CC) $(ARGS) $(OPTS) -o $(BIN_DIR)/renderer.$(EXTENSION) $(SRC_DIR)/Renderer.cpp $(LIBRARIES) $(SPEC_LIBS) $(EXT_LIBS)
+raytracer: Renderer.o $(LIBRARIES)
+	$(CC) $(ARGS) $(OPTS) -o $(BIN_DIR)/raytracer.$(EXTENSION) $(SRC_DIR)/RayTracer.cpp $(LIB_DIR)/Renderer.o $(LIBRARIES) $(EXT_LIBS)
 scene_creator: $(LIBRARIES)
 	$(CC) $(ARGS) $(OPTS) -o $(BIN_DIR)/scene_creator.$(EXTENSION) $(SRC_DIR)/SceneCreator.cpp $(LIBRARIES)
 

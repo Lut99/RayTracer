@@ -1,17 +1,17 @@
-/* RENDERER.cpp
+/* RAY TRACER.cpp
  *   by Lut99
  *
  * Created:
- *   1/22/2020, 1:00:17 PM
+ *   1/31/2020, 2:00:11 PM
  * Last edited:
- *   1/31/2020, 1:52:11 PM
+ *   1/31/2020, 2:18:24 PM
  * Auto updated?
  *   Yes
  *
  * Description:
- *   This file is the renderer for the RayTracer. For now, it is a very
- *   simple version that only does some basic tracing. This edition now
- *   also implements anti-aliasing.
+ *   This file is the entrypoint for the RayTracer. It handles collecting
+ *   arguments and loading from .json files, but the actual rendering will be
+ *   done by Renderer.cpp.
  * 
  * Dependencies:
  *   This project depends on the following libraries:
@@ -40,13 +40,10 @@
 #include "lib/include/materials/Metal.hpp"
 #include "lib/include/materials/Dielectric.hpp"
 
-#ifdef RENDER_THREADED
-#include "lib/include/ThreadPool.hpp"
-#endif
-
 #include "lib/include/ProgressBar.hpp"
 #include "lib/include/cxxopts.hpp"
 #include "lib/include/WorldIO.hpp"
+#include "lib/include/Renderer.hpp"
 
 using namespace std;
 using namespace RayTracer;
@@ -221,56 +218,11 @@ int main(int argc, char** argv) {
 
     // Render one picture
     cout << endl << "Rendering..." << endl;
+    Renderer renderer(n_threads, batch_size, show_progressbar);
 
-    Image out(screen_width, screen_height);
-    ProgressBar prgrs(0, screen_width * screen_height - 1);
     auto start = chrono::system_clock::now();
 
-    // Render it (how depends on if the program is threaded or not)
-    #ifndef RENDER_THREADED
-
-    for (int y = screen_height-1; y >= 0; y--) {
-        for (int x = 0; x < screen_width; x++) {
-            // Render the pixel
-            out[y][x] = world->render_pixel(x, y, *cam);
-
-            if (show_progressbar) {
-                prgrs.update();
-            }
-        }
-    }
-
-    #else
-
-    // Create a thread pool
-    ThreadPool pool(n_threads, batch_size);
-
-    // Use the thread pool to render it
-    unsigned long batch_index = 0;
-    unsigned long to_do = screen_width * screen_height;
-    while (batch_index < to_do) {
-        // Update the progressbar in any case for smoothness
-        if (show_progressbar) {
-            prgrs.set(batch_index);
-        }
-
-        // If a the queue is full, continue
-        if (pool.batch_queue_full()) {
-            continue;
-        }
-
-        // Create a new batch and append it
-        PixelBatch batch = pool.get_batch(screen_width, screen_height, batch_index);
-        batch.camera = cam;
-        batch.world = world;
-        batch.out = &out;
-        pool.add_batch(batch);
-    }
-
-    // Wait until all threads have been reaped
-    pool.complete();
-
-    #endif
+    Image out = renderer.render(world, cam);
 
     auto stop = chrono::system_clock::now();
     auto duration = stop - start;
