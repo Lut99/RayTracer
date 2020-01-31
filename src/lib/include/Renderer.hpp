@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/31/2020, 2:17:34 PM
+ *   1/31/2020, 2:23:25 PM
  * Auto updated?
  *   Yes
  *
@@ -19,6 +19,9 @@
 #ifndef RENDERER_HPP
 #define RENDERER_HPP
 
+#include <string>
+
+#include "Animation.hpp"
 #include "RenderWorld.hpp"
 #include "Camera.hpp"
 
@@ -29,10 +32,14 @@ namespace RayTracer {
             int batch_size;
             bool show_progressbar;
 
+            /* The Renderer class provides a more structures split between the prepration of the rendering and the rendering itself. */
             Renderer(int num_of_threads, int batch_size, bool show_progressbar);
 
             /* The render function renders a given world for you, either threaded or non-threaded (depends on how it is compiled) */
             Image render(RenderWorld* world, Camera* cam);
+
+            /* This render function renders a whole series of Images. Before rendering a new one, the renderworld.update() method is called to update all objects. */
+            void render_series(RenderWorld* world, Camera* cam, Animation& out);
     };
 }
 
