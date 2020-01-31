@@ -20,7 +20,7 @@ EXTENSION =exe
 OPTS += -D WINDOWS
 endif
 
-LIBRARIES = $(LIB_DIR)/Ray.o $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o $(LIB_DIR)/RenderObject.a $(LIB_DIR)/Random.o $(LIB_DIR)/ProgressBar.o $(LIB_DIR)/Camera.o $(LIB_DIR)/RenderWorld.o $(LIB_DIR)/Materials.a $(LIB_DIR)/WorldIO.o $(LIB_DIR)/objects/RenderObjectCollection.o
+LIBRARIES = $(LIB_DIR)/Ray.o $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o $(LIB_DIR)/RenderObject.a $(LIB_DIR)/Random.o $(LIB_DIR)/ProgressBar.o $(LIB_DIR)/Camera.o $(LIB_DIR)/RenderWorld.o $(LIB_DIR)/Materials.a $(LIB_DIR)/WorldIO.o $(LIB_DIR)/objects/RenderObjectCollection.o $(LIB_DIR)/scenes/RandomScene.o
 SPEC_LIBS =
 SPEC_LIBS_INCL =
 
@@ -50,6 +50,8 @@ $(LIB_DIR)/%.o: $(SRC_DIR)/lib/%.cpp
 $(LIB_DIR)/objects/%.o: $(SRC_DIR)/lib/objects/%.cpp
 	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
 $(LIB_DIR)/materials/%.o: $(SRC_DIR)/lib/materials/%.cpp
+	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
+$(LIB_DIR)/scenes/%.o: $(SRC_DIR)/lib/scenes/%.cpp
 	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
 
 

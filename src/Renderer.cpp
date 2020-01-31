@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/29/2020, 9:58:13 PM
+ *   1/31/2020, 12:47:37 PM
  * Auto updated?
  *   Yes
  *
@@ -57,14 +57,14 @@ int main(int argc, char** argv) {
     unsigned int screen_width, screen_height, number_of_rays, n_threads, batch_size, vfov;
     bool show_progressbar, correct_gamma;
     double aperture;
-    Vec3 lookfrom(3, 3, 2);
+    Vec3 lookfrom(0, 0, 0);
     Vec3 lookat(0, 0, -1);
     double dist_to_focus = (lookfrom - lookat).length();
 
     Options arguments("RayTracer", "Renders images using a custom-written RayTracer.");
     arguments.add_options()
         ("f,filename", "The name of the output picture (relative to the run directory)", value<string>())
-        ("s,scenename", "Path to the JSON file that will be used to create a RenderWorld", value<string>())
+        ("s,scene", "Path to the JSON file that will be used to create a RenderWorld", value<string>())
         ("W,width", "The width (in pixels) of the output image", value<unsigned int>())
         ("H,height", "The height (in pixels) of the output image", value<unsigned int>())
         ("r,rays", "The number of rays shot per pixel", value<unsigned int>())
@@ -85,8 +85,8 @@ int main(int argc, char** argv) {
     } else {
         filename = "output/out1.png";
     }
-    if (result.count("scenename")) {
-        scenename = result["scenename"].as<string>();
+    if (result.count("scene")) {
+        scenename = result["scene"].as<string>();
     } else {
         scenename = "";
     }
@@ -154,6 +154,9 @@ int main(int argc, char** argv) {
     cout << endl << "*** RayTracer Renderer ***" << endl << endl;
     cout << "Using options:" << endl;
     cout << "  Output file        : " << filename << endl;
+    if (scenename != "") {
+        cout << "  Scene used         : " << scenename << endl;
+    }
     cout << "  Image dimensions   : " << screen_width << "x" << screen_height << "px" << endl;
     cout << "  Number of rays     : " << number_of_rays << endl;
     #ifdef RENDER_THREADED
@@ -227,6 +230,11 @@ int main(int argc, char** argv) {
     unsigned long batch_index = 0;
     unsigned long to_do = screen_width * screen_height;
     while (batch_index < to_do) {
+        // Update the progressbar in any case for smoothness
+        if (show_progressbar) {
+            prgrs.set(batch_index);
+        }
+
         // If a the queue is full, continue
         if (pool.batch_queue_full()) {
             continue;
@@ -238,11 +246,6 @@ int main(int argc, char** argv) {
         batch.world = world;
         batch.out = &out;
         pool.add_batch(batch);
-
-        // Update the progressbar
-        if (show_progressbar) {
-            prgrs.set(batch_index);
-        }
     }
 
     // Wait until all threads have been reaped

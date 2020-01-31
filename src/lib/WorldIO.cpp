@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:41:40 PM
  * Last edited:
- *   1/29/2020, 10:00:00 PM
+ *   1/31/2020, 12:53:40 PM
  * Auto updated?
  *   Yes
  *
@@ -18,6 +18,7 @@
 
 #include <iostream>
 
+#include "include/scenes/RandomScene.hpp"
 #include "include/WorldIO.hpp"
 
 using namespace std;
@@ -38,6 +39,11 @@ json WorldIO::to_json(const RenderWorld& world) {
     return j;
 }
 RenderWorld* WorldIO::from_json(const json& json_obj) {
+    // Special case: if the json just says "random", load a random world
+    if (json_obj == "random") {
+        return new RandomScene();
+    }
+
     // Check if the object has an object type
     if (!json_obj.is_object()) {
         throw InvalidTypeException("RenderWorld", json::object().type_name(), json_obj.type_name());
@@ -110,6 +116,7 @@ json WorldIO::Objects::to_json(const RenderObject& object) {
     } else if (object.type == render_object_collection) {
         return to_json((RenderObjectCollection&) object);
     }
+    return json();
 }
 RenderObject* WorldIO::Objects::from_json(const json& json_obj) {
     // Check if the object has an object type
@@ -224,6 +231,7 @@ json WorldIO::Materials::to_json(const Material& object) {
     } else if (object.type == dielectric) {
         return to_json((Dielectric&) object);
     }
+    return json();
 }
 Material* WorldIO::Materials::from_json(const json& json_obj) {
     // Check if the object has an object type
