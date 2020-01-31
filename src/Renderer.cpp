@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/31/2020, 1:43:01 PM
+ *   1/31/2020, 1:52:11 PM
  * Auto updated?
  *   Yes
  *
@@ -204,6 +204,13 @@ int main(int argc, char** argv) {
             cam->gamma = correct_gamma;
             // Make sure the camera is up-to-date
             cam->recompute();
+            // Print some nice stuff
+            if (cam->vfov != vfov) {
+                cout << "  Camera: overriding field of view to " << cam->vfov << endl;
+            }
+            if (cam->aperture != aperture) {
+                cout << "  Camera: overriding aperture to " << cam->aperture << endl;
+            }
         }
     }
 
