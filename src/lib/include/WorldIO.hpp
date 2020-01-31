@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:41:56 PM
  * Last edited:
- *   1/29/2020, 9:58:24 PM
+ *   1/31/2020, 1:15:04 PM
  * Auto updated?
  *   Yes
  *
@@ -139,6 +139,11 @@ namespace RayTracer {
         nlohmann::json to_json(const RenderWorld& world);
         /* Creates a new RenderWorld object from a JSON object. */
         RenderWorld* from_json(const nlohmann::json& json_obj);
+
+        /* Writes a Camera object to a JSON object. */
+        nlohmann::json to_json(const Camera& cam);
+        /* Creates a new Camera object from a JSON object. */
+        Camera* camera_from_json(const nlohmann::json& json_obj);
 
         /* Writes a Vec3 object to a JSON object. */
         nlohmann::json to_json(const Vec3& vec3);

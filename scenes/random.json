@@ -1,1 +1,23 @@
-"random"
+{
+    "camera": {
+        "aperture": 0.1,
+        "lookat": [
+            0.0,
+            0.0,
+            -1.0
+        ],
+        "lookfrom": [
+            7.0,
+            2.0,
+            2.0
+        ],
+        "up": [
+            0.0,
+            1.0,
+            0.0
+        ],
+        "vfov": 50
+    },
+    "lights": [],
+    "objects": "random"
+}

@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:28 PM
  * Last edited:
- *   1/29/2020, 7:35:39 PM
+ *   1/31/2020, 1:30:48 PM
  * Auto updated?
  *   Yes
  *
@@ -28,21 +28,34 @@ namespace RayTracer {
 
     class Camera {
         public:
-            const int width;
-            const int height;
-            const int rays;
-            const bool gamma;
+            /* My added variables */
+            int width;
+            int height;
+            int rays;
+            bool gamma;
 
-            double lens_radius;
+            /* Setting variables */
+            Vec3 lookfrom;
+            Vec3 lookat;
+            Vec3 up;
+            double vfov;
+            double aperture;
 
+            /* Computed variables */
             Vec3 lower_left_corner;
             Vec3 horizontal;
             Vec3 vertical;
             Vec3 origin;
             Vec3 u, w, v;
+            double lens_radius;
 
-            /* The camera class holds information about the viewport of the scene. Note that for now, everything is set, but I suspect that may change later. */
-            Camera(Vec3 lookfrom, Vec3 lookat, Vec3 up, double vfov, double aperture, double focus_dist, int screen_width, int screen_height, int rays_per_pixel, bool correct_gamma);
+            /* The camera class holds information about the viewport of the scene. */
+            Camera(Vec3 lookfrom, Vec3 lookat, Vec3 up, double vfov, double aperture, int screen_width, int screen_height, int rays_per_pixel, bool correct_gamma);
+            /* The camera class holds information about the viewport of the scene. This overload only stores some basic variables, and does not recompute the rest yet. */
+            Camera(Vec3 lookfrom, Vec3 lookat, Vec3 up, double vfov, double aperture);
+
+            /* Recomputes the Camera values. This is useful after the given variables are altered after construction. */
+            void recompute();
 
             /* Returns a ray through given u and v through the pixel grid */
             Ray get_ray(int x, int y) const;

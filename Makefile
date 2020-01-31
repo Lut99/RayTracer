@@ -67,8 +67,8 @@ $(LIB_DIR)/Materials.a: $(LIB_DIR)/Material.o $(LIB_DIR)/materials/Lambertian.o 
 # MAIN COMPILATION #
 renderer: $(LIBRARIES) $(SPEC_LIBS_INCL)
 	$(CC) $(ARGS) $(OPTS) -o $(BIN_DIR)/renderer.$(EXTENSION) $(SRC_DIR)/Renderer.cpp $(LIBRARIES) $(SPEC_LIBS) $(EXT_LIBS)
-scene_creator: $(LIBRARIES) $(LIB_DIR)/objects/RenderObjectCollection.o
-	$(CC) $(ARGS) $(OPTS) -o $(BIN_DIR)/scene_creator.$(EXTENSION) $(SRC_DIR)/SceneCreator.cpp $(LIBRARIES) $(LIB_DIR)/objects/RenderObjectCollection.o
+scene_creator: $(LIBRARIES)
+	$(CC) $(ARGS) $(OPTS) -o $(BIN_DIR)/scene_creator.$(EXTENSION) $(SRC_DIR)/SceneCreator.cpp $(LIBRARIES)
 
 
 # TEST COMPILE RULES #

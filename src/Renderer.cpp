@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/31/2020, 1:08:21 PM
+ *   1/31/2020, 1:43:01 PM
  * Auto updated?
  *   Yes
  *
@@ -57,9 +57,6 @@ int main(int argc, char** argv) {
     unsigned int screen_width, screen_height, number_of_rays, n_threads, batch_size, vfov;
     bool show_progressbar, correct_gamma;
     double aperture;
-    Vec3 lookfrom(7, 2, 2);
-    Vec3 lookat(0, 0, -1);
-    double dist_to_focus = (lookfrom - lookat).length();
 
     Options arguments("RayTracer", "Renders images using a custom-written RayTracer.");
     arguments.add_options()
@@ -173,6 +170,7 @@ int main(int argc, char** argv) {
     }
 
     RenderWorld* world;
+    Camera *cam = NULL;
     if (scenename.empty()) {
         cout << endl << "Generating world..." << endl;
         world = new RenderWorld();
@@ -195,10 +193,24 @@ int main(int argc, char** argv) {
         world = WorldIO::from_json(j);
 
         cout << "Loaded " << world->get_object_count() << " objects" << endl;
+
+        if (!j["camera"].is_null()) {
+            cout << "Loading camera..." << endl;
+            cam = WorldIO::camera_from_json(j["camera"]);
+            // Set some meta variables
+            cam->width = screen_width;
+            cam->height = screen_height;
+            cam->rays = number_of_rays;
+            cam->gamma = correct_gamma;
+            // Make sure the camera is up-to-date
+            cam->recompute();
+        }
     }
 
-    cout << "Creating camera..." << endl;
-    Camera cam(lookfrom, lookat, Vec3(0, 1, 0), vfov, aperture, dist_to_focus, screen_width, screen_height, number_of_rays, correct_gamma);
+    if (cam == NULL) {
+        cout << "Creating camera..." << endl;
+        cam = new Camera(Vec3(7, 2, 2), Vec3(0, 0, -1), Vec3(0, 1, 0), vfov, aperture, screen_width, screen_height, number_of_rays, correct_gamma);
+    }
 
     // Render one picture
     cout << endl << "Rendering..." << endl;
@@ -213,7 +225,7 @@ int main(int argc, char** argv) {
     for (int y = screen_height-1; y >= 0; y--) {
         for (int x = 0; x < screen_width; x++) {
             // Render the pixel
-            out[y][x] = world->render_pixel(x, y, cam);
+            out[y][x] = world->render_pixel(x, y, *cam);
 
             if (show_progressbar) {
                 prgrs.update();
@@ -242,7 +254,7 @@ int main(int argc, char** argv) {
 
         // Create a new batch and append it
         PixelBatch batch = pool.get_batch(screen_width, screen_height, batch_index);
-        batch.camera = &cam;
+        batch.camera = cam;
         batch.world = world;
         batch.out = &out;
         pool.add_batch(batch);
@@ -258,6 +270,10 @@ int main(int argc, char** argv) {
     auto duration_ms = chrono::duration_cast<chrono::milliseconds>(duration);
 
     cout << "Done, rendered frame in " << ((double) duration_ms.count()) / 1000.0 << " seconds" << endl;
+
+    // Delete the allocated objects
+    delete world;
+    delete cam;
 
     // Write the image
     cout << "Writing output..." << endl;
