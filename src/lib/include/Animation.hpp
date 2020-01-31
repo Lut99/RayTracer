@@ -4,7 +4,7 @@
  * Created:
  *   1/31/2020, 2:25:18 PM
  * Last edited:
- *   1/31/2020, 3:09:29 PM
+ *   1/31/2020, 3:13:55 PM
  * Auto updated?
  *   Yes
  *
@@ -54,6 +54,9 @@ namespace RayTracer {
 
             /* Saves the internal buffer to disk if this isn't done dynamically, and then combines all images into a .mp4. */
             void to_mp4(std::string path);
+
+            /* Returns the current frame_index. Note that this is zero-indexed. */
+            const std::size_t get_frame_index() const;
     };
 }
 

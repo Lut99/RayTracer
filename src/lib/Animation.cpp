@@ -4,7 +4,7 @@
  * Created:
  *   1/31/2020, 2:25:02 PM
  * Last edited:
- *   1/31/2020, 3:10:30 PM
+ *   1/31/2020, 3:13:56 PM
  * Auto updated?
  *   Yes
  *
@@ -132,4 +132,8 @@ void Animation::to_mp4(string path) {
 
     // Release ffmpeg on the files
     // TBD
+}
+
+const std::size_t Animation::get_frame_index() const {
+    return this->frame_index;
 }
