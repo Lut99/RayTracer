@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   1/31/2020, 2:23:25 PM
+ *   2/1/2020, 5:48:37 PM
  * Auto updated?
  *   Yes
  *
@@ -21,7 +21,7 @@
 
 #include <string>
 
-#include "Animation.hpp"
+#include "Frames.hpp"
 #include "RenderWorld.hpp"
 #include "Camera.hpp"
 
@@ -39,7 +39,7 @@ namespace RayTracer {
             Image render(RenderWorld* world, Camera* cam);
 
             /* This render function renders a whole series of Images. Before rendering a new one, the renderworld.update() method is called to update all objects. */
-            void render_series(RenderWorld* world, Camera* cam, Animation& out);
+            void render_animation(RenderWorld* world, Camera* cam, Frames& out);
     };
 }
 

@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 2:15:38 PM
  * Last edited:
- *   2/1/2020, 2:35:57 PM
+ *   2/1/2020, 5:38:40 PM
  * Auto updated?
  *   Yes
  *
@@ -27,12 +27,11 @@
 
 namespace RayTracer {
     enum AnimationType {
-        movement,
         camera_movement
     };
 
     class Animation {
-        private:
+        protected:
             /* Pointer to the object this animation works on. */
             RenderObject* target;
 
@@ -43,7 +42,7 @@ namespace RayTracer {
             const AnimationType type;
 
             /* Virtual for the update() function. After each frame, this is called in the derived class to update the object it animates. The number is the amount of milliseconds since the last frame in the movie (so not the rendertime). */
-            virtual void update(chrono::milliseconds time_passed);
+            virtual void update(std::chrono::milliseconds time_passed);
     };
 }
 

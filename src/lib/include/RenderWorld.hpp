@@ -4,7 +4,7 @@
  * Created:
  *   1/27/2020, 2:30:56 PM
  * Last edited:
- *   2/1/2020, 3:29:38 PM
+ *   2/1/2020, 6:15:26 PM
  * Auto updated?
  *   Yes
  *
@@ -22,10 +22,12 @@
 
 #include <limits>
 #include <vector>
+#include <chrono>
 
 #include "Vec3.hpp"
 #include "RenderObject.hpp"
 #include "Camera.hpp"
+#include "Animation.hpp"
 
 namespace RayTracer {
     class RenderWorld {
@@ -34,6 +36,8 @@ namespace RayTracer {
             std::vector<RenderObject*> objects;
             /* List that stores all light objects in the world. */
             std::vector<int*> lights;
+            /* List that stores all animations in the world. */
+            std::vector<Animation*> animations;
 
             /* Deepcopies the different vectors*/
             template <typename T> void deepcopy(std::vector<T*>& target, const std::vector<T*>& source) const;
@@ -54,21 +58,32 @@ namespace RayTracer {
             void add_light(int light);
             /* Adds a RenderLight to the world. Note that anything added this way will be deallocated automatically. */
             void add_light(int* light);
+            /* Adds an Animation to the world. Note that internally, this will copy the given object instead of reference it. */
+            void add_animation(Animation light);
+            /* Adds a Animation to the world. Note that anything added this way will be deallocated automatically. */
+            void add_animation(Animation* light);
 
             /* Returns a reference to an object for modification */
             RenderObject& get_object(int obj_index) const;
             /* Returns a reference to a camera object for modification */
             int& get_light(int light_index) const;
+            /* Returns a reference to an animation object for modification */
+            Animation& get_animation(int animation_index) const;
 
             /* Returns the number of objects defined in the RenderWorld. */
             const std::size_t get_object_count() const;
             /* Returns the number of light objects defined in the RenderWorld. */
             const std::size_t get_light_count() const;
+            /* Returns the number of animation objects defined in the RenderWorld. */
+            const std::size_t get_animation_count() const;
 
             /* Computes the colour of a shot ray. The depth variable makes sure that, in the case of very reflective surfaces, we only do this at max 50 times. */
             Vec3 bounce_ray(const Ray& ray, int depth=0) const;
             /* Renders one pixel instead by shooting rays and everything. The optional cam_index can be used to render from another camera if there are multiple given. The index is equal to the order the cameras were added. */
             Vec3 render_pixel(int x, int y, const Camera& cam) const;
+
+            /* Updates all animations in the RenderWorld */
+            void update(std::chrono::milliseconds time_passed);
 
             /* Copy assignment operator for the RenderWorld class. */
             RenderWorld& operator=(RenderWorld other);
@@ -78,6 +93,9 @@ namespace RayTracer {
             /* Swap operator for the RenderWorld class. */
             friend void swap(RenderWorld& first, RenderWorld& second);
     };
+
+    /* Swap operator for the RenderWorld class. */
+    void swap(RenderWorld& first, RenderWorld& second);
 }
 
 #endif

@@ -4,7 +4,7 @@
  * Created:
  *   1/31/2020, 2:25:02 PM
  * Last edited:
- *   2/1/2020, 4:39:39 PM
+ *   2/1/2020, 5:56:12 PM
  * Auto updated?
  *   Yes
  *
@@ -116,6 +116,11 @@ Frames::~Frames() {
 
 
 void Frames::next() {
+    // Do nothing if we're already at the last frame
+    if (this->frame_index == this->n_frames - 1) {
+        return;
+    }
+
     // Depending on whether we should keep everything in memory, write current image to disk and delete it
     if (this->dynamic_writing) {
         this->current_frame->to_png(this->temp_dir + "/out" + to_string(this->frame_index) + ".png");

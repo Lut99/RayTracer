@@ -4,7 +4,7 @@
  * Created:
  *   1/27/2020, 2:30:39 PM
  * Last edited:
- *   2/1/2020, 3:30:44 PM
+ *   2/1/2020, 5:44:32 PM
  * Auto updated?
  *   Yes
  *
@@ -32,15 +32,18 @@ RenderWorld::RenderWorld(const RenderWorld& other) {
     // Deepcopy the vectors
     this->deepcopy(this->objects, other.objects);
     this->deepcopy(this->lights, other.lights);
+    this->deepcopy(this->animations, other.animations);
 }
 RenderWorld::RenderWorld(RenderWorld&& other) {
     // Simply shallow copy the vectors
     this->objects = other.objects;
     this->lights = other.lights;
+    this->animations = other.animations;
 
     // Now fill the object's vectors with empty ones to avoid deallocation of the objects
     other.objects = vector<RenderObject*>();
     other.lights = vector<int*>();
+    other.animations = vector<Animation*>();
 }
 
 RenderWorld::~RenderWorld() {
@@ -50,6 +53,9 @@ RenderWorld::~RenderWorld() {
     }
     for (std::size_t i = 0; i < this->lights.size(); i++) {
         delete this->lights.at(i);
+    }
+    for (std::size_t i = 0; i < this->animations.size(); i++) {
+        delete this->animations.at(i);
     }
 }
 
@@ -78,6 +84,15 @@ void RenderWorld::add_light(int* light) {
     
 }
 
+void RenderWorld::add_animation(Animation animation) {
+    this->animations.push_back(new Animation(animation));
+}
+
+void RenderWorld::add_animation(Animation* animation) {
+    this->animations.push_back(animation);
+}
+
+
 
 RenderObject& RenderWorld::get_object(int obj_index) const {
     // Check if not out of bounds
@@ -97,12 +112,24 @@ int& RenderWorld::get_light(int light_index) const {
     // Return the object
     return *this->lights.at(light_index);
 }
+Animation& RenderWorld::get_animation(int animation_index) const {
+    // Check if not out of bounds
+    if (animation_index < 0 || animation_index >= this->animations.size()) {
+        throw out_of_range("Animation index " + to_string(animation_index) + " is out of range for World with " + to_string(this->animations.size()) + " animations.");
+    }
+
+    // Return the object
+    return *this->animations.at(animation_index);
+}
 
 const std::size_t RenderWorld::get_object_count() const {
     return this->objects.size();
 }
 const std::size_t RenderWorld::get_light_count() const {
     return this->lights.size();
+}
+const std::size_t RenderWorld::get_animation_count() const {
+    return this->animations.size();
 }
 
 
@@ -156,6 +183,12 @@ Vec3 RenderWorld::render_pixel(int x, int y, const Camera& cam) const {
     }
 }
 
+void RenderWorld::update(chrono::milliseconds time_passed) {
+    for (std::size_t i = 0; i < this->animations.size(); i++) {
+        this->animations.at(i)->update(time_passed);
+    }
+}
+
 
 
 
@@ -169,13 +202,15 @@ RenderWorld& RenderWorld::operator=(RenderWorld other) {
 }
 
 RenderWorld& RenderWorld::operator=(RenderWorld&& other) {
-    // Simply shallow-copy the vectors
+    // Simply shallow copy the vectors
     this->objects = other.objects;
     this->lights = other.lights;
+    this->animations = other.animations;
 
-    // Set the other's vectors to empty vectors
+    // Now fill the object's vectors with empty ones to avoid deallocation of the objects
     other.objects = vector<RenderObject*>();
     other.lights = vector<int*>();
+    other.animations = vector<Animation*>();
 
     // Return a reference to this
     return *this;
@@ -186,4 +221,5 @@ void RayTracer::swap(RenderWorld& first, RenderWorld& second) {
 
     swap(first.objects, second.objects);
     swap(first.lights, second.lights);
+    swap(first.animations, second.animations);
 }
