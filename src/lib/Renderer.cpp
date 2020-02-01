@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   2/1/2020, 5:55:08 PM
+ *   2/1/2020, 7:29:11 PM
  * Auto updated?
  *   Yes
  *
@@ -81,12 +81,14 @@ Image Renderer::render(RenderWorld* world, Camera* cam) {
     pool.complete();
 
     #endif
+
+    return out;
 }
 
 void Renderer::render_animation(RenderWorld* world, Camera* cam, Frames& out) {
     for (std::size_t i = 0; i < out.n_frames; i++) {
         // Render this frame
-        ProgressBar prgrs(0, cam->width * cam->height - 1, "(" + to_string(i) + "/" + to_string(out.n_frames) + ")", "");
+        ProgressBar prgrs(0, cam->width * cam->height - 1, "(" + to_string(i + 1) + "/" + to_string(out.n_frames) + ")", "");
         for (int y = cam->height-1; y >= 0; y--) {
             for (int x = 0; x < cam->width; x++) {
                 // Render the pixel

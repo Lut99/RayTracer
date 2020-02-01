@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 4:55:47 PM
  * Last edited:
- *   2/1/2020, 5:39:50 PM
+ *   2/1/2020, 7:51:25 PM
  * Auto updated?
  *   Yes
  *
@@ -31,28 +31,35 @@ CameraRotation::CameraRotation(Camera* target_cam, chrono::seconds circle_time)
     : CameraMovement(target_cam, rotation),
     loop_time(circle_time),
     speed(this->compute_speed(circle_time))
-{}
+{
+    // Compute the start angle
+    Vec3 lookat = this->cam_target->lookat;
+    Vec3 lookfrom = this->cam_target->lookfrom;
+    Vec3 up = Vec3(lookat.x, lookfrom.y, lookat.z) - lookat;
+    this->start = acosf64(dot(up, lookfrom) / (up.length() * lookfrom.length()));
+}
 
 void CameraRotation::update(chrono::milliseconds time_passed) {
     Vec3 lookfrom = this->cam_target->lookfrom;
-    Vec3 circle_center = Vec3(this->cam_target->lookat);
-    circle_center.y = lookfrom.y;
+    Vec3 lookat = this->cam_target->lookat;
+    Vec3 up = Vec3(lookat.x, lookfrom.y, lookat.z) - lookat;
 
-    Vec3 on_circle = lookfrom - circle_center;
+    // Fetch the current 'angle'
+    double angle = acosf64(dot(up, lookfrom) / (up.length() * lookfrom.length()));
 
     // Rotate the vector by speed radians
     double speed = this->speed * chrono::duration_cast<chrono::seconds>(time_passed).count();
-    Vec3 new_on_circle = Vec3(
-        on_circle.x * cosf64(speed) - on_circle.y * sinf64(speed),
-        on_circle.y,
-        on_circle.z * sinf64(speed) + on_circle.y * cosf64(speed)
+
+    // Rotate the circle_from vector
+    Vec3 circle_from = lookfrom - Vec3(lookat.x, lookfrom.y, lookat.z);
+    Vec3 rot_circle_from = Vec3(
+        lookat.x + cosf64(angle + speed) * circle_from.length(),
+        lookfrom.y,
+        lookat.z + sinf64(angle + speed) * circle_from.length()
     );
 
-    // Compute the difference vector
-    Vec3 circle_diff = new_on_circle - on_circle;
-
     // Set the camera lookfrom to this new position
-    this->cam_target->lookfrom += circle_diff;
+    this->cam_target->lookfrom = rot_circle_from + Vec3(lookat.x, lookfrom.y, lookat.z);
 
     // Recompute the camera variables
     this->cam_target->recompute();

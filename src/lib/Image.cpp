@@ -4,7 +4,7 @@
  * Created:
  *   1/20/2020, 3:03:07 PM
  * Last edited:
- *   2/1/2020, 4:29:57 PM
+ *   2/1/2020, 7:25:07 PM
  * Auto updated?
  *   Yes
  *
@@ -95,6 +95,8 @@ Image::Image(int width, int height)
 Image::Image(const Image& other)
     : Image(other.width, other.height)
 {
+    cout << "Copy constructor" << endl;
+
     // Copy all pixels over
     for (std::size_t i = 0; i < this->width * this->height * 3; i++) {
         this->data[i] = other.data[i];
@@ -105,6 +107,7 @@ Image::Image(Image&& other)
     : width(other.width),
     height(other.height)
 {
+    cout << "Move constructor" << endl;
     this->data = other.data;
     other.data = nullptr;
 }

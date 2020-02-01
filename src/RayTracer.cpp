@@ -4,7 +4,7 @@
  * Created:
  *   1/31/2020, 2:00:11 PM
  * Last edited:
- *   2/1/2020, 6:25:05 PM
+ *   2/1/2020, 7:36:06 PM
  * Auto updated?
  *   Yes
  *
@@ -282,9 +282,12 @@ int main(int argc, char** argv) {
     Renderer renderer(n_threads, batch_size, show_progressbar);
 
     auto start = chrono::system_clock::now();
+    auto stop = start;
 
     if (n_frames == 1) {
         Image out = renderer.render(world, cam);
+
+        stop = chrono::system_clock::now();
 
         cout << "Writing output..." << endl;
         out.to_png(filename);
@@ -292,11 +295,11 @@ int main(int argc, char** argv) {
         Frames out(cam->width, cam->height, n_frames, fps, temppath, dynamic_writing);
         renderer.render_animation(world, cam, out);
 
+        stop = chrono::system_clock::now();
+
         cout << "Creating .mp4..." << endl;
         out.to_mp4(filename);
     }
-
-    auto stop = chrono::system_clock::now();
     auto duration = stop - start;
     auto duration_ms = chrono::duration_cast<chrono::milliseconds>(duration);
 

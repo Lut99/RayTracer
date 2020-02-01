@@ -4,7 +4,7 @@
  * Created:
  *   1/31/2020, 2:25:02 PM
  * Last edited:
- *   2/1/2020, 5:56:12 PM
+ *   2/1/2020, 7:40:14 PM
  * Auto updated?
  *   Yes
  *
@@ -44,6 +44,10 @@ Frames::Frames(int width, int height, int num_of_frames, int framerate, std::str
     }
     temp_check.close();
 
+    // Delete all .png files starting with out and ending in .png in the folder
+    string command = "rm -r "+ temp_dir + "/out*.png";
+    int res = system(command.c_str());
+
     // Initialize the first frame
     this->current_frame = new Image(this->width, this->height);
 
@@ -70,7 +74,7 @@ Frames::Frames(const Frames& other)
     } else {
         // Copy their entire this->frames list
         this->frames = new Image*[this->n_frames];
-        for (std::size_t i = 0; i < this->frame_index; i++) {
+        for (std::size_t i = 0; i <= this->frame_index; i++) {
             this->frames[i] = new Image(*other.frames[i]);
         }
         // Update the current_frame
@@ -117,7 +121,7 @@ Frames::~Frames() {
 
 void Frames::next() {
     // Do nothing if we're already at the last frame
-    if (this->frame_index == this->n_frames - 1) {
+    if (this->frame_index == this->n_frames) {
         return;
     }
 
@@ -146,7 +150,7 @@ ImageRow Frames::operator[](int index) {
 void Frames::to_mp4(string path) {
     // If we haven't, write all images to file
     if (!this->dynamic_writing) {
-        for (std::size_t i = 0; i < this->frame_index; i++) {
+        for (std::size_t i = 0; i <= this->frame_index; i++) {
             this->frames[i]->to_png(this->temp_dir + "/out" + to_string(i) + ".png");
         }
     }
