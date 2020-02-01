@@ -59,8 +59,8 @@ Renderer.o: $(SRC_DIR)/lib/Renderer.cpp
 
 
 # ARCHIVE RULES #
-$(LIB_DIR)/Image.a: $(LIB_DIR)/Animation.o $(LIB_DIR)/Image.o $(LIB_DIR)/LodePNG.o
-	ar rvs $(LIB_DIR)/Image.a $(LIB_DIR)/Animation.o $(LIB_DIR)/Image.o $(LIB_DIR)/LodePNG.o
+$(LIB_DIR)/Image.a: $(LIB_DIR)/Frames.o $(LIB_DIR)/Image.o $(LIB_DIR)/LodePNG.o
+	ar rvs $(LIB_DIR)/Image.a $(LIB_DIR)/Frames.o $(LIB_DIR)/Image.o $(LIB_DIR)/LodePNG.o
 $(LIB_DIR)/RenderObject.a: $(LIB_DIR)/RenderObject.o $(LIB_DIR)/objects/Sphere.o $(LIB_DIR)/objects/RenderObjectCollection.o
 	ar rvs $(LIB_DIR)/RenderObject.a $(LIB_DIR)/RenderObject.o $(LIB_DIR)/objects/Sphere.o $(LIB_DIR)/objects/RenderObjectCollection.o
 $(LIB_DIR)/Materials.a: $(LIB_DIR)/Material.o $(LIB_DIR)/materials/Lambertian.o $(LIB_DIR)/materials/Metal.o $(LIB_DIR)/materials/Dielectric.o
@@ -84,8 +84,8 @@ test_progressbar: $(LIB_DIR)/ProgressBar.o
 test_json: $(LIB_DIR)/Vec3.o $(LIB_DIR)/WorldIO.o
 	$(CC) $(ARGS) -o tests/bin/test_json.$(EXTENSION) tests/src/test_json.cpp $(LIB_DIR)/Vec3.o $(LIB_DIR)/WorldIO.o
 
-test_animation: $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o
-	$(CC) $(ARGS) -o tests/bin/test_animation.$(EXTENSION) tests/src/test_animation.cpp $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o
+test_frames: $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o
+	$(CC) $(ARGS) -o tests/bin/test_frames.$(EXTENSION) tests/src/test_frames.cpp $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o
 
 clean:
 	rm -f $(BIN_DIR)/*.out

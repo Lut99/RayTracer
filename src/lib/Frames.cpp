@@ -1,20 +1,20 @@
-/* ANIMATION.cpp
+/* FRAMES.cpp
  *   by Lut99
  *
  * Created:
  *   1/31/2020, 2:25:02 PM
  * Last edited:
- *   2/1/2020, 2:00:46 PM
+ *   2/1/2020, 2:12:55 PM
  * Auto updated?
  *   Yes
  *
  * Description:
- *   The Animation class wraps the Image class, and is meant to be able to
+ *   The Frames class wraps the Image class, and is meant to be able to
  *   render a little movie. In contrast to a simple list of Images, the
  *   animation also holds information about the framerate and number of
  *   frames, and can dynamically output frames while rendering to reduce
  *   the memory impact. This particular file is the implementation for
- *   Animation.hpp.
+ *   Frames.hpp.
 **/
 
 #include <iostream>
@@ -22,12 +22,12 @@
 #include <cstring>
 #include <cerrno>
 
-#include "include/Animation.hpp"
+#include "include/Frames.hpp"
 
 using namespace std;
 using namespace RayTracer;
 
-Animation::Animation(int width, int height, int num_of_frames, int framerate, std::string temp_dir, bool dynamic_write)
+Frames::Frames(int width, int height, int num_of_frames, int framerate, std::string temp_dir, bool dynamic_write)
     : width(width),
     height(height),
     n_frames(num_of_frames),
@@ -53,7 +53,7 @@ Animation::Animation(int width, int height, int num_of_frames, int framerate, st
         this->frames[this->frame_index] = this->current_frame;
     } 
 }
-Animation::Animation(const Animation& other) {
+Frames::Frames(const Frames& other) {
     // Copy some meta vars first
     this->width = other.width;
     this->height = other.height;
@@ -69,7 +69,7 @@ Animation::Animation(const Animation& other) {
         this->frames = other.frames;
     }
 }
-Animation::~Animation() {
+Frames::~Frames() {
     // Deallocate either everything or only the current frame
     if (!this->dynamic_writing) {
         for (std::size_t i = 0; i <= this->frame_index; i++) {
@@ -82,7 +82,7 @@ Animation::~Animation() {
     }
 }
 
-void Animation::next() {
+void Frames::next() {
     // Depending on whether we should keep everything in memory, write current image to disk and delete it
     if (this->dynamic_writing) {
         this->current_frame->to_png(this->temp_dir + "/out" + to_string(this->frame_index) + ".png");
@@ -100,11 +100,11 @@ void Animation::next() {
     }
 }
 
-ImageRow Animation::operator[](int index) {
+ImageRow Frames::operator[](int index) {
     // Wrap the operator of the internal current frame
     return this->current_frame->operator[](index);
 }
-Animation& Animation::operator=(const Animation& other) {
+Frames& Frames::operator=(const Frames& other) {
     // Copy some meta vars first
     this->width = other.width;
     this->height = other.height;
@@ -122,7 +122,7 @@ Animation& Animation::operator=(const Animation& other) {
     return *this;
 }
 
-void Animation::to_mp4(string path) {
+void Frames::to_mp4(string path) {
     // If we haven't, write all images to file
     if (!this->dynamic_writing) {
         for (std::size_t i = 0; i < this->frame_index; i++) {
@@ -143,9 +143,9 @@ void Animation::to_mp4(string path) {
 
     cout << "Running ffmpeg with command: '" + command + "'" << endl;
 
-    system(command.c_str());
+    int res = system(command.c_str());
 }
 
-const std::size_t Animation::get_frame_index() const {
+const std::size_t Frames::get_frame_index() const {
     return this->frame_index;
 }

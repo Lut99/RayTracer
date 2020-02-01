@@ -1,22 +1,22 @@
-/* TEST ANIMATION.cpp
+/* TEST FRAMES.cpp
  *   by Lut99
  *
  * Created:
  *   2/1/2020, 1:24:02 PM
  * Last edited:
- *   2/1/2020, 2:01:57 PM
+ *   2/1/2020, 2:10:57 PM
  * Auto updated?
  *   Yes
  *
  * Description:
- *   This file tests Animation.cpp. Primarily, it fills a set of 10 frames
+ *   This file tests Frames.cpp. Primarily, it fills a set of 10 frames
  *   with a slowly moving object, and then outputs these to pictures.
 **/
 
 #include <thread>
 #include <iostream>
 
-#include "../../src/lib/include/Animation.hpp"
+#include "../../src/lib/include/Frames.hpp"
 
 using namespace std;
 using namespace RayTracer;
@@ -26,7 +26,7 @@ bool test_animation() {
     cout << "Testing the animation class..." << endl;
 
     cout << "  Creating class with 10 frames..." << endl;
-    Animation ani(200, 100, 10, 1, "tests/bin/test_animation1", false);
+    Frames ani(200, 100, 10, 1, "tests/bin/test_animation1", false);
 
     cout << "  Rendering simple, moving square..." << endl;
     for (int i = 0; i < ani.n_frames; i++) {
@@ -52,7 +52,7 @@ bool test_dynamic() {
     cout << "Testing the animation class with dynamic saving..." << endl;
 
     cout << "  Creating class with 10 frames..." << endl;
-    Animation ani(200, 100, 10, 1, "tests/bin/test_animation2", true);
+    Frames ani(200, 100, 10, 1, "tests/bin/test_animation2", true);
 
     cout << "  Rendering simple, moving square..." << endl;
     for (int i = 0; i < ani.n_frames; i++) {
@@ -78,7 +78,7 @@ bool test_dynamic() {
 }
 
 int main() {
-    cout << endl << "*** TEST FOR \"Animation.cpp\" ***" << endl << endl;
+    cout << endl << "*** TEST FOR \"Frames.cpp\" ***" << endl << endl;
     if (!test_animation()) {
         return -1;
     }
