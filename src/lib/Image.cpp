@@ -4,7 +4,7 @@
  * Created:
  *   1/20/2020, 3:03:07 PM
  * Last edited:
- *   1/26/2020, 5:59:15 PM
+ *   2/1/2020, 4:29:57 PM
  * Auto updated?
  *   Yes
  *
@@ -91,15 +91,29 @@ Image::Image(int width, int height)
 {
     this->data = new double[this->width * this->height * 3];
 }
+
 Image::Image(const Image& other)
+    : Image(other.width, other.height)
+{
+    // Copy all pixels over
+    for (std::size_t i = 0; i < this->width * this->height * 3; i++) {
+        this->data[i] = other.data[i];
+    }
+}
+
+Image::Image(Image&& other)
     : width(other.width),
     height(other.height)
 {
     this->data = other.data;
+    other.data = nullptr;
 }
+
 Image::~Image() {
     delete[] this->data;
 }
+
+
 
 Pixel Image::pixel(int row, int col) {
     // Check if the indices are within bounds

@@ -4,7 +4,7 @@
  * Created:
  *   1/31/2020, 2:25:02 PM
  * Last edited:
- *   2/1/2020, 2:12:55 PM
+ *   2/1/2020, 4:39:39 PM
  * Auto updated?
  *   Yes
  *
@@ -53,22 +53,53 @@ Frames::Frames(int width, int height, int num_of_frames, int framerate, std::str
         this->frames[this->frame_index] = this->current_frame;
     } 
 }
-Frames::Frames(const Frames& other) {
-    // Copy some meta vars first
-    this->width = other.width;
-    this->height = other.height;
-    this->n_frames = other.n_frames;
-    this->fps = other.fps;
-    this->frame_index = other.frame_index;
-    this->temp_dir = other.temp_dir;
 
-    // Copy the reference to the current frame
-    this->current_frame = other.current_frame;
-    // Only copy the frames reference if them_dir is empty
-    if (!this->dynamic_writing) {
-        this->frames = other.frames;
+Frames::Frames(const Frames& other)
+    : width(other.width),
+    height(other.height),
+    n_frames(other.n_frames),
+    fps(other.fps),
+    frame_index(other.frame_index),
+    temp_dir(other.temp_dir),
+    dynamic_writing(other.dynamic_writing)
+{
+    // Depending on whether we write dynamically, copy the necessary data
+    if (this->dynamic_writing) {
+        // Copy the current_frame, done
+        this->current_frame = new Image(*other.current_frame);
+    } else {
+        // Copy their entire this->frames list
+        this->frames = new Image*[this->n_frames];
+        for (std::size_t i = 0; i < this->frame_index; i++) {
+            this->frames[i] = new Image(*other.frames[i]);
+        }
+        // Update the current_frame
+        this->current_frame = this->frames[frame_index];
     }
 }
+
+Frames::Frames(Frames&& other)
+    : width(other.width),
+    height(other.height),
+    n_frames(other.n_frames),
+    fps(other.fps),
+    frame_index(other.frame_index),
+    temp_dir(other.temp_dir),
+    dynamic_writing(other.dynamic_writing)
+{
+    // Copy the correct pointers
+    if (this->dynamic_writing) {
+        this->current_frame = other.current_frame;
+    } else {
+        this->frames = other.frames;
+        this->current_frame = this->frames[this->frame_index];
+    }
+
+    // Overwrite the other pointer with null
+    other.frames = nullptr;
+    other.current_frame = nullptr;
+}
+
 Frames::~Frames() {
     // Deallocate either everything or only the current frame
     if (!this->dynamic_writing) {
@@ -81,6 +112,8 @@ Frames::~Frames() {
         delete this->current_frame;
     }
 }
+
+
 
 void Frames::next() {
     // Depending on whether we should keep everything in memory, write current image to disk and delete it
@@ -103,23 +136,6 @@ void Frames::next() {
 ImageRow Frames::operator[](int index) {
     // Wrap the operator of the internal current frame
     return this->current_frame->operator[](index);
-}
-Frames& Frames::operator=(const Frames& other) {
-    // Copy some meta vars first
-    this->width = other.width;
-    this->height = other.height;
-    this->n_frames = other.n_frames;
-    this->fps = other.fps;
-    this->frame_index = other.frame_index;
-    this->temp_dir = other.temp_dir;
-
-    // Copy the reference to the current frame
-    this->current_frame = other.current_frame;
-    // Only copy the frames reference if them_dir is empty
-    if (!this->dynamic_writing) {
-        this->frames = other.frames;
-    }
-    return *this;
 }
 
 void Frames::to_mp4(string path) {
