@@ -4,7 +4,7 @@
  * Created:
  *   1/31/2020, 2:25:02 PM
  * Last edited:
- *   1/31/2020, 3:13:56 PM
+ *   2/1/2020, 2:00:46 PM
  * Auto updated?
  *   Yes
  *
@@ -131,7 +131,19 @@ void Animation::to_mp4(string path) {
     }
 
     // Release ffmpeg on the files
-    // TBD
+    string command = "ffmpeg ";
+    command += "-r " + to_string(this->fps);
+    command += " -f image2";
+    command += " -s " + to_string(this->width) + "x" + to_string(this->height);
+    command += " -i \"" + this->temp_dir + "/out%d.png\"";
+    command += " -vcodec libx264";
+    command += " -crf 25";
+    command += " -pix_fmt yuv420p";
+    command += " \"" + path + "\"";
+
+    cout << "Running ffmpeg with command: '" + command + "'" << endl;
+
+    system(command.c_str());
 }
 
 const std::size_t Animation::get_frame_index() const {
