@@ -4,7 +4,7 @@
  * Created:
  *   1/27/2020, 2:30:56 PM
  * Last edited:
- *   1/29/2020, 9:28:25 PM
+ *   2/1/2020, 3:29:38 PM
  * Auto updated?
  *   Yes
  *
@@ -34,11 +34,16 @@ namespace RayTracer {
             std::vector<RenderObject*> objects;
             /* List that stores all light objects in the world. */
             std::vector<int*> lights;
+
+            /* Deepcopies the different vectors*/
+            template <typename T> void deepcopy(std::vector<T*>& target, const std::vector<T*>& source) const;
         public:
             /* The RenderWorld class describes the world, and serves as the root for the object hiearchy. */
             RenderWorld();
-            /* Copy operator for the RenderWorld class. */
+            /* Copy constructor for the RenderWorld class. */
             RenderWorld(const RenderWorld& other);
+            /* Move constructor for the RenderWorld class. */
+            RenderWorld(RenderWorld&& other);
             ~RenderWorld();
 
             /* Adds a RenderObject to the world. Note that internally, this will copy the given object instead of reference it. */
@@ -65,8 +70,13 @@ namespace RayTracer {
             /* Renders one pixel instead by shooting rays and everything. The optional cam_index can be used to render from another camera if there are multiple given. The index is equal to the order the cameras were added. */
             Vec3 render_pixel(int x, int y, const Camera& cam) const;
 
-            /* Copy operator for the RenderWorld class. */
-            RenderWorld& operator=(const RenderWorld& other);
+            /* Copy assignment operator for the RenderWorld class. */
+            RenderWorld& operator=(RenderWorld other);
+            /* Move assignment operator for the RenderWorld class. */
+            RenderWorld& operator=(RenderWorld&& other);
+
+            /* Swap operator for the RenderWorld class. */
+            friend void swap(RenderWorld& first, RenderWorld& second);
     };
 }
 

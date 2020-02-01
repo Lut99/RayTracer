@@ -4,7 +4,7 @@
  * Created:
  *   1/27/2020, 2:30:39 PM
  * Last edited:
- *   1/29/2020, 9:49:59 PM
+ *   2/1/2020, 3:30:44 PM
  * Auto updated?
  *   Yes
  *
@@ -29,8 +29,18 @@ RenderWorld::RenderWorld() {
     // Nothing much, really
 }
 RenderWorld::RenderWorld(const RenderWorld& other) {
+    // Deepcopy the vectors
+    this->deepcopy(this->objects, other.objects);
+    this->deepcopy(this->lights, other.lights);
+}
+RenderWorld::RenderWorld(RenderWorld&& other) {
+    // Simply shallow copy the vectors
     this->objects = other.objects;
     this->lights = other.lights;
+
+    // Now fill the object's vectors with empty ones to avoid deallocation of the objects
+    other.objects = vector<RenderObject*>();
+    other.lights = vector<int*>();
 }
 
 RenderWorld::~RenderWorld() {
@@ -43,6 +53,13 @@ RenderWorld::~RenderWorld() {
     }
 }
 
+
+template <typename T> void RenderWorld::deepcopy(vector<T*>& target, const vector<T*>& source) const {
+    // Copy all elements to the other vector - but make sure to declare new copies
+    for (size_t i = 0; i < source.size(); i++) {
+        target.at(i) = new T(*source.at(i));
+    }
+}
 
 
 void RenderWorld::add_object(RenderObject obj) {
@@ -139,8 +156,34 @@ Vec3 RenderWorld::render_pixel(int x, int y, const Camera& cam) const {
     }
 }
 
-RenderWorld& RenderWorld::operator=(const RenderWorld& other) {
+
+
+
+RenderWorld& RenderWorld::operator=(RenderWorld other) {
+    // Only do some stuff if this != other
+    if (this != &other) {
+        // Swap this data with the other data
+        swap(*this, other);
+    }
+    return *this;
+}
+
+RenderWorld& RenderWorld::operator=(RenderWorld&& other) {
+    // Simply shallow-copy the vectors
     this->objects = other.objects;
     this->lights = other.lights;
+
+    // Set the other's vectors to empty vectors
+    other.objects = vector<RenderObject*>();
+    other.lights = vector<int*>();
+
+    // Return a reference to this
     return *this;
+}
+
+void RayTracer::swap(RenderWorld& first, RenderWorld& second) {
+    using std::swap;
+
+    swap(first.objects, second.objects);
+    swap(first.lights, second.lights);
 }
