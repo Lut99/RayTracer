@@ -4,7 +4,7 @@
  * Created:
  *   1/31/2020, 2:25:18 PM
  * Last edited:
- *   2/1/2020, 4:30:49 PM
+ *   2/2/2020, 5:54:31 PM
  * Auto updated?
  *   Yes
  *
@@ -51,6 +51,9 @@ namespace RayTracer {
 
             /* Returns a row within the current frame. */
             ImageRow operator[](int index);
+
+            /* Returns a reference to the current frame */
+            Image& get_current_frame();
 
             /* Saves the internal buffer to disk if this isn't done dynamically, and then combines all images into a .mp4. */
             void to_mp4(std::string path);

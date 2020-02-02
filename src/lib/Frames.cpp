@@ -4,7 +4,7 @@
  * Created:
  *   1/31/2020, 2:25:02 PM
  * Last edited:
- *   2/1/2020, 7:40:14 PM
+ *   2/2/2020, 5:54:55 PM
  * Auto updated?
  *   Yes
  *
@@ -145,6 +145,10 @@ void Frames::next() {
 ImageRow Frames::operator[](int index) {
     // Wrap the operator of the internal current frame
     return this->current_frame->operator[](index);
+}
+
+Image& Frames::get_current_frame() {
+    return *this->current_frame;
 }
 
 void Frames::to_mp4(string path) {

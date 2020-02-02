@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 4:55:47 PM
  * Last edited:
- *   2/1/2020, 7:51:25 PM
+ *   2/2/2020, 5:49:23 PM
  * Auto updated?
  *   Yes
  *
@@ -42,24 +42,32 @@ CameraRotation::CameraRotation(Camera* target_cam, chrono::seconds circle_time)
 void CameraRotation::update(chrono::milliseconds time_passed) {
     Vec3 lookfrom = this->cam_target->lookfrom;
     Vec3 lookat = this->cam_target->lookat;
-    Vec3 up = Vec3(lookat.x, lookfrom.y, lookat.z) - lookat;
+    Vec3 up = Vec3(1, 0, 0);
 
     // Fetch the current 'angle'
-    double angle = acosf64(dot(up, lookfrom) / (up.length() * lookfrom.length()));
+    Vec3 lookfrom_plane = Vec3(
+        lookfrom.x - lookat.x,
+        0,
+        lookfrom.y - lookat.y
+    );
+    double angle = acosf64(dot(up, lookfrom_plane) / (up.length() * lookfrom_plane.length()));
 
     // Rotate the vector by speed radians
     double speed = this->speed * chrono::duration_cast<chrono::seconds>(time_passed).count();
 
-    // Rotate the circle_from vector
-    Vec3 circle_from = lookfrom - Vec3(lookat.x, lookfrom.y, lookat.z);
-    Vec3 rot_circle_from = Vec3(
-        lookat.x + cosf64(angle + speed) * circle_from.length(),
-        lookfrom.y,
-        lookat.z + sinf64(angle + speed) * circle_from.length()
+    // Compute the new lookfrom_plane
+    Vec3 rot_lookfrom_plane = Vec3(
+        lookfrom_plane.x + cosf64(angle + speed) * lookfrom_plane.length(),
+        0,
+        lookfrom_plane.z + sinf64(angle + speed) * lookfrom_plane.length()
     );
 
     // Set the camera lookfrom to this new position
-    this->cam_target->lookfrom = rot_circle_from + Vec3(lookat.x, lookfrom.y, lookat.z);
+    this->cam_target->lookfrom = Vec3(
+        rot_lookfrom_plane.x + lookat.x,
+        lookfrom.y,
+        rot_lookfrom_plane.z + lookat.z
+    );
 
     // Recompute the camera variables
     this->cam_target->recompute();

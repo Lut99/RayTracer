@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 4:44:56 PM
  * Last edited:
- *   1/25/2020, 4:35:08 PM
+ *   2/2/2020, 6:23:37 PM
  * Auto updated?
  *   Yes
  *
@@ -101,7 +101,7 @@ void ProgressBar::init() {
     this->progress = this->min;
     this->done = false;
 
-    this->last_draw = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch());
+    this->last_draw = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch()) - this->interval;
 
     // Fetch the width of the command line if needed
     if (this->width < 0) {

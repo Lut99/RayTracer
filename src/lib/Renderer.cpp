@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   2/1/2020, 7:29:11 PM
+ *   2/2/2020, 6:22:56 PM
  * Auto updated?
  *   Yes
  *
@@ -79,6 +79,7 @@ Image Renderer::render(RenderWorld* world, Camera* cam) {
 
     // Wait until all threads have been reaped
     pool.complete();
+    pool.stop();
 
     #endif
 
@@ -86,9 +87,16 @@ Image Renderer::render(RenderWorld* world, Camera* cam) {
 }
 
 void Renderer::render_animation(RenderWorld* world, Camera* cam, Frames& out) {
+    #if RENDER_THREADED
+    ThreadPool pool(this->n_threads, this->batch_size);
+    #endif
+
     for (std::size_t i = 0; i < out.n_frames; i++) {
         // Render this frame
         ProgressBar prgrs(0, cam->width * cam->height - 1, "(" + to_string(i + 1) + "/" + to_string(out.n_frames) + ")", "");
+
+        #ifndef RENDER_THREADED
+
         for (int y = cam->height-1; y >= 0; y--) {
             for (int x = 0; x < cam->width; x++) {
                 // Render the pixel
@@ -100,10 +108,43 @@ void Renderer::render_animation(RenderWorld* world, Camera* cam, Frames& out) {
             }
         }
 
+        #else
+
+        // Use the thread pool to render it
+        unsigned long batch_index = 0;
+        unsigned long to_do = cam->width * cam->height;
+        while (batch_index < to_do) {
+            // Update the progressbar in any case for smoothness
+            if (this->show_progressbar) {
+                prgrs.set(batch_index);
+            }
+
+            // If a the queue is full, continue
+            if (pool.batch_queue_full()) {
+                continue;
+            }
+
+            // Create a new batch and append it
+            PixelBatch batch = pool.get_batch(cam->width, cam->height, batch_index);
+            batch.camera = cam;
+            batch.world = world;
+            batch.out = &out.get_current_frame();
+            pool.add_batch(batch);
+        }
+
+        // Make sure the threads are complete
+        pool.complete();
+
+        #endif
+
         // Update the frames
         out.next();
 
         // Update the world
         world->update(chrono::milliseconds(1000 / out.fps));
     }
+
+    #ifdef RENDER_THREADED
+    pool.stop();
+    #endif
 }
