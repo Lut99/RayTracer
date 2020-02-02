@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 4:56:07 PM
  * Last edited:
- *   2/1/2020, 7:44:15 PM
+ *   2/2/2020, 7:14:52 PM
  * Auto updated?
  *   Yes
  *
@@ -23,7 +23,9 @@
 namespace RayTracer {
     class CameraRotation: public CameraMovement {
         private:
-            double start;
+            Vec3 center;
+            double radius;
+            double angle;
 
             /* This function computes the distance on a circle the camera has to travel each frame for the circle_time to be made */
             static double compute_speed(std::chrono::seconds circle_time);

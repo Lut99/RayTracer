@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 4:55:47 PM
  * Last edited:
- *   2/2/2020, 5:49:23 PM
+ *   2/2/2020, 7:16:47 PM
  * Auto updated?
  *   Yes
  *
@@ -35,8 +35,9 @@ CameraRotation::CameraRotation(Camera* target_cam, chrono::seconds circle_time)
     // Compute the start angle
     Vec3 lookat = this->cam_target->lookat;
     Vec3 lookfrom = this->cam_target->lookfrom;
-    Vec3 up = Vec3(lookat.x, lookfrom.y, lookat.z) - lookat;
-    this->start = acosf64(dot(up, lookfrom) / (up.length() * lookfrom.length()));
+
+    this->center = Vec3(lookat.x, 0, lookat.z);
+    
 }
 
 void CameraRotation::update(chrono::milliseconds time_passed) {

@@ -93,6 +93,9 @@ test_json: $(LIB_DIR)/Vec3.o $(LIB_DIR)/WorldIO.o
 test_frames: $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o
 	$(CC) $(ARGS) -o tests/bin/test_frames.$(EXTENSION) tests/src/test_frames.cpp $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o
 
+test_vector_math: $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o
+	$(CC) $(ARGS) -o tests/bin/test_vector_math.$(EXTENSION) tests/src/test_vector_math.cpp $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o
+
 clean:
 	rm -f $(BIN_DIR)/*.out
 	rm -f $(LIB_DIR)/*.o
