@@ -4,7 +4,7 @@
  * Created:
  *   1/25/2020, 5:11:12 PM
  * Last edited:
- *   1/29/2020, 4:12:02 PM
+ *   2/2/2020, 6:12:28 PM
  * Auto updated?
  *   Yes
  *
@@ -52,6 +52,7 @@ namespace RayTracer {
             int n_threads;
             int batch_size;
 
+            int threads_waiting;
             bool working;
 
             /* The list of thread objects */

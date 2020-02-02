@@ -4,7 +4,7 @@
  * Created:
  *   1/25/2020, 5:10:34 PM
  * Last edited:
- *   1/29/2020, 4:12:32 PM
+ *   2/2/2020, 6:18:08 PM
  * Auto updated?
  *   Yes
  *
@@ -29,6 +29,7 @@ ThreadPool::ThreadPool(int num_of_threads, int batch_size, int max_in_queue)
     max_in_queue(max_in_queue)
 {
     this->working = true;
+    this->threads_waiting = 0;
 
     // Create the correct amount of threads
     this->pool.resize(this->n_threads);
@@ -45,11 +46,18 @@ void ThreadPool::worker(int id) {
     while (this->working) {
         // Create a scope to indicate the mutex duration
         PixelBatch batch;
-        {
+        {   
+            // Acquire the lock
             unique_lock<mutex> u_lock(this->batch_lock);
+
+            // Get some references to class variables
             vector<PixelBatch>* queue = &this->batch_queue;
             bool* working = &this->working;
+
+            // Wait until work is available OR we're stopping
+            this->threads_waiting++;
             this->batch_cond.wait(u_lock, [working, queue](){ return !queue->empty() || !(*working); });
+            this->threads_waiting--;
 
             // Acquire the first batch if and only if we didn't stop because of work
             if (this->working) {
@@ -134,13 +142,15 @@ void ThreadPool::stop() {
     }
 }
 void ThreadPool::complete() {
+    // Wait until all threads are waiting
     while (true) {
         {
             unique_lock<mutex> u_lock(this->batch_lock);
-            if (this->batch_queue.empty()) {
-                break;
+            // cout << "Batch empty? " << this->batch_queue.empty() << endl;
+            // cout << "Threads waiting = " << this->threads_waiting << endl;
+            if (this->batch_queue.empty() && this->threads_waiting == this->n_threads) {
+                return;
             }
         }
     }
-    this->stop();
 }
