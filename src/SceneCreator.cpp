@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 4:36:39 PM
  * Last edited:
- *   1/31/2020, 1:47:10 PM
+ *   2/3/2020, 5:34:11 PM
  * Auto updated?
  *   Yes
  *
@@ -83,7 +83,7 @@ int main(int argc, char** argv) {
     json j = WorldIO::to_json(world);
 
     /* ENCODE CAMERA */
-    j["camera"] = WorldIO::to_json(Camera(Vec3(7, 2, 2), Vec3(0, 0, -1), Vec3(0, 1, 0), 50, 0.1));
+    j["camera"] = WorldIO::to_json(Camera(Vec3(0, 0, 0), Vec3(0, 0, -1), Vec3(0, 1, 0), 90, 0));
     
     cout << "Writing to file..." << endl;
     ofstream out(json_file);

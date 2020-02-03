@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:14:41 PM
  * Last edited:
- *   1/29/2020, 7:16:29 PM
+ *   2/3/2020, 5:36:11 PM
  * Auto updated?
  *   Yes
  *
@@ -31,14 +31,13 @@ Dielectric::Dielectric(const Vec3& colour_absorption, double refrective_index)
 bool Dielectric::scatter(const Ray& ray_in, const HitRecord& record, Vec3& attenuation, Ray& ray_out) const {
     Vec3 outward_normal;
     double ni_over_nt;
-    attenuation = Vec3(1.0, 1.0, 1.0);//this->albedo;
+    attenuation = this->albedo;
     Vec3 refracted;
 
     double reflect_prob;
     double cosine;
 
     // I think this decides on what side of the sphere we hit; in to out or out to in.
-    /*
     if (dot(ray_in.direction, record.normal) > 0) {
         outward_normal = -record.normal;
         ni_over_nt = this->ref_idx;
@@ -48,16 +47,7 @@ bool Dielectric::scatter(const Ray& ray_in, const HitRecord& record, Vec3& atten
         ni_over_nt = 1.0 / this->ref_idx;
         cosine = -dot(ray_in.direction, record.normal) / ray_in.direction.length();
     }
-    */
-   if (dot(ray_in.direction, record.normal) > 0) {
-       outward_normal = -record.normal;
-       ni_over_nt = ref_idx;
-   } else {
-       outward_normal = record.normal;
-       ni_over_nt = 1.0 / ref_idx;
-   }
 
-    /*
     if (this->refract(ray_in.direction, outward_normal, ni_over_nt, refracted)) {
         reflect_prob = this->schlick(cosine);
     } else {
@@ -69,13 +59,11 @@ bool Dielectric::scatter(const Ray& ray_in, const HitRecord& record, Vec3& atten
     } else {
         ray_out = Ray(record.hitpoint, refracted);
     }
-    */
+
    if (this->refract(ray_in.direction, outward_normal, ni_over_nt, refracted)) {
        ray_out = Ray(record.hitpoint, refracted);
    } else {
-       //ray_out = Ray(record.hitpoint, this->reflect(ray_in.direction, record.normal));
-       ray_out = ray_in;
-       return false;
+       ray_out = Ray(record.hitpoint, this->reflect(ray_in.direction, record.normal));
    }
 
     return true;
