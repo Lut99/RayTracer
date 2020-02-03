@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 4:55:47 PM
  * Last edited:
- *   2/2/2020, 7:16:47 PM
+ *   2/3/2020, 4:58:26 PM
  * Auto updated?
  *   Yes
  *
@@ -24,7 +24,7 @@ using namespace RayTracer;
 
 double CameraRotation::compute_speed(std::chrono::seconds circle_time) {
     double circle_dist = 2 * M_PI;
-    return circle_dist / ((double) circle_time.count());
+    return circle_dist / (((double) circle_time.count()) * 1000);
 }
 
 CameraRotation::CameraRotation(Camera* target_cam, chrono::seconds circle_time)
@@ -32,43 +32,28 @@ CameraRotation::CameraRotation(Camera* target_cam, chrono::seconds circle_time)
     loop_time(circle_time),
     speed(this->compute_speed(circle_time))
 {
-    // Compute the start angle
+    // Compute the start positions
     Vec3 lookat = this->cam_target->lookat;
     Vec3 lookfrom = this->cam_target->lookfrom;
+    Vec3 lookfrom_circle(lookfrom.x, 0, lookfrom.z);
 
     this->center = Vec3(lookat.x, 0, lookat.z);
-    
+    this->angle = acosf64(dot(Vec3(0, 0, 1), (lookfrom_circle - center).normalize()));
+    this->radius = (lookfrom_circle - this->center).length();
 }
 
 void CameraRotation::update(chrono::milliseconds time_passed) {
-    Vec3 lookfrom = this->cam_target->lookfrom;
-    Vec3 lookat = this->cam_target->lookat;
-    Vec3 up = Vec3(1, 0, 0);
-
-    // Fetch the current 'angle'
-    Vec3 lookfrom_plane = Vec3(
-        lookfrom.x - lookat.x,
-        0,
-        lookfrom.y - lookat.y
-    );
-    double angle = acosf64(dot(up, lookfrom_plane) / (up.length() * lookfrom_plane.length()));
-
-    // Rotate the vector by speed radians
-    double speed = this->speed * chrono::duration_cast<chrono::seconds>(time_passed).count();
-
-    // Compute the new lookfrom_plane
-    Vec3 rot_lookfrom_plane = Vec3(
-        lookfrom_plane.x + cosf64(angle + speed) * lookfrom_plane.length(),
-        0,
-        lookfrom_plane.z + sinf64(angle + speed) * lookfrom_plane.length()
-    );
-
     // Set the camera lookfrom to this new position
     this->cam_target->lookfrom = Vec3(
-        rot_lookfrom_plane.x + lookat.x,
-        lookfrom.y,
-        rot_lookfrom_plane.z + lookat.z
+        this->center.x + cosf64(this->angle) * this->radius,
+        this->cam_target->lookfrom.y,
+        this->center.z + sinf64(this->angle) * this->radius
     );
+
+    this->angle += this->speed * time_passed.count();
+    while (this->angle >= 2 * M_PI) {
+        this->angle -= 2 * M_PI;
+    }
 
     // Recompute the camera variables
     this->cam_target->recompute();

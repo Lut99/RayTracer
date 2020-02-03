@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 12:12:44 PM
  * Last edited:
- *   1/29/2020, 7:04:13 PM
+ *   2/3/2020, 4:52:04 PM
  * Auto updated?
  *   Yes
  *
@@ -120,7 +120,7 @@ double& Vec3::operator[](int index) {
 }
 
 double Vec3::length() const {
-    return sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
+    return sqrtf64(this->x * this->x + this->y * this->y + this->z * this->z);
 }
 double Vec3::squared_length() const {
     double l = this->length();
