@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:41:40 PM
  * Last edited:
- *   1/31/2020, 1:48:46 PM
+ *   2/4/2020, 4:34:11 PM
  * Auto updated?
  *   Yes
  *
@@ -309,91 +309,3 @@ Material* WorldIO::Materials::from_json(const json& json_obj) {
     }
 }
 
-json WorldIO::Materials::to_json(const Lambertian& object) {
-    json j;
-    j["type"] = (unsigned long) object.type;
-    j["albedo"] = WorldIO::to_json(object.albedo);
-    return j;
-}
-Lambertian* WorldIO::Materials::lambertian_from_json(const json& json_obj) {
-    // Check if the object has an object type
-    if (!json_obj.is_object()) {
-        throw InvalidTypeException("Lambertian", json::object().type_name(), json_obj.type_name());
-    }
-
-    // Check if there is an albedo field
-    if (json_obj["albedo"].is_null()) {
-        throw MissingFieldException("Lambertian", "albedo");
-    }
-
-    // Parse it with the Vec3 parser
-    Vec3 albedo = WorldIO::vec3_from_json(json_obj["albedo"]);
-
-    return new Lambertian(albedo);
-}
-
-json WorldIO::Materials::to_json(const Metal& object) {
-    json j;
-    j["type"] = (unsigned long) object.type;
-    j["albedo"] = WorldIO::to_json(object.albedo);
-    j["fuzz"] = object.fuzz;
-    return j;
-}
-Metal* WorldIO::Materials::metal_from_json(const json& json_obj) {
-    // Check if the object has an object type
-    if (!json_obj.is_object()) {
-        throw InvalidTypeException("Metal", json::object().type_name(), json_obj.type_name());
-    }
-
-    // Check if the required fields are there
-    if (json_obj["albedo"].is_null()) {
-        throw MissingFieldException("Metal", "albedo");
-    }
-    if (json_obj["fuzz"].is_null()) {
-        throw MissingFieldException("Metal", "fuzz");
-    }
-
-    // Parse it
-    Vec3 albedo = WorldIO::vec3_from_json(json_obj["albedo"]);
-    double fuzz;
-    try {
-        fuzz = json_obj["fuzz"].get<double>();
-    } catch (nlohmann::detail::type_error& e) {
-        throw InvalidFieldFormat("Metal", "fuzz", "double", json_obj["fuzz"].type_name());
-    }
-
-    return new Metal(albedo, fuzz);
-}
-
-json WorldIO::Materials::to_json(const Dielectric& object) {
-    json j;
-    j["type"] = (unsigned long) object.type;
-    j["albedo"] = WorldIO::to_json(object.albedo);
-    j["ref_idx"] = object.ref_idx;
-    return j;
-}
-Dielectric* WorldIO::Materials::dielectric_from_json(const json& json_obj) {
-    // Check if the object has an object type
-    if (!json_obj.is_object()) {
-        throw InvalidTypeException("Dielectric", json::object().type_name(), json_obj.type_name());
-    }
-
-    // Check if the required fields are there
-    if (json_obj["albedo"].is_null()) {
-        throw MissingFieldException("Dielectric", "albedo");
-    }
-    if (json_obj["ref_idx"].is_null()) {
-        throw MissingFieldException("Dielectric", "ref_idx");
-    }
-
-    // Parse it
-    Vec3 albedo = WorldIO::vec3_from_json(json_obj["albedo"]);
-    double ref_idx;
-    try {
-        ref_idx = json_obj["ref_idx"].get<double>();
-    } catch (nlohmann::detail::type_error& e) {
-        throw InvalidFieldFormat("Dielectric", "ref_idx", "double", json_obj["fuzz"].type_name());
-    }
-
-    return new Dielectric(albedo, ref_idx);
-}

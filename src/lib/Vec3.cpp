@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 12:12:44 PM
  * Last edited:
- *   2/3/2020, 4:52:04 PM
+ *   2/4/2020, 4:26:56 PM
  * Auto updated?
  *   Yes
  *
@@ -17,10 +17,12 @@
 
 #include <stdexcept>
 
+#include "include/JSONExceptions.hpp"
 #include "include/Vec3.hpp"
 
 using namespace std;
 using namespace RayTracer;
+using namespace nlohmann;
 
 
 Vec3::Vec3() {
@@ -136,7 +138,35 @@ Vec3 Vec3::normalize() const {
     );
 }
 
+json Vec3::to_json() const {
+    json j = json::array();
+    j[0] = this->x;
+    j[1] = this->y;
+    j[2] = this->z;
+    return j;
+}
+Vec3 Vec3::from_json(json json_obj) {
+    // First, check if the json_obj is an array
+    if (!json_obj.is_array()) {
+        throw InvalidTypeException("Vec3", json::array().type_name(), json_obj.type_name());
+    }
 
+    // Next, check for the array length
+    if (json_obj.size() != 3) {
+        throw InvalidLengthException("Vec3", 3, json_obj.size());
+    }
+
+    // Then, try to parse it as three doubles
+    Vec3 to_return;
+    try {
+        to_return.x = json_obj[0].get<double>();
+        to_return.y = json_obj[1].get<double>();
+        to_return.z = json_obj[2].get<double>();
+    } catch (nlohmann::detail::type_error& e) {
+        throw InvalidTypeException("Vec3", "double", json_obj[0].type_name());
+    }
+    return to_return;
+}
 
 
 

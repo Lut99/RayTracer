@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:15:28 PM
  * Last edited:
- *   1/29/2020, 7:16:01 PM
+ *   2/4/2020, 4:32:10 PM
  * Auto updated?
  *   Yes
  *
@@ -18,6 +18,7 @@
 #ifndef DIELECTRIC_HPP
 #define DIELECTRIC_HPP
 
+#include "../json.hpp"
 #include "../Material.hpp"
 
 namespace RayTracer {
@@ -33,6 +34,11 @@ namespace RayTracer {
             virtual bool refract(const Vec3& v, const Vec3& n, double ni_over_nt, Vec3& refracted) const;
             /* Does some magic. */
             virtual double schlick(double cosine) const;
+
+            /* Returns a json object describing this Dielectric object. */
+            virtual nlohmann::json to_json() const;
+            /* Returns a fresh Dielectric object as described in given json object. */
+            static Dielectric from_json(nlohmann::json json_obj);
 
             Vec3 albedo;
             double ref_idx;

@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:08:10 PM
  * Last edited:
- *   1/29/2020, 7:13:23 PM
+ *   2/4/2020, 4:28:11 PM
  * Auto updated?
  *   Yes
  *
@@ -16,10 +16,12 @@
 **/
 
 #include "../include/Random.hpp"
+#include "../include/JSONExceptions.hpp"
 #include "../include/materials/Lambertian.hpp"
 
 using namespace std;
 using namespace RayTracer;
+using namespace nlohmann;
 
 
 Lambertian::Lambertian(const Vec3& colour_absorption)
@@ -33,4 +35,28 @@ bool Lambertian::scatter(const Ray& ray_in, const HitRecord& record, Vec3& atten
     ray_out = Ray(record.hitpoint, target - record.hitpoint);
     attenuation = this->albedo;
     return true;
+}
+
+nlohmann::json Lambertian::to_json() const {
+    json j;
+    j["type"] = (unsigned long) this->type;
+    j["albedo"] = this->albedo.to_json();
+    return j;
+}
+
+Lambertian Lambertian::from_json(nlohmann::json json_obj) {
+    // Check if the object has an object type
+    if (!json_obj.is_object()) {
+        throw InvalidTypeException("Lambertian", json::object().type_name(), json_obj.type_name());
+    }
+
+    // Check if there is an albedo field
+    if (json_obj["albedo"].is_null()) {
+        throw MissingFieldException("Lambertian", "albedo");
+    }
+
+    // Parse it with the Vec3 parser
+    Vec3 albedo = Vec3::from_json(json_obj["albedo"]);
+
+    return Lambertian(albedo);
 }

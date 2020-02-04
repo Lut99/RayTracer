@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:11:51 PM
  * Last edited:
- *   1/29/2020, 7:13:19 PM
+ *   2/4/2020, 4:30:56 PM
  * Auto updated?
  *   Yes
  *
@@ -16,10 +16,12 @@
 **/
 
 #include "../include/Random.hpp"
+#include "../include/JSONExceptions.hpp"
 #include "../include/materials/Metal.hpp"
 
 using namespace std;
 using namespace RayTracer;
+using namespace nlohmann;
 
 
 Metal::Metal(const Vec3& colour_absorption, double fuzziness)
@@ -36,4 +38,37 @@ bool Metal::scatter(const Ray& ray_in, const HitRecord& record, Vec3& attenuatio
     ray_out = Ray(record.hitpoint, reflected + this->fuzz*random_in_unit_sphere());
     attenuation = this->albedo;
     return (dot(ray_out.direction, record.normal) > 0);
+}
+
+json Metal::to_json() const {
+    json j;
+    j["type"] = (unsigned long) this->type;
+    j["albedo"] = this->albedo.to_json();
+    j["fuzz"] = this->fuzz;
+    return j;
+}
+Metal Metal::from_json(json json_obj) {
+    // Check if the object has an object type
+    if (!json_obj.is_object()) {
+        throw InvalidTypeException("Metal", json::object().type_name(), json_obj.type_name());
+    }
+
+    // Check if the required fields are there
+    if (json_obj["albedo"].is_null()) {
+        throw MissingFieldException("Metal", "albedo");
+    }
+    if (json_obj["fuzz"].is_null()) {
+        throw MissingFieldException("Metal", "fuzz");
+    }
+
+    // Parse it
+    Vec3 albedo = Vec3::from_json(json_obj["albedo"]);
+    double fuzz;
+    try {
+        fuzz = json_obj["fuzz"].get<double>();
+    } catch (nlohmann::detail::type_error& e) {
+        throw InvalidFieldFormat("Metal", "fuzz", "double", json_obj["fuzz"].type_name());
+    }
+
+    return Metal(albedo, fuzz);
 }
