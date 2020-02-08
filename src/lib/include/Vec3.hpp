@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 12:11:32 PM
  * Last edited:
- *   1/29/2020, 7:05:04 PM
+ *   2/4/2020, 4:22:24 PM
  * Auto updated?
  *   Yes
  *
@@ -19,6 +19,7 @@
 #define VEC3_HPP
 
 #include <math.h>
+#include "json.hpp"
 
 namespace RayTracer {
     class Vec3 {
@@ -72,6 +73,11 @@ namespace RayTracer {
 
             /* Returns the normalized version of this vector. */
             Vec3 normalize() const;
+
+            /* Returns a json object describing this Vec3 object. */
+            virtual nlohmann::json to_json() const;
+            /* Returns a fresh Vec3 object as described in given json object. */
+            static Vec3 from_json(nlohmann::json json_obj);
     };
 
     /* Constant addition operator for the Vec3 class (Vec3 + Vec3). */

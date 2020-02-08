@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:14:41 PM
  * Last edited:
- *   2/3/2020, 5:36:11 PM
+ *   2/4/2020, 4:33:59 PM
  * Auto updated?
  *   Yes
  *
@@ -16,10 +16,12 @@
 **/
 
 #include "../include/Random.hpp"
+#include "../include/JSONExceptions.hpp"
 #include "../include/materials/Dielectric.hpp"
 
 using namespace std;
 using namespace RayTracer;
+using namespace nlohmann;
 
 
 Dielectric::Dielectric(const Vec3& colour_absorption, double refrective_index)
@@ -89,4 +91,37 @@ double Dielectric::schlick(double cosine) const {
     double r0 = (1 - this->ref_idx) / (1 + this->ref_idx);
     r0 = r0 * r0;
     return r0 + (1 - r0) * pow((1 - cosine), 5);
+}
+
+json Dielectric::to_json() const {
+    json j;
+    j["type"] = (unsigned long) this->type;
+    j["albedo"] = this->albedo.to_json();
+    j["ref_idx"] = this->ref_idx;
+    return j;
+}
+Dielectric Dielectric::from_json(json json_obj) {
+    // Check if the object has an object type
+    if (!json_obj.is_object()) {
+        throw InvalidTypeException("Dielectric", json::object().type_name(), json_obj.type_name());
+    }
+
+    // Check if the required fields are there
+    if (json_obj["albedo"].is_null()) {
+        throw MissingFieldException("Dielectric", "albedo");
+    }
+    if (json_obj["ref_idx"].is_null()) {
+        throw MissingFieldException("Dielectric", "ref_idx");
+    }
+
+    // Parse it
+    Vec3 albedo = Vec3::from_json(json_obj["albedo"]);
+    double ref_idx;
+    try {
+        ref_idx = json_obj["ref_idx"].get<double>();
+    } catch (nlohmann::detail::type_error& e) {
+        throw InvalidFieldFormat("Dielectric", "ref_idx", "double", json_obj["ref_idx"].type_name());
+    }
+
+    return Dielectric(albedo, ref_idx);
 }
