@@ -1,5 +1,5 @@
 CC=g++
-ARGS = -std=c++17 -O2
+ARGS = -std=c++17 -O2 -Wall -Wextra
 
 NVCC=nvcc
 NVCC_ARGS = -std=c++17
