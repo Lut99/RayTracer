@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:39:23 PM
  * Last edited:
- *   1/29/2020, 7:20:02 PM
+ *   2/8/2020, 11:00:24 PM
  * Auto updated?
  *   Yes
  *
@@ -20,6 +20,7 @@
 
 #include <string>
 
+#include "json.hpp"
 #include "Vec3.hpp"
 #include "Ray.hpp"
 #include "HitRecord.hpp"
@@ -51,6 +52,11 @@ namespace RayTracer {
 
             /* Virtual for the normal of the derived class. */
             virtual Vec3 normal(const HitRecord& record) const;
+
+            /* Virtual for the to_json function of the RenderObjects's children */
+            virtual nlohmann::json to_json() const;
+            /* Static function that gets a derived material class from given json object. Note that the returned value is allocated and will have to be deallocated. */
+            static RenderObject* from_json(nlohmann::json json_obj);
     };
 }
 

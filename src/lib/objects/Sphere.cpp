@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:36:39 PM
  * Last edited:
- *   1/29/2020, 7:20:27 PM
+ *   2/8/2020, 10:55:49 PM
  * Auto updated?
  *   Yes
  *
@@ -19,10 +19,13 @@
 #include <math.h>
 #include <stdexcept>
 
+#include "../include/JSONExceptions.hpp"
 #include "../include/objects/Sphere.hpp"
 
 using namespace std;
 using namespace RayTracer;
+using namespace nlohmann;
+
 
 Sphere::Sphere(const Vec3& origin, double radius, Material* material)
     : RenderObject(origin, sphere)
@@ -72,4 +75,44 @@ Vec3 Sphere::colour(const HitRecord& record) const {
 
 Vec3 Sphere::normal(const HitRecord& record) const {
     return (record.hitpoint - this->center) / this->radius;
+}
+
+
+
+json Sphere::to_json() const {
+    json j;
+    j["type"] = (unsigned long) this->type;
+    j["center"] = this->center.to_json();
+    j["radius"] = this->radius;
+    j["material"] = this->material->to_json();
+    return j;
+}
+Sphere* Sphere::from_json(json json_obj) {
+    // Check if the object has an object type
+    if (!json_obj.is_object()) {
+        throw InvalidTypeException("Sphere", json::object().type_name(), json_obj.type_name());
+    }
+
+    // Check for the required fields
+    if (json_obj["center"].is_null()) {
+        throw MissingFieldException("Sphere", "center");
+    }
+    if (json_obj["radius"].is_null()) {
+        throw MissingFieldException("Sphere", "radius");
+    }
+    if (json_obj["material"].is_null()) {
+        throw MissingFieldException("Sphere", "material");
+    }
+
+    // Parse them
+    Vec3 center = Vec3::from_json(json_obj["center"]);
+    double radius;
+    try {
+        radius = json_obj["radius"].get<double>();
+    } catch (nlohmann::detail::type_error& e) {
+        throw InvalidFieldFormat("Sphere", "radius", "double", json_obj["radius"].type_name());
+    }
+    Material* mat = Material::from_json(json_obj["material"]);
+
+    return new Sphere(center, radius, mat);
 }

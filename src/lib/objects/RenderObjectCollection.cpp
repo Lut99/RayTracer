@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 2:26:08 PM
  * Last edited:
- *   1/29/2020, 9:00:50 PM
+ *   2/8/2020, 10:58:54 PM
  * Auto updated?
  *   Yes
  *
@@ -17,10 +17,13 @@
 
 #include <stdexcept>
 
+#include "../include/JSONExceptions.hpp"
 #include "../include/objects/RenderObjectCollection.hpp"
 
 using namespace std;
 using namespace RayTracer;
+using namespace nlohmann;
+
 
 Vec3 RenderObjectCollection::compute_center(vector<RenderObject*> objects) const {
     Vec3 average;
@@ -71,4 +74,37 @@ RenderObject* RenderObjectCollection::get_object(size_t index) const {
     }
 
     return this->objects.at(index);
+}
+
+json RenderObjectCollection::to_json() const {
+    json j;
+    j["type"] = (unsigned long) this->type;
+    j["objects"] = json::array();
+    // Append all the internal objects
+    for (std::size_t i = 0; i < this->objects.size(); i++) {
+        j["objects"][i] = this->objects[i]->to_json();
+    }
+    return j;
+}
+RenderObjectCollection* RenderObjectCollection::from_json(json json_obj) {
+    // Check if the object has an object type
+    if (!json_obj.is_object()) {
+        throw InvalidTypeException("RenderObjectCollection", json::object().type_name(), json_obj.type_name());
+    }
+
+    // Check if the required field exists and is an array
+    if (json_obj["objects"].is_null()) {
+        throw MissingFieldException("RenderObjectCollection", "objects");
+    }
+    if (!json_obj["objects"].is_array()) {
+        throw InvalidFieldFormat("RenderObjectCollection", "objects", json::array().type_name(), json_obj["objects"].type_name());
+    }
+
+    // Parse all the items in this array
+    vector<RenderObject*> objects;
+    for (std::size_t i = 0; i < json_obj["objects"].size(); i++) {
+        objects.push_back(RenderObject::from_json(json_obj["objects"][i]));
+    }
+
+    return new RenderObjectCollection(objects);
 }

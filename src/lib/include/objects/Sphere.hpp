@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:37:11 PM
  * Last edited:
- *   1/29/2020, 7:05:24 PM
+ *   2/8/2020, 10:53:14 PM
  * Auto updated?
  *   Yes
  *
@@ -17,6 +17,8 @@
 
 #ifndef SPHERE_HPP
 #define SPHERE_HPP
+
+#include "../json.hpp"
 
 #include "../RenderObject.hpp"
 #include "../Material.hpp"
@@ -39,6 +41,11 @@ namespace RayTracer {
 
             /* Returns the normal of the sphere at given point. */
             virtual Vec3 normal(const HitRecord& record) const;
+
+            /* Returns a json object representing this Sphere object */
+            virtual nlohmann::json to_json() const;
+            /* Creates a newly allocated Sphere object from given json object. Note that the new object will have to be deallocated manually. */
+            static Sphere* from_json(nlohmann::json json_obj);
     };
 }
 

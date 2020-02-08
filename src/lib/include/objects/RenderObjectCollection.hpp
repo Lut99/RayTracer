@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 2:26:30 PM
  * Last edited:
- *   1/29/2020, 8:59:48 PM
+ *   2/8/2020, 10:56:20 PM
  * Auto updated?
  *   Yes
  *
@@ -20,6 +20,7 @@
 
 #include <vector>
 
+#include "../json.hpp"
 #include "../RenderObject.hpp"
 
 namespace RayTracer {
@@ -46,6 +47,11 @@ namespace RayTracer {
             const std::size_t size() const;
             /* Returns a reference to an object at given index in the vector. */
             RenderObject* get_object(std::size_t index) const;
+
+            /* Returns a json object representing this RenderObjectCollection object */
+            virtual nlohmann::json to_json() const;
+            /* Creates a newly allocated RenderObjectCollection object from given json object. Note that the new object will have to be deallocated manually. */
+            static RenderObjectCollection* from_json(nlohmann::json json_obj);
     };
 }
 
