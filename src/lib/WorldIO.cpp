@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:41:40 PM
  * Last edited:
- *   2/8/2020, 11:02:34 PM
+ *   2/8/2020, 11:06:35 PM
  * Auto updated?
  *   Yes
  *
@@ -70,54 +70,4 @@ RenderWorld* WorldIO::from_json(const json& json_obj) {
 
     return world;
 }
-
-/* CAMERA OBJECTS */
-json WorldIO::to_json(const Camera& cam) {
-    json j;
-    j["lookat"] = to_json(cam.lookat);
-    j["lookfrom"] = to_json(cam.lookfrom);
-    j["up"] = to_json(cam.up);
-    j["vfov"] = cam.vfov;
-    j["aperture"] = cam.aperture;
-    return j;
-}
-Camera* WorldIO::camera_from_json(const json& json_obj) {
-    // Check if it is an object
-    if (!json_obj.is_object()) {
-        throw InvalidTypeException("Camera", json::object().type_name(), json_obj.type_name());
-    }
-
-    // Next, check if the required fields are present
-    if (json_obj["lookat"].is_null()) {
-        throw MissingFieldException("RenderWorld", "lookat");
-    }
-    if (json_obj["lookfrom"].is_null()) {
-        throw MissingFieldException("RenderWorld", "lookfrom");
-    }
-    if (json_obj["up"].is_null()) {
-        throw MissingFieldException("RenderWorld", "up");
-    }
-    if (json_obj["vfov"].is_null()) {
-        throw MissingFieldException("RenderWorld", "vfov");
-    }
-    if (json_obj["aperture"].is_null()) {
-        throw MissingFieldException("RenderWorld", "aperture");
-    }
-
-    // Parse the objects
-    Vec3 lookat = vec3_from_json(json_obj["lookat"]);
-    Vec3 lookfrom = vec3_from_json(json_obj["lookfrom"]);
-    Vec3 up = vec3_from_json(json_obj["up"]);
-    double vfov, aperture;
-    try {
-        vfov = json_obj["vfov"].get<double>();
-        aperture = json_obj["aperture"].get<double>();
-    } catch (nlohmann::detail::type_error& e) {
-        throw InvalidFieldFormat("RenderWorld", "vfov or aperture", "double", json_obj[0].type_name());
-    }
-    
-    // Return a new Camera object
-    return new Camera(lookfrom, lookat, up, vfov, aperture);
-}
-
 

@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:28 PM
  * Last edited:
- *   1/31/2020, 1:30:48 PM
+ *   2/8/2020, 11:04:19 PM
  * Auto updated?
  *   Yes
  *
@@ -18,6 +18,7 @@
 #ifndef CAMERA_HPP
 #define CAMERA_HPP
 
+#include "json.hpp"
 #include "Image.hpp"
 #include "Vec3.hpp"
 #include "Ray.hpp"
@@ -59,6 +60,11 @@ namespace RayTracer {
 
             /* Returns a ray through given u and v through the pixel grid */
             Ray get_ray(int x, int y) const;
+
+            /* Returns a json object with the properties of this Camera object. */
+            virtual nlohmann::json to_json() const;
+            /* Returns a new Camera object from given json object. Note that this new object will have to be deallocated. */
+            static Camera* from_json(nlohmann::json json_obj);
     };
 }
 

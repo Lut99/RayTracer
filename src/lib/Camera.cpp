@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:14 PM
  * Last edited:
- *   1/31/2020, 1:31:49 PM
+ *   2/8/2020, 11:06:08 PM
  * Auto updated?
  *   Yes
  *
@@ -19,12 +19,14 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+#include "include/JSONExceptions.hpp"
 #include "include/ProgressBar.hpp"
 #include "include/Random.hpp"
 #include "include/Camera.hpp"
 
 using namespace std;
 using namespace RayTracer;
+using namespace nlohmann;
 
 
 Camera::Camera(Vec3 lookfrom, Vec3 lookat, Vec3 up, double vfov, double aperture, int screen_width, int screen_height, int rays_per_pixel, bool correct_gamma)
@@ -82,4 +84,54 @@ void Camera::recompute() {
     this->lower_left_corner = this->origin - half_width * focus_dist * this->u - half_height * focus_dist *  this->v - focus_dist * this->w;
     this->horizontal = 2 * half_width * focus_dist * this->u;
     this->vertical = 2 * half_height * focus_dist * this->v;
+}
+
+
+
+json Camera::to_json() const {
+    json j;
+    j["lookat"] = this->lookat.to_json();
+    j["lookfrom"] = this->lookfrom.to_json();
+    j["up"] = this->up.to_json();
+    j["vfov"] = this->vfov;
+    j["aperture"] = this->aperture;
+    return j;
+}
+Camera* Camera::from_json(nlohmann::json json_obj) {
+    // Check if it is an object
+    if (!json_obj.is_object()) {
+        throw InvalidTypeException("Camera", json::object().type_name(), json_obj.type_name());
+    }
+
+    // Next, check if the required fields are present
+    if (json_obj["lookat"].is_null()) {
+        throw MissingFieldException("Camera", "lookat");
+    }
+    if (json_obj["lookfrom"].is_null()) {
+        throw MissingFieldException("Camera", "lookfrom");
+    }
+    if (json_obj["up"].is_null()) {
+        throw MissingFieldException("Camera", "up");
+    }
+    if (json_obj["vfov"].is_null()) {
+        throw MissingFieldException("Camera", "vfov");
+    }
+    if (json_obj["aperture"].is_null()) {
+        throw MissingFieldException("Camera", "aperture");
+    }
+
+    // Parse the objects
+    Vec3 lookat = Vec3::from_json(json_obj["lookat"]);
+    Vec3 lookfrom = Vec3::from_json(json_obj["lookfrom"]);
+    Vec3 up = Vec3::from_json(json_obj["up"]);
+    double vfov, aperture;
+    try {
+        vfov = json_obj["vfov"].get<double>();
+        aperture = json_obj["aperture"].get<double>();
+    } catch (nlohmann::detail::type_error& e) {
+        throw InvalidFieldFormat("Camera", "vfov or aperture", "double", json_obj[0].type_name());
+    }
+    
+    // Return a new Camera object
+    return new Camera(lookfrom, lookat, up, vfov, aperture);
 }
