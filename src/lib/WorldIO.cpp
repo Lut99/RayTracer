@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:41:40 PM
  * Last edited:
- *   2/4/2020, 4:34:11 PM
+ *   2/8/2020, 10:45:13 PM
  * Auto updated?
  *   Yes
  *
@@ -261,51 +261,5 @@ RenderObjectCollection* WorldIO::Objects::renderobjectcollection_from_json(const
     }
 
     return new RenderObjectCollection(objects);
-}
-
-
-
-
-/* MATERIALS */
-json WorldIO::Materials::to_json(const Material& object) {
-    // Return based on the type
-    if (object.type == lambertian) {
-        return to_json((Lambertian&) object);
-    } else if (object.type == metal) {
-        return to_json((Metal&) object);
-    } else if (object.type == dielectric) {
-        return to_json((Dielectric&) object);
-    }
-    return json();
-}
-Material* WorldIO::Materials::from_json(const json& json_obj) {
-    // Check if the object has an object type
-    if (!json_obj.is_object()) {
-        throw InvalidTypeException("Material", json::object().type_name(), json_obj.type_name());
-    }
-
-    // Check for the type field
-    if (json_obj["type"].is_null()) {
-        throw MissingFieldException("Material", "type");
-    }
-
-    // Parse the raw type
-    MaterialType type;
-    try {
-        type = (MaterialType) json_obj["type"].get<unsigned long>();
-    } catch (nlohmann::detail::type_error& e) {
-        throw InvalidFieldFormat("Material", "type", "unsigned long", json_obj["type"].type_name());
-    }
-
-    // Return the correct parser
-    if (type == lambertian) {
-        return (Material*) WorldIO::Materials::lambertian_from_json(json_obj);
-    } else if (type == metal) {
-        return (Material*) WorldIO::Materials::metal_from_json(json_obj);
-    } else if (type == dielectric) {
-        return (Material*) WorldIO::Materials::dielectric_from_json(json_obj);
-    } else {
-        throw UnknownSubtypeException("Material", type);
-    }
 }
 
