@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 4:48:29 PM
  * Last edited:
- *   2/8/2020, 11:14:16 PM
+ *   2/8/2020, 11:25:31 PM
  * Auto updated?
  *   Yes
  *
@@ -20,6 +20,7 @@
 
 #include <chrono>
 
+#include "../json.hpp"
 #include "../Camera.hpp"
 #include "../RenderAnimation.hpp"
 
@@ -37,10 +38,15 @@ namespace RayTracer {
             CameraMovement(Camera* target_cam, CameraMovementType movement_type);
         public:
             /* Describes the subtype of the movement. */
-            const CameraMovementType type;
+            const CameraMovementType cam_type;
 
             /* Virtual for the update() function. After each frame, this is called in the derived class to update the camera it animates. The number is the amount of milliseconds since the last frame in the movie (so not the rendertime). */
             virtual void update(std::chrono::milliseconds time_passed);
+
+            /* Returns a json object based on this CameraMovement object. */
+            virtual nlohmann::json to_json() const;
+            /* Returns a child of the CameraMovement from a json object. Note that the returned object is allocated and has to be deallocated later on. */
+            static CameraMovement* from_json(nlohmann::json json_obj);
     };
 }
 

@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 4:55:47 PM
  * Last edited:
- *   2/3/2020, 4:58:26 PM
+ *   2/8/2020, 11:38:22 PM
  * Auto updated?
  *   Yes
  *
@@ -17,10 +17,13 @@
 
 #include <math.h>
 
+#include "../../include/JSONExceptions.hpp"
 #include "../../include/animations/camera/CameraRotation.hpp"
 
 using namespace std;
 using namespace RayTracer;
+using namespace nlohmann;
+
 
 double CameraRotation::compute_speed(std::chrono::seconds circle_time) {
     double circle_dist = 2 * M_PI;
@@ -42,6 +45,8 @@ CameraRotation::CameraRotation(Camera* target_cam, chrono::seconds circle_time)
     this->radius = (lookfrom_circle - this->center).length();
 }
 
+
+
 void CameraRotation::update(chrono::milliseconds time_passed) {
     // Set the camera lookfrom to this new position
     this->cam_target->lookfrom = Vec3(
@@ -57,4 +62,34 @@ void CameraRotation::update(chrono::milliseconds time_passed) {
 
     // Recompute the camera variables
     this->cam_target->recompute();
+}
+
+
+
+json CameraRotation::to_json() const {
+    json j;
+    j["type"] = (unsigned long) this->type;
+    j["cam_type"] = (unsigned long) this->cam_type;
+    j["loop_time"] = this->loop_time.count();
+    return j;
+}
+CameraRotation* CameraRotation::from_json(json json_obj) {
+    // Check if the object has an object type
+    if (!json_obj.is_object()) {
+        throw InvalidTypeException("CameraRotation", json::object().type_name(), json_obj.type_name());
+    }
+
+    // Check if the required field exist
+    if (json_obj["loop_time"].is_null()) {
+        throw MissingFieldException("CameraRotation", "loop_time");
+    }
+
+    // Try to parse the required fields
+    chrono::seconds loop_time;
+    try {
+        loop_time = chrono::seconds(json_obj[0].get<long>());
+    } catch (nlohmann::detail::type_error& e) {
+        throw InvalidTypeException("CameraRotation", "unsigned long", json_obj[0].type_name());
+    }
+    return new CameraRotation(nullptr, loop_time);
 }

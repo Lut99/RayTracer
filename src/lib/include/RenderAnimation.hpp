@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 2:15:38 PM
  * Last edited:
- *   2/8/2020, 11:12:51 PM
+ *   2/8/2020, 11:18:59 PM
  * Auto updated?
  *   Yes
  *
@@ -23,6 +23,7 @@
 
 #include <chrono>
 
+#include "json.hpp"
 #include "RenderObject.hpp"
 
 namespace RayTracer {
@@ -43,6 +44,11 @@ namespace RayTracer {
 
             /* Virtual for the update() function. After each frame, this is called in the derived class to update the object it animates. The number is the amount of milliseconds since the last frame in the movie (so not the rendertime). */
             virtual void update(std::chrono::milliseconds time_passed);
+
+            /* Returns a json object based on this RenderAnimation. */
+            virtual nlohmann::json to_json() const;
+            /* Returns a child of the RenderAnimation from a json object. Note that the returned object is allocated and has to be deallocated later on. */
+            static RenderAnimation* from_json(nlohmann::json json_obj);
     };
 }
 

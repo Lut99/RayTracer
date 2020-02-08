@@ -4,7 +4,7 @@
  * Created:
  *   1/27/2020, 2:30:39 PM
  * Last edited:
- *   2/8/2020, 11:17:03 PM
+ *   2/8/2020, 11:21:25 PM
  * Auto updated?
  *   Yes
  *
@@ -246,7 +246,7 @@ json RenderWorld::to_json() const {
     **/
 
     for (size_t i = 0; i < this->animations.size(); i++) {
-        j["animations"][i] = this->animations[i].to_json();
+        j["animations"][i] = this->animations[i]->to_json();
     }
 
     return j;
@@ -285,13 +285,13 @@ RenderWorld* RenderWorld::from_json(nlohmann::json json_obj) {
     // Parse the lights
     /*
     for (std::size_t i = 0; i < json_obj["lights"].size(); i++) {
-        world->add_object(RenderLight::from_json(json_obj["lights"][i]));
+        world->add_light(RenderLight::from_json(json_obj["lights"][i]));
     }
     **/
 
     // Parse the animations
     for (std::size_t i = 0; i < json_obj["animations"].size(); i++) {
-        world->add_object(RenderAnimation::from_json(json_obj["animations"][i]));
+        world->add_animation(RenderAnimation::from_json(json_obj["animations"][i]));
     }
 
     return world;
