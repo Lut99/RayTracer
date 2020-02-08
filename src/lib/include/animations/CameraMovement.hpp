@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 4:48:29 PM
  * Last edited:
- *   2/8/2020, 11:25:31 PM
+ *   2/9/2020, 12:15:16 AM
  * Auto updated?
  *   Yes
  *
@@ -31,17 +31,19 @@ namespace RayTracer {
 
     class CameraMovement: public RenderAnimation {
         protected:
-            /* Pointer to the camera this animation works on. */
-            Camera* cam_target;
-
             /* The CameraMovement is a special type of animations that is applicaple on cameras. It is itself another baseclass for these animations. */
-            CameraMovement(Camera* target_cam, CameraMovementType movement_type);
+            CameraMovement(CameraMovementType movement_type);
+
+            /* This function compiles CameraMovement-general properies to a given json object. */
+            virtual void baseclass_to_json(nlohmann::json& json_obj) const;
         public:
             /* Describes the subtype of the movement. */
             const CameraMovementType cam_type;
 
+            /* Recomputes the start point and angle of the target Camera. This might not be used by the derived class, but then they should simply implement a dummy function. */
+            virtual void recompute(Camera* target);
             /* Virtual for the update() function. After each frame, this is called in the derived class to update the camera it animates. The number is the amount of milliseconds since the last frame in the movie (so not the rendertime). */
-            virtual void update(std::chrono::milliseconds time_passed);
+            virtual void update(std::chrono::milliseconds time_passed, Camera* target);
 
             /* Returns a json object based on this CameraMovement object. */
             virtual nlohmann::json to_json() const;

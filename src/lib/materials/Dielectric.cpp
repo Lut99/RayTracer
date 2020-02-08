@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:14:41 PM
  * Last edited:
- *   2/8/2020, 1:44:07 PM
+ *   2/9/2020, 12:21:07 AM
  * Auto updated?
  *   Yes
  *
@@ -95,7 +95,11 @@ double Dielectric::schlick(double cosine) const {
 
 json Dielectric::to_json() const {
     json j;
-    j["type"] = (unsigned long) this->type;
+    
+    // First, let the Material class compile
+    this->baseclass_to_json(j);
+
+    // Add our own properties
     j["albedo"] = this->albedo.to_json();
     j["ref_idx"] = this->ref_idx;
     return j;

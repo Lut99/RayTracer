@@ -4,7 +4,7 @@
  * Created:
  *   1/31/2020, 2:00:11 PM
  * Last edited:
- *   2/1/2020, 7:36:06 PM
+ *   2/9/2020, 12:45:49 AM
  * Auto updated?
  *   Yes
  *
@@ -44,12 +44,39 @@
 
 #include "lib/include/ProgressBar.hpp"
 #include "lib/include/cxxopts.hpp"
-#include "lib/include/WorldIO.hpp"
 #include "lib/include/Renderer.hpp"
 
 using namespace std;
 using namespace RayTracer;
 using namespace cxxopts;
+
+
+/* Creates the default scene of three spheres. */
+RenderWorld* create_default_renderworld() {
+    RenderWorld* world = new RenderWorld();
+    world->add_object(new Sphere(Vec3(0, 0, -1), 0.5, new Lambertian(Vec3(0.1, 0.2, 0.5))));
+    world->add_object(new Sphere(Vec3(0, -100.5, -1), 100, new Lambertian(Vec3(0.8, 0.8, 0.0))));
+    world->add_object(new Sphere(Vec3(1, 0, -1), 0.5, new Metal(Vec3(0.8, 0.6, 0.2), 0.0)));
+    world->add_object(new Sphere(Vec3(-1, 0, -1), 0.5, new Dielectric(Vec3(1.0, 1.0, 1.0), 1.5)));
+
+    return world;
+}
+
+/* Updates a camera object so that it knows the width, height, number of rays and whether it should correct for gamma. */
+void update_camera(Camera* cam, unsigned int screen_width, unsigned int screen_height, unsigned int number_of_rays, bool correct_gamma) {
+    cam->width = screen_width;
+    cam->height = screen_height;
+    cam->rays = number_of_rays;
+    cam->gamma = correct_gamma;
+}
+/* Creates a new camera for the default scene. */
+Camera* create_default_camera(double vfov, double aperture, unsigned int screen_width, unsigned int screen_height, unsigned int number_of_rays, bool correct_gamma) {
+    Camera* cam = new Camera(Vec3(3, 2, 2), Vec3(0, 0, -1), Vec3(0, 1, 0), vfov, aperture);
+    update_camera(cam, screen_width, screen_height, number_of_rays, correct_gamma);
+
+    return cam;
+}
+
 
 int main(int argc, char** argv) {
     std::string filename, scenename, temppath;
@@ -223,59 +250,68 @@ int main(int argc, char** argv) {
     Camera *cam = NULL;
     if (scenename.empty()) {
         cout << endl << "Generating world..." << endl;
-        world = new RenderWorld();
-        world->add_object(new Sphere(Vec3(0, 0, -1), 0.5, new Lambertian(Vec3(0.1, 0.2, 0.5))));
-        world->add_object(new Sphere(Vec3(0, -100.5, -1), 100, new Lambertian(Vec3(0.8, 0.8, 0.0))));
-        world->add_object(new Sphere(Vec3(1, 0, -1), 0.5, new Metal(Vec3(0.8, 0.6, 0.2), 0.0)));
-        world->add_object(new Sphere(Vec3(-1, 0, -1), 0.5, new Dielectric(Vec3(1.0, 1.0, 1.0), 1.5)));
+        world = create_default_renderworld();
+        cout << "Done, counting " << world->get_object_count() << " objects" << endl;
+
+        cout << "Generating camera..." << endl;
+        cam = create_default_camera(vfov, aperture, screen_width, screen_height, number_of_rays, correct_gamma);
+        cout << "Done" << endl;
     } else {
-        // Open a file to the input scene
-        cout << endl << "Loading world..." << endl;
+        // Open a filestream to the input scene
+        cout << endl << "Loading JSON..." << endl;
         ifstream scene_file(scenename);
         if (!scene_file.is_open()) {
             cerr << "Could not open file: " << strerror(errno) << endl;
             exit(-1);
         }
+
+        // Load a JSON from it
         nlohmann::json j;
         scene_file >> j;
         scene_file.close();
 
-        world = WorldIO::from_json(j);
+        // Check if the j is an object
+        if (!j.is_object()) {
+            cerr << "JSON in file \"" << scenename << "\" is not a JSON object" << endl;
+            exit(-1);
+        }
 
-        cout << "Loaded " << world->get_object_count() << " objects" << endl;
+        // Load all the objects (if present)
+        if (!j["world"].is_null()) {
+            cout << "  Loading world..." << endl;
+            world = RenderWorld::from_json(j["world"]);
+        } else {
+            cout << "  Generating world..." << endl;
+            world = create_default_renderworld();
+        }
+        cout << "  Done, counting " << world->get_object_count() << " objects" << endl;
 
+        // Load any camera
         if (!j["camera"].is_null()) {
-            cout << "Loading camera..." << endl;
-            cam = WorldIO::camera_from_json(j["camera"]);
-            // Set some meta variables
-            cam->width = screen_width;
-            cam->height = screen_height;
-            cam->rays = number_of_rays;
-            cam->gamma = correct_gamma;
-            // Make sure the camera is up-to-date
+            cout << "  Loading camera..." << endl;
+
+            // Load the actual object
+            cam = Camera::from_json(j["camera"]);
+
+            // Update it to make sure it has some meta variables
+            update_camera(cam, screen_width, screen_height, number_of_rays, correct_gamma);
+            
+            // Let the camera compute some initial variables
             cam->recompute();
+
             // Print some nice stuff
             if (cam->vfov != vfov) {
-                cout << "  Camera: overriding field of view to " << cam->vfov << endl;
+                cout << "    Camera: overriding field of view to " << cam->vfov << endl;
             }
             if (cam->aperture != aperture) {
-                cout << "  Camera: overriding aperture to " << cam->aperture << endl;
+                cout << "    Camera: overriding aperture to " << cam->aperture << endl;
             }
+        } else {
+            cam = create_default_camera(vfov, aperture, screen_width, screen_height, number_of_rays, correct_gamma);
         }
+        cout << "  Done" << endl;
     }
 
-    if (cam == NULL) {
-        cout << "Creating camera..." << endl;
-        cam = new Camera(Vec3(3, 2, 2), Vec3(0, 0, -1), Vec3(0, 1, 0), vfov, aperture, screen_width, screen_height, number_of_rays, correct_gamma);
-    }
-
-    // Only add animations if we're rendering multiple frames
-    if (n_frames > 1) {
-        if (scenename.empty()) {
-            cout << "Creating animations..." << endl;
-            world->add_animation(new CameraRotation(cam, chrono::seconds(4)));
-        }
-    }
 
     // Render one picture
     cout << endl << "Rendering..." << endl;

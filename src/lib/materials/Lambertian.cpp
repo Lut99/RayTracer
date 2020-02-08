@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:08:10 PM
  * Last edited:
- *   2/8/2020, 1:44:24 PM
+ *   2/9/2020, 12:20:53 AM
  * Auto updated?
  *   Yes
  *
@@ -39,7 +39,11 @@ bool Lambertian::scatter(const Ray& ray_in, const HitRecord& record, Vec3& atten
 
 nlohmann::json Lambertian::to_json() const {
     json j;
-    j["type"] = (unsigned long) this->type;
+    
+    // First, let the Material class compile
+    this->baseclass_to_json(j);
+
+    // Add our own properties
     j["albedo"] = this->albedo.to_json();
     return j;
 }

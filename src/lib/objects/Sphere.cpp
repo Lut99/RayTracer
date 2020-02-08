@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:36:39 PM
  * Last edited:
- *   2/8/2020, 10:55:49 PM
+ *   2/9/2020, 12:13:31 AM
  * Auto updated?
  *   Yes
  *
@@ -81,7 +81,11 @@ Vec3 Sphere::normal(const HitRecord& record) const {
 
 json Sphere::to_json() const {
     json j;
-    j["type"] = (unsigned long) this->type;
+
+    // First, let the parent class parse all it wants
+    this->baseclass_to_json(j);
+    
+    // Add child-specific properties
     j["center"] = this->center.to_json();
     j["radius"] = this->radius;
     j["material"] = this->material->to_json();

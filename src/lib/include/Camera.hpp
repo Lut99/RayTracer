@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:28 PM
  * Last edited:
- *   2/8/2020, 11:04:19 PM
+ *   2/9/2020, 12:24:10 AM
  * Auto updated?
  *   Yes
  *
@@ -18,7 +18,12 @@
 #ifndef CAMERA_HPP
 #define CAMERA_HPP
 
+#include <chrono>
+
 #include "json.hpp"
+
+#include "animations/CameraMovement.hpp"
+
 #include "Image.hpp"
 #include "Vec3.hpp"
 #include "Ray.hpp"
@@ -34,6 +39,7 @@ namespace RayTracer {
             int height;
             int rays;
             bool gamma;
+            CameraMovement* animation;
 
             /* Setting variables */
             Vec3 lookfrom;
@@ -57,6 +63,11 @@ namespace RayTracer {
 
             /* Recomputes the Camera values. This is useful after the given variables are altered after construction. */
             void recompute();
+
+            /* Adds an animation for this Camera. */
+            virtual void set_animation(CameraMovement* animation);
+            /* Updates the camera position in the World using stored animation. */
+            virtual void update(std::chrono::milliseconds time_passed);
 
             /* Returns a ray through given u and v through the pixel grid */
             Ray get_ray(int x, int y) const;

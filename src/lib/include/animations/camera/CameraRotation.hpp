@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 4:56:07 PM
  * Last edited:
- *   2/8/2020, 11:38:17 PM
+ *   2/8/2020, 11:56:53 PM
  * Auto updated?
  *   Yes
  *
@@ -34,10 +34,12 @@ namespace RayTracer {
             const std::chrono::seconds loop_time;
 
             /* The CameraRotation class describes how a Camera object rotates along a specified circle. The center of it is the Camera's lookat point, and the radius is given. The speed variable determines how many rotations per second the camera makes. */
-            CameraRotation(Camera* target_cam, std::chrono::seconds circle_time);
+            CameraRotation(std::chrono::seconds circle_time);
 
+            /* Recomputes the start point and angle of the target Camera. */
+            virtual void recompute(Camera* target);
             /* The update class updates the position of the camera along the circle. */
-            virtual void update(std::chrono::milliseconds time_passed);
+            virtual void update(std::chrono::milliseconds time_passed, Camera* target);
 
             /* Returns a json object based on this CameraRotation object. */
             virtual nlohmann::json to_json() const;

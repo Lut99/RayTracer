@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 2:15:15 PM
  * Last edited:
- *   2/8/2020, 11:43:12 PM
+ *   2/9/2020, 12:14:55 AM
  * Auto updated?
  *   Yes
  *
@@ -30,13 +30,23 @@ using namespace RayTracer;
 using namespace nlohmann;
 
 
-RenderAnimation::RenderAnimation(RenderObject* target_object, RenderAnimationType animation_type)
-    : target(target_object),
-    type(animation_type)
+RenderAnimation::RenderAnimation(RenderAnimationType animation_type)
+    : type(animation_type)
 {}
 
-void RenderAnimation::update(chrono::milliseconds time_passed) {
-    throw runtime_error("Function RenderAnimation::update(chrono::milliseconds time_passed) is not overridden.");
+
+
+void RenderAnimation::baseclass_to_json(json& json_obj) const {
+    json_obj["type"] = (unsigned long) this->type;
+}
+
+
+
+void RenderAnimation::recompute(RenderObject* target) {
+    throw runtime_error("Function RenderAnimation::recompute(RenderObject* target) is not overridden.");
+}
+void RenderAnimation::update(chrono::milliseconds time_passed, RenderObject* target) {
+    throw runtime_error("Function RenderAnimation::update(chrono::milliseconds time_passed, RenderObject* target) is not overridden.");
 }
 
 

@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 2:15:38 PM
  * Last edited:
- *   2/8/2020, 11:18:59 PM
+ *   2/9/2020, 12:15:05 AM
  * Auto updated?
  *   Yes
  *
@@ -33,17 +33,19 @@ namespace RayTracer {
 
     class RenderAnimation {
         protected:
-            /* Pointer to the object this animation works on. */
-            RenderObject* target;
-
             /* Note that the baseclass is not meant to be called directly, but only from child classes. */
-            RenderAnimation(RenderObject* target_object, RenderAnimationType animation_type);
+            RenderAnimation(RenderAnimationType animation_type);
+
+            /* This function compiles RenderAnimation-general properies to a given json object. */
+            virtual void baseclass_to_json(nlohmann::json& json_obj) const;
         public:
             /* Describes the subtype of the animation. */
             const RenderAnimationType type;
 
-            /* Virtual for the update() function. After each frame, this is called in the derived class to update the object it animates. The number is the amount of milliseconds since the last frame in the movie (so not the rendertime). */
-            virtual void update(std::chrono::milliseconds time_passed);
+            /* Virtual function that lets the derived classes compute something before the first update() is called. If child classes do not use this, they should implement a dummy function. */
+            virtual void recompute(RenderObject* target);
+            /* Virtual for the update() function. After each frame, this is called in the derived class to update the object it animates. The number is the amount of milliseconds since the last frame in the movie (so not the rendertime), and the target is the object this animation performs it's thing on. */
+            virtual void update(std::chrono::milliseconds time_passed, RenderObject* target);
 
             /* Returns a json object based on this RenderAnimation. */
             virtual nlohmann::json to_json() const;

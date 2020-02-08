@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 4:48:11 PM
  * Last edited:
- *   2/8/2020, 11:42:05 PM
+ *   2/9/2020, 12:17:47 AM
  * Auto updated?
  *   Yes
  *
@@ -27,20 +27,34 @@ using namespace RayTracer;
 using namespace nlohmann;
 
 
-CameraMovement::CameraMovement(Camera* target_cam, CameraMovementType movement_type)
-    : RenderAnimation(nullptr, camera_movement),
-    cam_target(target_cam),
+CameraMovement::CameraMovement(CameraMovementType movement_type)
+    : RenderAnimation(camera_movement),
     cam_type(movement_type)
 {}
 
-void CameraMovement::update(chrono::milliseconds time_passed) {
-    throw runtime_error("Function CameraMovement::update(chrono::milliseconds time_passed) is not overridden.");
+
+
+void CameraMovement::recompute(Camera* target) {
+    throw runtime_error("Function CameraMovement::recompute(Camera* target) is not overridden.");
+}
+void CameraMovement::update(chrono::milliseconds time_passed, Camera* target) {
+    throw runtime_error("Function CameraMovement::update(chrono::milliseconds time_passed, Camera* target) is not overridden.");
 }
 
+
+
+void CameraMovement::baseclass_to_json(json& json_obj) const {
+    // First, let the next one up the chain do their thing
+    this->RenderAnimation::baseclass_to_json(json_obj);
+
+    // Add our own general properties
+    json_obj["cam_type"] = (unsigned long) this->cam_type;
+}
 
 json CameraMovement::to_json() const {
     throw runtime_error("Function CameraMovement::to_json() is not overridden.");
 }
+
 CameraMovement* CameraMovement::from_json(json json_obj) {
     // Check if the object has an object type
     if (!json_obj.is_object()) {

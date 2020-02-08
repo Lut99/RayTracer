@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:39:23 PM
  * Last edited:
- *   2/8/2020, 11:00:24 PM
+ *   2/9/2020, 12:18:17 AM
  * Auto updated?
  *   Yes
  *
@@ -19,12 +19,14 @@
 #define SHAPE_HPP
 
 #include <string>
+#include <chrono>
 
 #include "json.hpp"
 #include "Vec3.hpp"
 #include "Ray.hpp"
 #include "HitRecord.hpp"
 #include "Material.hpp"
+#include "RenderAnimation.hpp"
 
 namespace RayTracer {
     enum RenderObjectType {
@@ -37,6 +39,11 @@ namespace RayTracer {
     };
 
     class RenderObject {
+        protected:
+            RenderAnimation* animation;
+
+            /* This function compiles RenderObject-general properies to a given json object. */
+            virtual void baseclass_to_json(nlohmann::json& json_obj) const;
         public:
             const RenderObjectType type;
             Vec3 center;
@@ -53,8 +60,13 @@ namespace RayTracer {
             /* Virtual for the normal of the derived class. */
             virtual Vec3 normal(const HitRecord& record) const;
 
-            /* Virtual for the to_json function of the RenderObjects's children */
-            virtual nlohmann::json to_json() const;
+            /* Allows an animation to be specified for this particular RenderObject. Any overloads of this function might be able to handle animations specific to that type themselves, but then should call this version for the rest (if there are any left). */
+            virtual void set_animation(RenderAnimation* animation);
+            /* Updates this object based on given animation. Only needs to be overloaded if derived classes handle this in particular ways and for particular animation types. */
+            virtual void update(std::chrono::milliseconds time_passed);
+
+            /* Virtual for the derived classes to implement a custom to_json function. */
+            nlohmann::json to_json() const;
             /* Static function that gets a derived material class from given json object. Note that the returned value is allocated and will have to be deallocated. */
             static RenderObject* from_json(nlohmann::json json_obj);
     };

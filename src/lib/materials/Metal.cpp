@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:11:51 PM
  * Last edited:
- *   2/8/2020, 1:44:16 PM
+ *   2/9/2020, 12:21:00 AM
  * Auto updated?
  *   Yes
  *
@@ -42,7 +42,11 @@ bool Metal::scatter(const Ray& ray_in, const HitRecord& record, Vec3& attenuatio
 
 json Metal::to_json() const {
     json j;
-    j["type"] = (unsigned long) this->type;
+
+    // First, let the Material class compile
+    this->baseclass_to_json(j);
+
+    // Add our own properties
     j["albedo"] = this->albedo.to_json();
     j["fuzz"] = this->fuzz;
     return j;

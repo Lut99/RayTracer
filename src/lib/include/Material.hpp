@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 10:19:23 PM
  * Last edited:
- *   2/8/2020, 10:49:51 PM
+ *   2/9/2020, 12:19:34 AM
  * Auto updated?
  *   Yes
  *
@@ -39,9 +39,14 @@ namespace RayTracer {
 
 
     class Material {
+        protected:
+            /* The Material class is purely virtual, and should only be constructor from any child classes. */
+            Material(MaterialType material_type);
+
+            /* This function compiles Material-general properies to a given json object. */
+            virtual void baseclass_to_json(nlohmann::json& json_obj) const;
         public:
             const MaterialType type;
-            Material(MaterialType material_type);
 
             /* Computes how a ray reflects from or travels through the surface of the material. */
             virtual bool scatter(const Ray& ray_in, const HitRecord& record, Vec3& attenuation, Ray& ray_out) const;

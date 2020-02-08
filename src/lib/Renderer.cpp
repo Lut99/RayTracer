@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   2/8/2020, 1:23:18 PM
+ *   2/9/2020, 12:32:36 AM
  * Auto updated?
  *   Yes
  *
@@ -143,8 +143,10 @@ void Renderer::render_animation(RenderWorld* world, Camera* cam, Frames& out) {
         // Update the frames
         out.next();
 
-        // Update the world
-        world->update(chrono::milliseconds(1000 / out.fps));
+        // Update the world & camera
+        chrono::milliseconds time_passed(1000 / out.fps);
+        world->update(time_passed);
+        cam->update(time_passed);
     }
 
     #ifdef RENDER_THREADED

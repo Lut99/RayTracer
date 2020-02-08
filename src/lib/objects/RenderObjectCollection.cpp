@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 2:26:08 PM
  * Last edited:
- *   2/8/2020, 10:58:54 PM
+ *   2/9/2020, 12:13:36 AM
  * Auto updated?
  *   Yes
  *
@@ -78,7 +78,11 @@ RenderObject* RenderObjectCollection::get_object(size_t index) const {
 
 json RenderObjectCollection::to_json() const {
     json j;
-    j["type"] = (unsigned long) this->type;
+
+    // First, let the parent class parse all it wants
+    this->baseclass_to_json(j);
+    
+    // Add child-specific properties
     j["objects"] = json::array();
     // Append all the internal objects
     for (std::size_t i = 0; i < this->objects.size(); i++) {

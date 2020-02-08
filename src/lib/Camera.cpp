@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:14 PM
  * Last edited:
- *   2/8/2020, 11:06:08 PM
+ *   2/9/2020, 12:29:53 AM
  * Auto updated?
  *   Yes
  *
@@ -41,6 +41,8 @@ Camera::Camera(Vec3 lookfrom, Vec3 lookat, Vec3 up, double vfov, double aperture
     aperture(aperture)
 {
     this->recompute();
+
+    this->animation = nullptr;
 }
 Camera::Camera(Vec3 lookfrom, Vec3 lookat, Vec3 up, double vfov, double aperture)
     : lookfrom(lookfrom),
@@ -48,7 +50,11 @@ Camera::Camera(Vec3 lookfrom, Vec3 lookat, Vec3 up, double vfov, double aperture
     up(up),
     vfov(vfov),
     aperture(aperture)
-{}
+{
+    this->animation = nullptr;
+}
+
+
 
 Ray Camera::get_ray(int x, int y) const {
     // Compute u and v
@@ -66,6 +72,8 @@ Ray Camera::get_ray(int x, int y) const {
     Vec3 offset = this->u * rd.x + this->v * rd.y;
     return Ray(this->origin + offset, this->lower_left_corner + s * this->horizontal + t * this->vertical - this->origin - offset);
 }
+
+
 
 void Camera::recompute() {
     double ratio = (double) this->width / (double) this->height;
@@ -88,6 +96,21 @@ void Camera::recompute() {
 
 
 
+void Camera::set_animation(CameraMovement* animation) {
+    this->animation = animation;
+    // Also recompute the animation based on this object
+    this->animation->recompute(this);
+}
+
+void Camera::update(std::chrono::milliseconds time_passed){
+    // Only if there is one, update the animation
+    if (this->animation != nullptr) {
+        this->animation->update(time_passed, this);
+    }
+}
+
+
+
 json Camera::to_json() const {
     json j;
     j["lookat"] = this->lookat.to_json();
@@ -95,8 +118,12 @@ json Camera::to_json() const {
     j["up"] = this->up.to_json();
     j["vfov"] = this->vfov;
     j["aperture"] = this->aperture;
+    if (this->animation != nullptr) {
+        j["animation"] = this->animation->to_json();
+    }
     return j;
 }
+
 Camera* Camera::from_json(nlohmann::json json_obj) {
     // Check if it is an object
     if (!json_obj.is_object()) {
@@ -121,17 +148,20 @@ Camera* Camera::from_json(nlohmann::json json_obj) {
     }
 
     // Parse the objects
-    Vec3 lookat = Vec3::from_json(json_obj["lookat"]);
-    Vec3 lookfrom = Vec3::from_json(json_obj["lookfrom"]);
-    Vec3 up = Vec3::from_json(json_obj["up"]);
-    double vfov, aperture;
+    Camera* to_return;
+    to_return->lookat = Vec3::from_json(json_obj["lookat"]);
+    to_return->lookfrom = Vec3::from_json(json_obj["lookfrom"]);
+    to_return->up = Vec3::from_json(json_obj["up"]);
     try {
-        vfov = json_obj["vfov"].get<double>();
-        aperture = json_obj["aperture"].get<double>();
+        to_return->vfov = json_obj["vfov"].get<double>();
+        to_return->aperture = json_obj["aperture"].get<double>();
     } catch (nlohmann::detail::type_error& e) {
         throw InvalidFieldFormat("Camera", "vfov or aperture", "double", json_obj[0].type_name());
     }
+    // Only parse the animation if it is present
+    if (!json_obj["animation"].is_null()) {
+        to_return->set_animation(CameraMovement::from_json(json_obj["animation"]));
+    }
     
-    // Return a new Camera object
-    return new Camera(lookfrom, lookat, up, vfov, aperture);
+    return to_return;
 }
