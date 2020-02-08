@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 4:48:29 PM
  * Last edited:
- *   2/1/2020, 5:38:31 PM
+ *   2/8/2020, 11:14:16 PM
  * Auto updated?
  *   Yes
  *
@@ -21,14 +21,14 @@
 #include <chrono>
 
 #include "../Camera.hpp"
-#include "../Animation.hpp"
+#include "../RenderAnimation.hpp"
 
 namespace RayTracer {
     enum CameraMovementType {
         rotation
     };
 
-    class CameraMovement: public Animation {
+    class CameraMovement: public RenderAnimation {
         protected:
             /* Pointer to the camera this animation works on. */
             Camera* cam_target;

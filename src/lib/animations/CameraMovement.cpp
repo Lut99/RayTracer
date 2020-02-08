@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 4:48:11 PM
  * Last edited:
- *   2/1/2020, 5:38:26 PM
+ *   2/8/2020, 11:14:25 PM
  * Auto updated?
  *   Yes
  *
@@ -23,7 +23,7 @@ using namespace std;
 using namespace RayTracer;
 
 CameraMovement::CameraMovement(Camera* target_cam, CameraMovementType movement_type)
-    : Animation(nullptr, camera_movement),
+    : RenderAnimation(nullptr, camera_movement),
     cam_target(target_cam),
     type(movement_type)
 {}
