@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:14:41 PM
  * Last edited:
- *   2/4/2020, 4:33:59 PM
+ *   2/8/2020, 1:44:07 PM
  * Auto updated?
  *   Yes
  *
@@ -100,7 +100,7 @@ json Dielectric::to_json() const {
     j["ref_idx"] = this->ref_idx;
     return j;
 }
-Dielectric Dielectric::from_json(json json_obj) {
+Dielectric* Dielectric::from_json(json json_obj) {
     // Check if the object has an object type
     if (!json_obj.is_object()) {
         throw InvalidTypeException("Dielectric", json::object().type_name(), json_obj.type_name());
@@ -123,5 +123,5 @@ Dielectric Dielectric::from_json(json json_obj) {
         throw InvalidFieldFormat("Dielectric", "ref_idx", "double", json_obj["ref_idx"].type_name());
     }
 
-    return Dielectric(albedo, ref_idx);
+    return new Dielectric(albedo, ref_idx);
 }

@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:11:51 PM
  * Last edited:
- *   2/4/2020, 4:30:56 PM
+ *   2/8/2020, 1:44:16 PM
  * Auto updated?
  *   Yes
  *
@@ -47,7 +47,7 @@ json Metal::to_json() const {
     j["fuzz"] = this->fuzz;
     return j;
 }
-Metal Metal::from_json(json json_obj) {
+Metal* Metal::from_json(json json_obj) {
     // Check if the object has an object type
     if (!json_obj.is_object()) {
         throw InvalidTypeException("Metal", json::object().type_name(), json_obj.type_name());
@@ -70,5 +70,5 @@ Metal Metal::from_json(json json_obj) {
         throw InvalidFieldFormat("Metal", "fuzz", "double", json_obj["fuzz"].type_name());
     }
 
-    return Metal(albedo, fuzz);
+    return new Metal(albedo, fuzz);
 }

@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:08:10 PM
  * Last edited:
- *   2/4/2020, 4:28:11 PM
+ *   2/8/2020, 1:44:24 PM
  * Auto updated?
  *   Yes
  *
@@ -44,7 +44,7 @@ nlohmann::json Lambertian::to_json() const {
     return j;
 }
 
-Lambertian Lambertian::from_json(nlohmann::json json_obj) {
+Lambertian* Lambertian::from_json(nlohmann::json json_obj) {
     // Check if the object has an object type
     if (!json_obj.is_object()) {
         throw InvalidTypeException("Lambertian", json::object().type_name(), json_obj.type_name());
@@ -58,5 +58,5 @@ Lambertian Lambertian::from_json(nlohmann::json json_obj) {
     // Parse it with the Vec3 parser
     Vec3 albedo = Vec3::from_json(json_obj["albedo"]);
 
-    return Lambertian(albedo);
+    return new Lambertian(albedo);
 }

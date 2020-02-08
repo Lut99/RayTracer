@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:15:28 PM
  * Last edited:
- *   2/4/2020, 4:32:10 PM
+ *   2/8/2020, 1:43:55 PM
  * Auto updated?
  *   Yes
  *
@@ -38,7 +38,7 @@ namespace RayTracer {
             /* Returns a json object describing this Dielectric object. */
             virtual nlohmann::json to_json() const;
             /* Returns a fresh Dielectric object as described in given json object. */
-            static Dielectric from_json(nlohmann::json json_obj);
+            static Dielectric* from_json(nlohmann::json json_obj);
 
             Vec3 albedo;
             double ref_idx;

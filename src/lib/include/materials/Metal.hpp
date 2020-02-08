@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:12:18 PM
  * Last edited:
- *   2/4/2020, 4:29:22 PM
+ *   2/8/2020, 1:43:52 PM
  * Auto updated?
  *   Yes
  *
@@ -34,7 +34,7 @@ namespace RayTracer {
             /* Returns a json object describing this Metal object. */
             virtual nlohmann::json to_json() const;
             /* Returns a fresh Metal object as described in given json object. */
-            static Metal from_json(nlohmann::json json_obj);
+            static Metal* from_json(nlohmann::json json_obj);
 
             Vec3 albedo;
             double fuzz;

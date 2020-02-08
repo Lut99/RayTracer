@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 10:19:23 PM
  * Last edited:
- *   1/29/2020, 8:40:42 PM
+ *   2/8/2020, 1:45:07 PM
  * Auto updated?
  *   Yes
  *
@@ -19,6 +19,8 @@
 #define MATERIAL_HPP
 
 #include <string>
+
+#include "json.hpp"
 
 #include "Ray.hpp"
 #include "HitRecord.hpp"
@@ -43,6 +45,11 @@ namespace RayTracer {
 
             /* Computes how a ray reflects from or travels through the surface of the material. */
             virtual bool scatter(const Ray& ray_in, const HitRecord& record, Vec3& attenuation, Ray& ray_out) const;
+
+            /* Virtual for the to_json function of the Material's children */
+            virtual nlohmann::json to_json() const;
+            /* Static function that gets a derived material class from given json object. Note that the returned value is allocated and will have to be deallocated. */
+            Material* 
     };
 }
 
