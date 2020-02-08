@@ -4,7 +4,7 @@
  * Created:
  *   1/27/2020, 2:30:39 PM
  * Last edited:
- *   2/1/2020, 5:44:32 PM
+ *   2/8/2020, 11:17:03 PM
  * Auto updated?
  *   Yes
  *
@@ -20,10 +20,14 @@
 #include <iostream>
 #include <stdexcept>
 
+#include "include/scenes/RandomScene.hpp"
+#include "include/JSONExceptions.hpp"
 #include "include/RenderWorld.hpp"
 
 using namespace std;
 using namespace RayTracer;
+using namespace nlohmann;
+
 
 RenderWorld::RenderWorld() {
     // Nothing much, really
@@ -43,7 +47,7 @@ RenderWorld::RenderWorld(RenderWorld&& other) {
     // Now fill the object's vectors with empty ones to avoid deallocation of the objects
     other.objects = vector<RenderObject*>();
     other.lights = vector<int*>();
-    other.animations = vector<Animation*>();
+    other.animations = vector<RenderAnimation*>();
 }
 
 RenderWorld::~RenderWorld() {
@@ -84,11 +88,11 @@ void RenderWorld::add_light(int* light) {
     
 }
 
-void RenderWorld::add_animation(Animation animation) {
-    this->animations.push_back(new Animation(animation));
+void RenderWorld::add_animation(RenderAnimation animation) {
+    this->animations.push_back(new RenderAnimation(animation));
 }
 
-void RenderWorld::add_animation(Animation* animation) {
+void RenderWorld::add_animation(RenderAnimation* animation) {
     this->animations.push_back(animation);
 }
 
@@ -112,7 +116,7 @@ int& RenderWorld::get_light(int light_index) const {
     // Return the object
     return *this->lights.at(light_index);
 }
-Animation& RenderWorld::get_animation(int animation_index) const {
+RenderAnimation& RenderWorld::get_animation(int animation_index) const {
     // Check if not out of bounds
     if (animation_index < 0 || animation_index >= this->animations.size()) {
         throw out_of_range("Animation index " + to_string(animation_index) + " is out of range for World with " + to_string(this->animations.size()) + " animations.");
@@ -210,7 +214,7 @@ RenderWorld& RenderWorld::operator=(RenderWorld&& other) {
     // Now fill the object's vectors with empty ones to avoid deallocation of the objects
     other.objects = vector<RenderObject*>();
     other.lights = vector<int*>();
-    other.animations = vector<Animation*>();
+    other.animations = vector<RenderAnimation*>();
 
     // Return a reference to this
     return *this;
@@ -222,4 +226,73 @@ void RayTracer::swap(RenderWorld& first, RenderWorld& second) {
     swap(first.objects, second.objects);
     swap(first.lights, second.lights);
     swap(first.animations, second.animations);
+}
+
+
+
+json RenderWorld::to_json() const {
+    json j;
+    j["objects"] = json::array();
+    j["lights"] = json::array();
+
+    for (size_t i = 0; i < this->objects.size(); i++) {
+        j["objects"][i] = this->objects[i]->to_json();
+    }
+
+    /*
+    for (size_t i = 0; i < this->lights.size(); i++) {
+        j["lights"][i] = this->lights[i].to_json();
+    }
+    **/
+
+    for (size_t i = 0; i < this->animations.size(); i++) {
+        j["animations"][i] = this->animations[i].to_json();
+    }
+
+    return j;
+}
+RenderWorld* RenderWorld::from_json(nlohmann::json json_obj) {
+    // Check if the object has an object type
+    if (!json_obj.is_object()) {
+        throw InvalidTypeException("RenderWorld", json::object().type_name(), json_obj.type_name());
+    }
+
+    // Check if the required field exists and is an array
+    if (json_obj["objects"].is_null()) {
+        throw MissingFieldException("RenderWorld", "objects");
+    }
+    if (json_obj["lights"].is_null()) {
+        throw MissingFieldException("RenderWorld", "lights");
+    }
+    if (json_obj["objects"] == "random") {
+        // Special case: return a randomly generated world
+        return new RandomScene();
+    } else if (!json_obj["objects"].is_array()) {
+        throw InvalidFieldFormat("RenderWorld", "objects", json::array().type_name(), json_obj["objects"].type_name());
+    }
+    if (!json_obj["lights"].is_array()) {
+        throw InvalidFieldFormat("RenderWorld", "lights", json::array().type_name(), json_obj["lights"].type_name());
+    }
+
+    // Parse all the items in this array
+    RenderWorld* world = new RenderWorld();
+
+    // Parse the objects
+    for (std::size_t i = 0; i < json_obj["objects"].size(); i++) {
+        world->add_object(RenderObject::from_json(json_obj["objects"][i]));
+    }
+    
+    // Parse the lights
+    /*
+    for (std::size_t i = 0; i < json_obj["lights"].size(); i++) {
+        world->add_object(RenderLight::from_json(json_obj["lights"][i]));
+    }
+    **/
+
+    // Parse the animations
+    for (std::size_t i = 0; i < json_obj["animations"].size(); i++) {
+        world->add_object(RenderAnimation::from_json(json_obj["animations"][i]));
+    }
+
+    return world;
 }

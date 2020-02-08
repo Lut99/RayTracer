@@ -4,7 +4,7 @@
  * Created:
  *   1/27/2020, 2:30:56 PM
  * Last edited:
- *   2/1/2020, 6:15:26 PM
+ *   2/8/2020, 11:14:45 PM
  * Auto updated?
  *   Yes
  *
@@ -24,10 +24,11 @@
 #include <vector>
 #include <chrono>
 
+#include "json.hpp"
 #include "Vec3.hpp"
 #include "RenderObject.hpp"
 #include "Camera.hpp"
-#include "Animation.hpp"
+#include "RenderAnimation.hpp"
 
 namespace RayTracer {
     class RenderWorld {
@@ -37,7 +38,7 @@ namespace RayTracer {
             /* List that stores all light objects in the world. */
             std::vector<int*> lights;
             /* List that stores all animations in the world. */
-            std::vector<Animation*> animations;
+            std::vector<RenderAnimation*> animations;
 
             /* Deepcopies the different vectors*/
             template <typename T> void deepcopy(std::vector<T*>& target, const std::vector<T*>& source) const;
@@ -59,16 +60,16 @@ namespace RayTracer {
             /* Adds a RenderLight to the world. Note that anything added this way will be deallocated automatically. */
             void add_light(int* light);
             /* Adds an Animation to the world. Note that internally, this will copy the given object instead of reference it. */
-            void add_animation(Animation light);
+            void add_animation(RenderAnimation light);
             /* Adds a Animation to the world. Note that anything added this way will be deallocated automatically. */
-            void add_animation(Animation* light);
+            void add_animation(RenderAnimation* light);
 
             /* Returns a reference to an object for modification */
             RenderObject& get_object(int obj_index) const;
             /* Returns a reference to a camera object for modification */
             int& get_light(int light_index) const;
             /* Returns a reference to an animation object for modification */
-            Animation& get_animation(int animation_index) const;
+            RenderAnimation& get_animation(int animation_index) const;
 
             /* Returns the number of objects defined in the RenderWorld. */
             const std::size_t get_object_count() const;
@@ -92,6 +93,11 @@ namespace RayTracer {
 
             /* Swap operator for the RenderWorld class. */
             friend void swap(RenderWorld& first, RenderWorld& second);
+
+            /* Returns a json object representing this RenderWorld and all RenderObjects, RenderLights and RenderAnimations stored in it. */
+            virtual nlohmann::json to_json() const;
+            /* Returns a new RenderWorld based on the given json file. Note that this new world will have to be deallocated later on. */
+            static RenderWorld* from_json(nlohmann::json json_obj);
     };
 
     /* Swap operator for the RenderWorld class. */
