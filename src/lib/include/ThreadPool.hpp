@@ -4,7 +4,7 @@
  * Created:
  *   1/25/2020, 5:11:12 PM
  * Last edited:
- *   2/2/2020, 6:12:28 PM
+ *   2/8/2020, 1:21:36 PM
  * Auto updated?
  *   Yes
  *
@@ -55,6 +55,8 @@ namespace RayTracer {
             int threads_waiting;
             bool working;
 
+            bool wakeup;
+
             /* The list of thread objects */
             std::vector<std::thread> pool;
 
@@ -64,6 +66,8 @@ namespace RayTracer {
             std::mutex batch_lock;
             /* Condition variable to access the queue */
             std::condition_variable batch_cond;
+            /* Condition variable to wake up the farmer thread */
+            std::condition_variable wake_cond;
 
             /* Thread worker function */
             void worker(int id);
@@ -82,6 +86,9 @@ namespace RayTracer {
             void add_batch(int width, int height, const Camera& cam, const RenderWorld& world, Image& out, unsigned long& batch_index);
             /* Returns a the indices for a new batch */
             PixelBatch get_batch(int width, int height, unsigned long& batch_index) const;
+
+            /* Uses a conditional variable to pause the thread until any of the worker threads wake it up */
+            void wait();
 
             /* Stops the threadpool and waits until all threads have joined. */
             void stop();

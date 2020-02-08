@@ -4,7 +4,7 @@
  * Created:
  *   1/25/2020, 5:10:34 PM
  * Last edited:
- *   2/2/2020, 6:18:08 PM
+ *   2/8/2020, 1:23:49 PM
  * Auto updated?
  *   Yes
  *
@@ -26,7 +26,8 @@ using namespace RayTracer;
 ThreadPool::ThreadPool(int num_of_threads, int batch_size, int max_in_queue)
     : n_threads(num_of_threads),
     batch_size(batch_size),
-    max_in_queue(max_in_queue)
+    max_in_queue(max_in_queue),
+    wakeup(false)
 {
     this->working = true;
     this->threads_waiting = 0;
@@ -53,6 +54,9 @@ void ThreadPool::worker(int id) {
             // Get some references to class variables
             vector<PixelBatch>* queue = &this->batch_queue;
             bool* working = &this->working;
+
+            // Signal the main thread that we're ready for more
+            this->wake_cond.notify_all();
 
             // Wait until work is available OR we're stopping
             this->threads_waiting++;
@@ -125,6 +129,16 @@ void ThreadPool::add_batch(int width, int height, const Camera& cam, const Rende
 
     this->add_batch(batch);
 }
+
+
+void ThreadPool::wait() {
+    unique_lock<mutex> u_lock(this->batch_lock);
+
+    // Wait for the conditional variable to be triggered
+    bool& wakeup = this->wakeup;
+    this->wake_cond.wait(u_lock, [wakeup](){ return wakeup; });
+}
+
 
 void ThreadPool::stop() {
     // Try to stop the threads

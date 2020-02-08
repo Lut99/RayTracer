@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   2/2/2020, 6:22:56 PM
+ *   2/8/2020, 1:23:18 PM
  * Auto updated?
  *   Yes
  *
@@ -63,6 +63,9 @@ Image Renderer::render(RenderWorld* world, Camera* cam) {
         if (this->show_progressbar) {
             prgrs.set(batch_index);
         }
+
+        // Wait until at least one thread has woken us up
+        pool.wait();
 
         // If a the queue is full, continue
         if (pool.batch_queue_full()) {
