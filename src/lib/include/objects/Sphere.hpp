@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:37:11 PM
  * Last edited:
- *   2/8/2020, 10:53:14 PM
+ *   2/9/2020, 1:44:27 AM
  * Auto updated?
  *   Yes
  *
@@ -31,7 +31,14 @@ namespace RayTracer {
 
             /* The Sphere class computes how a ray interacts with a Sphere object. The Sphere is defined by an origin (vector) and a radius. */
             Sphere(const Vec3& origin, double radius, Material* material);
-            ~Sphere();
+            /* Copy constructor for the Sphere class. */
+            Sphere(const Sphere& other);
+            /* Move constructor for the Sphere class. */
+            Sphere(Sphere&& other);
+            virtual ~Sphere();
+
+            /* The clone method returns a reference to a new RenderObject method. */
+            virtual RenderObject* clone() const;
 
             /* Computes whether given Ray hits this Sphere. If it doesn't, return a t of -1. If it does, returns the length of the Ray until it hits the Sphere. Not that t_min and t_max are exclusive. */
             virtual bool hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const;

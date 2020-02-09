@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 3:23:28 PM
  * Last edited:
- *   2/9/2020, 12:24:10 AM
+ *   2/9/2020, 2:03:21 AM
  * Auto updated?
  *   Yes
  *
@@ -22,7 +22,7 @@
 
 #include "json.hpp"
 
-#include "animations/CameraMovement.hpp"
+#include "CameraMovement.hpp"
 
 #include "Image.hpp"
 #include "Vec3.hpp"
@@ -31,6 +31,7 @@
 namespace RayTracer {
     class RenderWorld;
     class ThreadPool;
+    class CameraMovement;
 
     class Camera {
         public:
@@ -60,6 +61,8 @@ namespace RayTracer {
             Camera(Vec3 lookfrom, Vec3 lookat, Vec3 up, double vfov, double aperture, int screen_width, int screen_height, int rays_per_pixel, bool correct_gamma);
             /* The camera class holds information about the viewport of the scene. This overload only stores some basic variables, and does not recompute the rest yet. */
             Camera(Vec3 lookfrom, Vec3 lookat, Vec3 up, double vfov, double aperture);
+            /* Virtual deconstructor */
+            virtual ~Camera() = default;
 
             /* Recomputes the Camera values. This is useful after the given variables are altered after construction. */
             void recompute();

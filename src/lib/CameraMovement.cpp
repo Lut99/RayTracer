@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 4:48:11 PM
  * Last edited:
- *   2/9/2020, 12:17:47 AM
+ *   2/9/2020, 2:00:23 AM
  * Auto updated?
  *   Yes
  *
@@ -20,7 +20,7 @@
 #include "../include/animations/camera/CameraRotation.hpp"
 
 #include "../include/JSONExceptions.hpp"
-#include "../include/animations/CameraMovement.hpp"
+#include "../include/CameraMovement.hpp"
 
 using namespace std;
 using namespace RayTracer;
@@ -28,27 +28,13 @@ using namespace nlohmann;
 
 
 CameraMovement::CameraMovement(CameraMovementType movement_type)
-    : RenderAnimation(camera_movement),
-    cam_type(movement_type)
+    : type(movement_type)
 {}
 
 
 
-void CameraMovement::recompute(Camera* target) {
-    throw runtime_error("Function CameraMovement::recompute(Camera* target) is not overridden.");
-}
-void CameraMovement::update(chrono::milliseconds time_passed, Camera* target) {
-    throw runtime_error("Function CameraMovement::update(chrono::milliseconds time_passed, Camera* target) is not overridden.");
-}
-
-
-
 void CameraMovement::baseclass_to_json(json& json_obj) const {
-    // First, let the next one up the chain do their thing
-    this->RenderAnimation::baseclass_to_json(json_obj);
-
-    // Add our own general properties
-    json_obj["cam_type"] = (unsigned long) this->cam_type;
+    json_obj["cam_type"] = (unsigned long) this->type;
 }
 
 json CameraMovement::to_json() const {
@@ -62,16 +48,16 @@ CameraMovement* CameraMovement::from_json(json json_obj) {
     }
 
     // Check if the required type field exists and is an array
-    if (json_obj["cam_type"].is_null()) {
-        throw MissingFieldException("CameraMovement", "cam_type");
+    if (json_obj["type"].is_null()) {
+        throw MissingFieldException("CameraMovement", "type");
     }
     
     // Parse the raw type
     CameraMovementType cam_type;
     try {
-        cam_type = (CameraMovementType) json_obj["cam_type"].get<unsigned long>();
+        cam_type = (CameraMovementType) json_obj["type"].get<unsigned long>();
     } catch (nlohmann::detail::type_error& e) {
-        throw InvalidFieldFormat("CameraMovement", "cam_type", "unsigned long", json_obj["cam_type"].type_name());
+        throw InvalidFieldFormat("CameraMovement", "type", "unsigned long", json_obj["type"].type_name());
     }
 
     // Decide how to parse the rest of the JSON

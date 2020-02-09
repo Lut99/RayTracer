@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:36:39 PM
  * Last edited:
- *   2/9/2020, 12:13:31 AM
+ *   2/9/2020, 1:46:16 AM
  * Auto updated?
  *   Yes
  *
@@ -27,15 +27,38 @@ using namespace RayTracer;
 using namespace nlohmann;
 
 
-Sphere::Sphere(const Vec3& origin, double radius, Material* material)
-    : RenderObject(origin, sphere)
+Sphere::Sphere(const Vec3& center, double radius, Material* material)
+    : RenderObject(center, sphere)
 {
     this->radius = radius;
     this->material = material;
 }
+
+Sphere::Sphere(const Sphere& other)
+    : RenderObject(other.center, sphere)
+{
+    this->radius = other.radius;
+    this->material = other.material->clone();
+}
+
+Sphere::Sphere(Sphere&& other)
+    : RenderObject(other.center, sphere)
+{
+    this->radius = other.radius;
+    this->material = other.material;
+
+    other.material = nullptr;
+}
+
 Sphere::~Sphere() {
     delete this->material;
 }
+
+RenderObject* Sphere::clone() const {
+    return (RenderObject*) new Sphere(*this);
+}
+
+
 
 bool Sphere::hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const {
     Vec3 d_ray_sphere = ray.origin - this->center;

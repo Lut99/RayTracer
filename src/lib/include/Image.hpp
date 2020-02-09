@@ -4,7 +4,7 @@
  * Created:
  *   1/20/2020, 3:01:57 PM
  * Last edited:
- *   2/1/2020, 4:26:02 PM
+ *   2/9/2020, 1:01:17 AM
  * Auto updated?
  *   Yes
  *
@@ -35,7 +35,7 @@ namespace RayTracer {
             /* The pixel class is used to access a pixel in an Image. Should not be used manually. Note that the given pointer is not deallocated. */
             Pixel(double* colours);
 
-            double& operator[](int index);
+            double& operator[](unsigned int index);
             Pixel& operator=(const Pixel& other);
             Pixel& operator=(const Vec3& other);
     };
@@ -45,12 +45,12 @@ namespace RayTracer {
             /* The internal representation of the data. This is aligned as a row of three colour channels. */
             double* data;
         public:
-            const int width;
+            const unsigned int width;
 
             /* The ImageRow class is only used for operator[] access in a complete Image. Note: Does not deallocate given pointer */
-            ImageRow(double* data, int width);
+            ImageRow(double* data, unsigned int width);
             
-            Pixel operator[](int index);
+            Pixel operator[](unsigned int index);
     };
 
     class Image {
@@ -58,22 +58,22 @@ namespace RayTracer {
             /* The internal representation of the data. This is aligned as rows, then columns and then three colour values. */
             double *data;
         public:
-            const int width;
-            const int height;
+            const unsigned int width;
+            const unsigned int height;
 
             /* The Image class is meant to be raw image storage. It is not much more than a wrapped 3D-array (that is allocated in 1D) with the added bonus of easy to-file features. */
-            Image(int width, int height);
+            Image(unsigned int width, unsigned int height);
             /* Copy constructor for the Image Class. */
             Image(const Image& other);
             /* Move constructor for the Image Class. */
             Image(Image&& other);
             ~Image();
 
-            /* Provides access to a row inside the array. */
-            Pixel pixel(int row, int col);
+            /* Provides access to a pixel inside the array (skipping ImageRows). */
+            Pixel pixel(unsigned int row, unsigned int col);
 
             /* Provides array subscript access to a row inside the Image (which is another image) */
-            ImageRow operator[](int index);
+            ImageRow operator[](unsigned int index);
 
             /* Saves the image to a .ppm image file. */
             void to_png(std::string path);

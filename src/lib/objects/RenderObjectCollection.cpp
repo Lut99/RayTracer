@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 2:26:08 PM
  * Last edited:
- *   2/9/2020, 12:13:36 AM
+ *   2/9/2020, 1:43:47 AM
  * Auto updated?
  *   Yes
  *
@@ -40,6 +40,12 @@ RenderObjectCollection::RenderObjectCollection(vector<RenderObject*> objects)
     this->objects = objects;
 }
 
+RenderObject* RenderObjectCollection::clone() const {
+    return (RenderObject*) new RenderObjectCollection(*this);
+}
+
+
+
 bool RenderObjectCollection::hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const {
     HitRecord temp_record;
     double t_best = t_max;
@@ -65,11 +71,11 @@ Vec3 RenderObjectCollection::normal(const HitRecord& record) const {
     return record.obj->normal(record);
 }
 
-const size_t RenderObjectCollection::size() const {
+size_t RenderObjectCollection::size() const {
     return this->objects.size();
 }
 RenderObject* RenderObjectCollection::get_object(size_t index) const {
-    if (index < 0 || index >= this->size()) {
+    if (index >= this->size()) {
         throw out_of_range("Index " + to_string(index) + " is out of range for RenderObjectCollection with size " + to_string(this->size()));
     }
 

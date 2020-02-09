@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:39:23 PM
  * Last edited:
- *   2/9/2020, 12:18:17 AM
+ *   2/9/2020, 1:50:49 AM
  * Auto updated?
  *   Yes
  *
@@ -29,6 +29,8 @@
 #include "RenderAnimation.hpp"
 
 namespace RayTracer {
+    class RenderAnimation;
+
     enum RenderObjectType {
         sphere,
         render_object_collection
@@ -48,17 +50,22 @@ namespace RayTracer {
             const RenderObjectType type;
             Vec3 center;
 
+            /* Default deconstructor for the RenderObject class, except that it's virtual so that baseclasses can improve upon this. */
+            virtual ~RenderObject() = default;
+            /* The clone method returns a reference to a new RenderObject method. This is purely virtual, and should be implemented by the derived classes as if it were a copy constructor. */
+            virtual RenderObject* clone() const = 0;
+
             /* The RenderObject class is virtual, and should not be used by yourself. Only derived classes should call this function. */
             RenderObject(const Vec3& center, const RenderObjectType type);
 
             /* Virtual for the derived classes to determine whether they have been hit by a ray or not. */
-            virtual bool hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const;
+            virtual bool hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const = 0;
 
             /* Virtual for the derived classes to return the colour associated with the hit position. */
-            virtual Vec3 colour(const HitRecord& record) const;
+            virtual Vec3 colour(const HitRecord& record) const = 0;
 
             /* Virtual for the normal of the derived class. */
-            virtual Vec3 normal(const HitRecord& record) const;
+            virtual Vec3 normal(const HitRecord& record) const = 0;
 
             /* Allows an animation to be specified for this particular RenderObject. Any overloads of this function might be able to handle animations specific to that type themselves, but then should call this version for the rest (if there are any left). */
             virtual void set_animation(RenderAnimation* animation);
@@ -66,7 +73,7 @@ namespace RayTracer {
             virtual void update(std::chrono::milliseconds time_passed);
 
             /* Virtual for the derived classes to implement a custom to_json function. */
-            nlohmann::json to_json() const;
+            virtual nlohmann::json to_json() const = 0;
             /* Static function that gets a derived material class from given json object. Note that the returned value is allocated and will have to be deallocated. */
             static RenderObject* from_json(nlohmann::json json_obj);
     };

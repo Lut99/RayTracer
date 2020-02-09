@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 4:55:47 PM
  * Last edited:
- *   2/9/2020, 12:17:26 AM
+ *   2/9/2020, 1:56:52 AM
  * Auto updated?
  *   Yes
  *
@@ -32,8 +32,8 @@ double CameraRotation::compute_speed(std::chrono::seconds circle_time) {
 
 CameraRotation::CameraRotation(chrono::seconds circle_time)
     : CameraMovement(rotation),
-    loop_time(circle_time),
-    speed(this->compute_speed(circle_time))
+    speed(this->compute_speed(circle_time)),
+    loop_time(circle_time)
 {}
 
 

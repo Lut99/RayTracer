@@ -4,7 +4,7 @@
  * Created:
  *   1/27/2020, 2:30:39 PM
  * Last edited:
- *   2/9/2020, 12:30:44 AM
+ *   2/9/2020, 1:37:14 AM
  * Auto updated?
  *   Yes
  *
@@ -34,8 +34,16 @@ RenderWorld::RenderWorld() {
 }
 RenderWorld::RenderWorld(const RenderWorld& other) {
     // Deepcopy the vectors
-    this->deepcopy(this->objects, other.objects);
-    this->deepcopy(this->lights, other.lights);
+
+    // Deepcopy the objects
+    for (size_t i = 0; i < other.objects.size(); i++) {
+        this->objects.push_back(other.objects.at(i)->clone());
+    }
+
+    // Deepcopy the lights
+    // for (size_t i = 0; i < other.lights.size(); i++) {
+    //     this->lights.push_back(other.lights.at(i)->clone());
+    // }
 }
 RenderWorld::RenderWorld(RenderWorld&& other) {
     // Simply shallow copy the vectors
@@ -58,24 +66,9 @@ RenderWorld::~RenderWorld() {
 }
 
 
-template <typename T> void RenderWorld::deepcopy(vector<T*>& target, const vector<T*>& source) const {
-    // Copy all elements to the other vector - but make sure to declare new copies
-    for (size_t i = 0; i < source.size(); i++) {
-        target.at(i) = new T(*source.at(i));
-    }
-}
-
-
-void RenderWorld::add_object(RenderObject obj) {
-    this->objects.push_back(new RenderObject(obj));
-}
 
 void RenderWorld::add_object(RenderObject* obj) {
     this->objects.push_back(obj);
-}
-
-void RenderWorld::add_light(int light) {
-
 }
 
 void RenderWorld::add_light(int* light) {
@@ -84,18 +77,18 @@ void RenderWorld::add_light(int* light) {
 
 
 
-RenderObject& RenderWorld::get_object(int obj_index) const {
+RenderObject& RenderWorld::get_object(unsigned int obj_index) const {
     // Check if not out of bounds
-    if (obj_index < 0 || obj_index >= this->objects.size()) {
+    if (obj_index >= this->objects.size()) {
         throw out_of_range("Object index " + to_string(obj_index) + " is out of range for World with " + to_string(this->objects.size()) + " objects.");
     }
 
     // Return the object
     return *this->objects.at(obj_index);
 }
-int& RenderWorld::get_light(int light_index) const {
+int& RenderWorld::get_light(unsigned int light_index) const {
     // Check if not out of bounds
-    if (light_index < 0 || light_index >= this->lights.size()) {
+    if (light_index >= this->lights.size()) {
         throw out_of_range("Light index " + to_string(light_index) + " is out of range for World with " + to_string(this->lights.size()) + " lights.");
     }
 
@@ -103,10 +96,10 @@ int& RenderWorld::get_light(int light_index) const {
     return *this->lights.at(light_index);
 }
 
-const std::size_t RenderWorld::get_object_count() const {
+std::size_t RenderWorld::get_object_count() const {
     return this->objects.size();
 }
-const std::size_t RenderWorld::get_light_count() const {
+std::size_t RenderWorld::get_light_count() const {
     return this->lights.size();
 }
 
@@ -211,11 +204,9 @@ json RenderWorld::to_json() const {
         j["objects"][i] = this->objects[i]->to_json();
     }
 
-    /*
-    for (size_t i = 0; i < this->lights.size(); i++) {
-        j["lights"][i] = this->lights[i].to_json();
-    }
-    **/
+    // for (size_t i = 0; i < this->lights.size(); i++) {
+    //     j["lights"][i] = this->lights[i].to_json();
+    // }
 
     return j;
 }

@@ -4,7 +4,7 @@
  * Created:
  *   1/20/2020, 3:03:07 PM
  * Last edited:
- *   2/1/2020, 7:25:07 PM
+ *   2/9/2020, 1:01:14 AM
  * Auto updated?
  *   Yes
  *
@@ -43,8 +43,8 @@ double& Pixel::b() {
     return this->data[2];
 }
 
-double& Pixel::operator[](int index) {
-    if (index < 0 || index >= 3) {
+double& Pixel::operator[](unsigned int index) {
+    if (index >= 3) {
         throw out_of_range("Cannot get colour channel " + to_string(index) + " from Image with 3 channels");
     }
 
@@ -66,15 +66,15 @@ Pixel& Pixel::operator=(const Vec3& other) {
 
 
 /* IMAGE ROW CLASS */
-ImageRow::ImageRow(double* data, int width)
+ImageRow::ImageRow(double* data, unsigned int width)
     : width(width)
 {
     this->data = data;
 }
 
-Pixel ImageRow::operator[](int index) {
+Pixel ImageRow::operator[](unsigned int index) {
     // Check if out of bounds
-    if (index < 0 || index >= this->width) {
+    if (index >= this->width) {
         throw out_of_range("Cannot get element " + to_string(index) + " from Image with width " + to_string(index));
     }
 
@@ -85,7 +85,7 @@ Pixel ImageRow::operator[](int index) {
 
 
 /* IMAGE CLASS */
-Image::Image(int width, int height)
+Image::Image(unsigned int width, unsigned int height)
     : width(width),
     height(height)
 {
@@ -118,9 +118,9 @@ Image::~Image() {
 
 
 
-Pixel Image::pixel(int row, int col) {
+Pixel Image::pixel(unsigned int row, unsigned int col) {
     // Check if the indices are within bounds
-    if (row < 0 || row >= this->width || col < 0 || col >= this->height) {
+    if (row >= this->width || col >= this->height) {
         throw out_of_range("Pixel at (" + to_string(col) + ", " + to_string(row) + ") is out of range for Image with size (" + to_string(this->width) + ", " + to_string(this->height) + ")");
     }
 
@@ -129,9 +129,9 @@ Pixel Image::pixel(int row, int col) {
     return Pixel(pixel);
 }
 
-ImageRow Image::operator[](int index) {
+ImageRow Image::operator[](unsigned int index) {
     // Check if the index is within bounds
-    if (index < 0 || index >= this->height) {
+    if (index >= this->height) {
         throw out_of_range("Cannot get row " + to_string(index) + " from Image with height " + to_string(index));
     }
 

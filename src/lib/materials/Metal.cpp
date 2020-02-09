@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:11:51 PM
  * Last edited:
- *   2/9/2020, 12:21:00 AM
+ *   2/9/2020, 1:49:22 AM
  * Auto updated?
  *   Yes
  *
@@ -30,6 +30,12 @@ Metal::Metal(const Vec3& colour_absorption, double fuzziness)
     fuzz(fuzziness)
 {}
 
+Material* Metal::clone() const {
+    return (Material*) new Metal(*this);
+}
+
+
+
 Vec3 Metal::reflect(const Vec3& v, const Vec3& n) const {
     return v - 2 * dot(n, v) * n;
 }
@@ -39,6 +45,8 @@ bool Metal::scatter(const Ray& ray_in, const HitRecord& record, Vec3& attenuatio
     attenuation = this->albedo;
     return (dot(ray_out.direction, record.normal) > 0);
 }
+
+
 
 json Metal::to_json() const {
     json j;

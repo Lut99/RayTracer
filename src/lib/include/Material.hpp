@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 10:19:23 PM
  * Last edited:
- *   2/9/2020, 12:19:34 AM
+ *   2/9/2020, 1:47:24 AM
  * Auto updated?
  *   Yes
  *
@@ -48,11 +48,17 @@ namespace RayTracer {
         public:
             const MaterialType type;
 
+            /* Virtual deconstructor for Material to allow children to handle this if they need to. */
+            virtual ~Material() = default;
+
+            /* This function is meant to be implemented in the child classes of Material to allow for polymorphic copying. */
+            virtual Material* clone() const = 0;
+
             /* Computes how a ray reflects from or travels through the surface of the material. */
-            virtual bool scatter(const Ray& ray_in, const HitRecord& record, Vec3& attenuation, Ray& ray_out) const;
+            virtual bool scatter(const Ray& ray_in, const HitRecord& record, Vec3& attenuation, Ray& ray_out) const = 0;
 
             /* Virtual for the to_json function of the Material's children */
-            virtual nlohmann::json to_json() const;
+            virtual nlohmann::json to_json() const = 0;
             /* Static function that gets a derived material class from given json object. Note that the returned value is allocated and will have to be deallocated. */
             static Material* from_json(nlohmann::json json_obj);
     };

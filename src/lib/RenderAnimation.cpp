@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 2:15:15 PM
  * Last edited:
- *   2/9/2020, 12:14:55 AM
+ *   2/9/2020, 2:00:23 AM
  * Auto updated?
  *   Yes
  *
@@ -20,7 +20,7 @@
 
 #include <stdexcept>
 
-#include "include/animations/CameraMovement.hpp"
+#include "include/CameraMovement.hpp"
 
 #include "include/JSONExceptions.hpp"
 #include "include/RenderAnimation.hpp"
@@ -38,15 +38,6 @@ RenderAnimation::RenderAnimation(RenderAnimationType animation_type)
 
 void RenderAnimation::baseclass_to_json(json& json_obj) const {
     json_obj["type"] = (unsigned long) this->type;
-}
-
-
-
-void RenderAnimation::recompute(RenderObject* target) {
-    throw runtime_error("Function RenderAnimation::recompute(RenderObject* target) is not overridden.");
-}
-void RenderAnimation::update(chrono::milliseconds time_passed, RenderObject* target) {
-    throw runtime_error("Function RenderAnimation::update(chrono::milliseconds time_passed, RenderObject* target) is not overridden.");
 }
 
 
@@ -74,9 +65,7 @@ RenderAnimation* RenderAnimation::from_json(json json_obj) {
     }
 
     // Decide how to parse the rest of the JSON
-    if (type == camera_movement) {
-        return (RenderAnimation*) CameraMovement::from_json(json_obj);
-    } else {
+    if (true) {
         throw UnknownSubtypeException("RenderAnimation", type);
     }
 }

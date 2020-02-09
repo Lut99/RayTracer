@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 2:26:30 PM
  * Last edited:
- *   2/8/2020, 10:56:20 PM
+ *   2/9/2020, 1:43:24 AM
  * Auto updated?
  *   Yes
  *
@@ -33,6 +33,10 @@ namespace RayTracer {
         public:
             /* The RenderObjectCollection can contain multiple RenderObjects and treat those as if they were one. */
             RenderObjectCollection(std::vector<RenderObject*> objects);
+            virtual ~RenderObjectCollection() = default;
+
+            /* The clone method returns a reference to a new RenderObject method. */
+            virtual RenderObject* clone() const;
 
             /* Returns the closest hit object from the internal collection of objects. */
             virtual bool hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const;
@@ -44,7 +48,7 @@ namespace RayTracer {
             virtual Vec3 normal(const HitRecord& record) const;
 
             /* Returns the number of objects in the collection. */
-            const std::size_t size() const;
+            std::size_t size() const;
             /* Returns a reference to an object at given index in the vector. */
             RenderObject* get_object(std::size_t index) const;
 

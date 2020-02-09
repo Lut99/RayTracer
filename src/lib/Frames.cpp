@@ -4,7 +4,7 @@
  * Created:
  *   1/31/2020, 2:25:02 PM
  * Last edited:
- *   2/2/2020, 5:54:55 PM
+ *   2/9/2020, 12:59:31 AM
  * Auto updated?
  *   Yes
  *
@@ -27,14 +27,14 @@
 using namespace std;
 using namespace RayTracer;
 
-Frames::Frames(int width, int height, int num_of_frames, int framerate, std::string temp_dir, bool dynamic_write)
-    : width(width),
+Frames::Frames(unsigned int width, unsigned int height, unsigned int num_of_frames, unsigned int framerate, std::string temp_dir, bool dynamic_write)
+    : frame_index(0),
+    temp_dir(temp_dir),
+    dynamic_writing(dynamic_write),
+    width(width),
     height(height),
     n_frames(num_of_frames),
-    fps(framerate),
-    frame_index(0),
-    temp_dir(temp_dir),
-    dynamic_writing(dynamic_write)
+    fps(framerate)
 {
     // Touch a file in the temp dir to make sure that the director exists
     ofstream temp_check(temp_dir + "/out1.png");
@@ -47,6 +47,9 @@ Frames::Frames(int width, int height, int num_of_frames, int framerate, std::str
     // Delete all .png files starting with out and ending in .png in the folder
     string command = "rm -r "+ temp_dir + "/out*.png";
     int res = system(command.c_str());
+    if (res != 0) {
+        cerr << "WARNING: Could not remove .png files in the temporary output folder." << endl;
+    }
 
     // Initialize the first frame
     this->current_frame = new Image(this->width, this->height);
@@ -59,13 +62,13 @@ Frames::Frames(int width, int height, int num_of_frames, int framerate, std::str
 }
 
 Frames::Frames(const Frames& other)
-    : width(other.width),
+    : frame_index(other.frame_index),
+    temp_dir(other.temp_dir),
+    dynamic_writing(other.dynamic_writing),
+    width(other.width),
     height(other.height),
     n_frames(other.n_frames),
-    fps(other.fps),
-    frame_index(other.frame_index),
-    temp_dir(other.temp_dir),
-    dynamic_writing(other.dynamic_writing)
+    fps(other.fps)
 {
     // Depending on whether we write dynamically, copy the necessary data
     if (this->dynamic_writing) {
@@ -83,13 +86,13 @@ Frames::Frames(const Frames& other)
 }
 
 Frames::Frames(Frames&& other)
-    : width(other.width),
+    : frame_index(other.frame_index),
+    temp_dir(other.temp_dir),
+    dynamic_writing(other.dynamic_writing),
+    width(other.width),
     height(other.height),
     n_frames(other.n_frames),
-    fps(other.fps),
-    frame_index(other.frame_index),
-    temp_dir(other.temp_dir),
-    dynamic_writing(other.dynamic_writing)
+    fps(other.fps)
 {
     // Copy the correct pointers
     if (this->dynamic_writing) {
@@ -173,8 +176,11 @@ void Frames::to_mp4(string path) {
     cout << "Running ffmpeg with command: '" + command + "'" << endl;
 
     int res = system(command.c_str());
+    if (res != 0) {
+        cerr << "WARNING: ffmpeg run failed." << endl;
+    }
 }
 
-const std::size_t Frames::get_frame_index() const {
+std::size_t Frames::get_frame_index() const {
     return this->frame_index;
 }

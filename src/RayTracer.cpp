@@ -4,7 +4,7 @@
  * Created:
  *   1/31/2020, 2:00:11 PM
  * Last edited:
- *   2/9/2020, 12:45:49 AM
+ *   2/9/2020, 2:04:28 AM
  * Auto updated?
  *   Yes
  *
@@ -199,6 +199,9 @@ int main(int argc, char** argv) {
         cerr << "Could not parse batch size: " << opt.what() << endl;
         exit(-1);
     }
+    #else
+    n_threads = 16;
+    batch_size = 1000;
     #endif
 
     // Fix the output file if needed

@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:38:50 PM
  * Last edited:
- *   2/9/2020, 12:13:05 AM
+ *   2/9/2020, 1:02:09 AM
  * Auto updated?
  *   Yes
  *
@@ -46,20 +46,6 @@ void RenderObject::baseclass_to_json(nlohmann::json& json_obj) const {
 
 
 
-bool RenderObject::hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const {
-    throw runtime_error("Function RenderObject::hit(const Ray& ray, double t_min, double t_max, HitRecord& record) is not overridden.");
-}
-
-Vec3 RenderObject::colour(const HitRecord& record) const {
-    throw runtime_error("Function RenderObject::colour(const HitRecord& record) is not overridden.");
-}
-
-Vec3 RenderObject::normal(const HitRecord& record) const {
-    throw runtime_error("Function RenderObject::normal(const HitRecord& record) is not overridden.");
-}
-
-
-
 void RenderObject::set_animation(RenderAnimation* animation) {
     this->animation = animation;
     // Let the animation recompute itself based on this RenderObject
@@ -73,10 +59,6 @@ void RenderObject::update(std::chrono::milliseconds time_passed) {
 }
 
 
-
-json RenderObject::to_json() const {
-    throw runtime_error("Function RenderObject::to_json() is not overridden.");
-}
 
 RenderObject* RenderObject::from_json(json json_obj) {
     // Check if the object has an object type

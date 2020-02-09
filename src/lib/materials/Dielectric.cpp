@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:14:41 PM
  * Last edited:
- *   2/9/2020, 12:21:07 AM
+ *   2/9/2020, 1:49:29 AM
  * Auto updated?
  *   Yes
  *
@@ -29,6 +29,12 @@ Dielectric::Dielectric(const Vec3& colour_absorption, double refrective_index)
     albedo(colour_absorption),
     ref_idx(refrective_index)
 {}
+
+Material* Dielectric::clone() const {
+    return (Material*) new Dielectric(*this);
+}
+
+
 
 bool Dielectric::scatter(const Ray& ray_in, const HitRecord& record, Vec3& attenuation, Ray& ray_out) const {
     Vec3 outward_normal;
@@ -92,6 +98,8 @@ double Dielectric::schlick(double cosine) const {
     r0 = r0 * r0;
     return r0 + (1 - r0) * pow((1 - cosine), 5);
 }
+
+
 
 json Dielectric::to_json() const {
     json j;

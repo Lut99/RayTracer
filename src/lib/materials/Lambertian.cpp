@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:08:10 PM
  * Last edited:
- *   2/9/2020, 12:20:53 AM
+ *   2/9/2020, 1:51:52 AM
  * Auto updated?
  *   Yes
  *
@@ -29,13 +29,21 @@ Lambertian::Lambertian(const Vec3& colour_absorption)
     albedo(colour_absorption)
 {}
 
+Material* Lambertian::clone() const {
+    return (Material*) new Lambertian(*this);
+}
+
+
+
 // NOTE: For self, attenuation is like the decay of light in the medium.
-bool Lambertian::scatter(const Ray& ray_in, const HitRecord& record, Vec3& attenuation, Ray& ray_out) const {
+bool Lambertian::scatter(const Ray&, const HitRecord& record, Vec3& attenuation, Ray& ray_out) const {
     Vec3 target = record.hitpoint + record.normal + random_in_unit_sphere();
     ray_out = Ray(record.hitpoint, target - record.hitpoint);
     attenuation = this->albedo;
     return true;
 }
+
+
 
 nlohmann::json Lambertian::to_json() const {
     json j;

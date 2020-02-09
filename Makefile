@@ -20,7 +20,7 @@ EXTENSION =exe
 OPTS += -D WINDOWS
 endif
 
-LIBRARIES = $(LIB_DIR)/Ray.o $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o $(LIB_DIR)/RenderObject.a $(LIB_DIR)/Random.o $(LIB_DIR)/ProgressBar.o $(LIB_DIR)/Camera.o $(LIB_DIR)/RenderWorld.o $(LIB_DIR)/Materials.a $(LIB_DIR)/WorldIO.o $(LIB_DIR)/objects/RenderObjectCollection.o $(LIB_DIR)/scenes/RandomScene.o $(LIB_DIR)/Animations.a
+LIBRARIES = $(LIB_DIR)/Ray.o $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o $(LIB_DIR)/RenderObject.a $(LIB_DIR)/Random.o $(LIB_DIR)/ProgressBar.o $(LIB_DIR)/Camera.o $(LIB_DIR)/RenderWorld.o $(LIB_DIR)/Materials.a $(LIB_DIR)/scenes/RandomScene.o $(LIB_DIR)/Animations.a
 
 ifdef THREADED
 ifdef CUDA
@@ -69,8 +69,8 @@ $(LIB_DIR)/RenderObject.a: $(LIB_DIR)/RenderObject.o $(LIB_DIR)/objects/Sphere.o
 	ar rvs $(LIB_DIR)/RenderObject.a $(LIB_DIR)/RenderObject.o $(LIB_DIR)/objects/Sphere.o $(LIB_DIR)/objects/RenderObjectCollection.o
 $(LIB_DIR)/Materials.a: $(LIB_DIR)/Material.o $(LIB_DIR)/materials/Lambertian.o $(LIB_DIR)/materials/Metal.o $(LIB_DIR)/materials/Dielectric.o
 	ar rvs $(LIB_DIR)/Materials.a $(LIB_DIR)/Material.o $(LIB_DIR)/materials/Lambertian.o $(LIB_DIR)/materials/Metal.o $(LIB_DIR)/materials/Dielectric.o
-$(LIB_DIR)/Animations.a: $(LIB_DIR)/Animation.o $(LIB_DIR)/animations/CameraMovement.o $(LIB_DIR)/animations/camera/CameraRotation.o
-	ar rvs $(LIB_DIR)/Animations.a $(LIB_DIR)/Animation.o $(LIB_DIR)/animations/CameraMovement.o $(LIB_DIR)/animations/camera/CameraRotation.o
+$(LIB_DIR)/Animations.a: $(LIB_DIR)/RenderAnimation.o $(LIB_DIR)/animations/CameraMovement.o $(LIB_DIR)/animations/camera/CameraRotation.o
+	ar rvs $(LIB_DIR)/Animations.a $(LIB_DIR)/RenderAnimation.o $(LIB_DIR)/animations/CameraMovement.o $(LIB_DIR)/animations/camera/CameraRotation.o
 
 
 # MAIN COMPILATION #

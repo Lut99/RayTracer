@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 10:18:56 PM
  * Last edited:
- *   2/9/2020, 12:20:12 AM
+ *   2/9/2020, 1:47:31 AM
  * Auto updated?
  *   Yes
  *
@@ -35,19 +35,8 @@ Material::Material(MaterialType material_type)
 
 
 
-
-bool Material::scatter(const Ray& ray_in, const HitRecord& record, Vec3& attenuation, Ray& ray_out) const {
-    throw runtime_error("Function Material::scatter(const Ray& ray_in, const HitRecord& record, Vec3& attenuation, Ray& ray_out) is not overridden.");
-}
-
-
-
 void Material::baseclass_to_json(json& json_obj) const {
     json_obj["type"] = (unsigned long) this->type;
-}
-
-json Material::to_json() const {
-    throw runtime_error("Function Material::to_json() is not overridden.");
 }
 
 Material* Material::from_json(json json_obj) {

@@ -4,7 +4,7 @@
  * Created:
  *   1/27/2020, 2:30:56 PM
  * Last edited:
- *   2/9/2020, 12:21:14 AM
+ *   2/9/2020, 2:02:59 AM
  * Auto updated?
  *   Yes
  *
@@ -37,9 +37,6 @@ namespace RayTracer {
             std::vector<RenderObject*> objects;
             /* List that stores all light objects in the world. */
             std::vector<int*> lights;
-
-            /* Deepcopies the different vectors*/
-            template <typename T> void deepcopy(std::vector<T*>& target, const std::vector<T*>& source) const;
         public:
             /* The RenderWorld class describes the world, and serves as the root for the object hiearchy. */
             RenderWorld();
@@ -47,26 +44,22 @@ namespace RayTracer {
             RenderWorld(const RenderWorld& other);
             /* Move constructor for the RenderWorld class. */
             RenderWorld(RenderWorld&& other);
-            ~RenderWorld();
+            virtual ~RenderWorld();
 
-            /* Adds a RenderObject to the world. Note that internally, this will copy the given object instead of reference it. */
-            void add_object(RenderObject obj);
             /* Adds a RenderObject to the world. Note that anything added this way will be deallocated automatically. */
             void add_object(RenderObject* obj);
-            /* Adds a RenderLight to the world. Note that internally, this will copy the given object instead of reference it. */
-            void add_light(int light);
             /* Adds a RenderLight to the world. Note that anything added this way will be deallocated automatically. */
             void add_light(int* light);
 
             /* Returns a reference to an object for modification */
-            RenderObject& get_object(int obj_index) const;
+            RenderObject& get_object(unsigned int obj_index) const;
             /* Returns a reference to a camera object for modification */
-            int& get_light(int light_index) const;
+            int& get_light(unsigned int light_index) const;
 
             /* Returns the number of objects defined in the RenderWorld. */
-            const std::size_t get_object_count() const;
+            std::size_t get_object_count() const;
             /* Returns the number of light objects defined in the RenderWorld. */
-            const std::size_t get_light_count() const;
+            std::size_t get_light_count() const;
 
             /* Computes the colour of a shot ray. The depth variable makes sure that, in the case of very reflective surfaces, we only do this at max 50 times. */
             Vec3 bounce_ray(const Ray& ray, int depth=0) const;

@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:12:18 PM
  * Last edited:
- *   2/8/2020, 1:43:52 PM
+ *   2/9/2020, 1:49:06 AM
  * Auto updated?
  *   Yes
  *
@@ -25,6 +25,11 @@ namespace RayTracer {
     class Metal: public Material {
         public:
             Metal(const Vec3& colour_absorption, double fuzziness);
+            /* Virtual deconstructor for Material to allow children to handle this if they need to. */
+            virtual ~Metal() = default;
+
+            /* Clone constructor for the Metal class. Basically a copy constructor, except that it allocates it (so it needs deallocating) and that the return type is Material*. */
+            virtual Material* clone() const;
 
             /* Computes how a ray reflects from or travels through the surface of the material. */
             virtual bool scatter(const Ray& ray_in, const HitRecord& record, Vec3& attenuation, Ray& ray_out) const;

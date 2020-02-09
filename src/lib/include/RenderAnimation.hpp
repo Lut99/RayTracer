@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 2:15:38 PM
  * Last edited:
- *   2/9/2020, 12:15:05 AM
+ *   2/9/2020, 1:57:55 AM
  * Auto updated?
  *   Yes
  *
@@ -27,9 +27,9 @@
 #include "RenderObject.hpp"
 
 namespace RayTracer {
-    enum RenderAnimationType {
-        camera_movement
-    };
+    class RenderObject;
+
+    enum RenderAnimationType {};
 
     class RenderAnimation {
         protected:
@@ -42,10 +42,13 @@ namespace RayTracer {
             /* Describes the subtype of the animation. */
             const RenderAnimationType type;
 
+            /* Virtual deconstructor for the RenderAnimation class. */
+            virtual ~RenderAnimation() = default;
+
             /* Virtual function that lets the derived classes compute something before the first update() is called. If child classes do not use this, they should implement a dummy function. */
-            virtual void recompute(RenderObject* target);
+            virtual void recompute(RenderObject* target) = 0;
             /* Virtual for the update() function. After each frame, this is called in the derived class to update the object it animates. The number is the amount of milliseconds since the last frame in the movie (so not the rendertime), and the target is the object this animation performs it's thing on. */
-            virtual void update(std::chrono::milliseconds time_passed, RenderObject* target);
+            virtual void update(std::chrono::milliseconds time_passed, RenderObject* target) = 0;
 
             /* Returns a json object based on this RenderAnimation. */
             virtual nlohmann::json to_json() const;

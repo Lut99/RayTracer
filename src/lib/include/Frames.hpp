@@ -4,7 +4,7 @@
  * Created:
  *   1/31/2020, 2:25:18 PM
  * Last edited:
- *   2/2/2020, 5:54:31 PM
+ *   2/9/2020, 12:50:45 AM
  * Auto updated?
  *   Yes
  *
@@ -33,13 +33,13 @@ namespace RayTracer {
             bool dynamic_writing;
 
         public:
-            const int width;
-            const int height;
-            const int n_frames;
-            const int fps;
+            const unsigned int width;
+            const unsigned int height;
+            const unsigned int n_frames;
+            const unsigned int fps;
 
             /* The animation class is used to render multiple frames, and output them as a movie. The dynamic_write boolean determines if the entire animation is saved in memory, and then to the disk (false) or if each image should be written to disk as soon it is rendered (true). Note that .to_mp4() still has to be called to create an mp4 from the images. */
-            Frames(int width, int height, int num_of_frames, int framerate, std::string temp_dir, bool dynamic_write);
+            Frames(unsigned int width, unsigned int height, unsigned int num_of_frames, unsigned int framerate, std::string temp_dir, bool dynamic_write);
             /* Copy constructor for the Frames class. */
             Frames(const Frames& other);
             /* Move constructor for the Frames class. */
@@ -59,7 +59,7 @@ namespace RayTracer {
             void to_mp4(std::string path);
 
             /* Returns the current frame_index. Note that this is zero-indexed. */
-            const std::size_t get_frame_index() const;
+            std::size_t get_frame_index() const;
     };
 }
 

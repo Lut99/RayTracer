@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 4:56:07 PM
  * Last edited:
- *   2/8/2020, 11:56:53 PM
+ *   2/9/2020, 2:02:16 AM
  * Auto updated?
  *   Yes
  *
@@ -18,7 +18,7 @@
 #ifndef CAMERAROTATION_HPP
 #define CAMERAROTATION_HPP
 
-#include "../CameraMovement.hpp"
+#include "../../CameraMovement.hpp"
 
 namespace RayTracer {
     class CameraRotation: public CameraMovement {
@@ -35,6 +35,9 @@ namespace RayTracer {
 
             /* The CameraRotation class describes how a Camera object rotates along a specified circle. The center of it is the Camera's lookat point, and the radius is given. The speed variable determines how many rotations per second the camera makes. */
             CameraRotation(std::chrono::seconds circle_time);
+
+            /* Virtual deconstructor for the CameraRotation class. */
+            virtual ~CameraRotation() = default;
 
             /* Recomputes the start point and angle of the target Camera. */
             virtual void recompute(Camera* target);
