@@ -4,7 +4,7 @@
  * Created:
  *   1/25/2020, 5:10:34 PM
  * Last edited:
- *   2/8/2020, 1:23:49 PM
+ *   2/9/2020, 5:41:28 PM
  * Auto updated?
  *   Yes
  *
@@ -23,18 +23,17 @@ using namespace std;
 using namespace RayTracer;
 
 
-ThreadPool::ThreadPool(int num_of_threads, int batch_size, int max_in_queue)
-    : n_threads(num_of_threads),
-    batch_size(batch_size),
-    max_in_queue(max_in_queue),
-    wakeup(false)
+ThreadPool::ThreadPool(unsigned int num_of_threads, unsigned int batch_size, unsigned int max_in_queue)
+    : max_in_queue(max_in_queue),
+    n_threads(num_of_threads),
+    batch_size(batch_size)
 {
     this->working = true;
     this->threads_waiting = 0;
 
     // Create the correct amount of threads
     this->pool.resize(this->n_threads);
-    for (int i = 0; i < this->n_threads; i++) {
+    for (unsigned int i = 0; i < this->n_threads; i++) {
         this->pool[i] = thread(&ThreadPool::worker, this, i);
     }
 }
@@ -42,7 +41,7 @@ ThreadPool::~ThreadPool() {
     this->stop();
 }
 
-void ThreadPool::worker(int id) {
+void ThreadPool::worker(unsigned int id) {
     // Run while directed to do so
     while (this->working) {
         // Create a scope to indicate the mutex duration
@@ -55,13 +54,13 @@ void ThreadPool::worker(int id) {
             vector<PixelBatch>* queue = &this->batch_queue;
             bool* working = &this->working;
 
-            // Signal the main thread that we're ready for more
-            this->wake_cond.notify_all();
-
             // Wait until work is available OR we're stopping
             this->threads_waiting++;
             this->batch_cond.wait(u_lock, [working, queue](){ return !queue->empty() || !(*working); });
             this->threads_waiting--;
+
+            // Signal the main thread that it can start filling the queue again
+            this->wake_cond.notify_all();
 
             // Acquire the first batch if and only if we didn't stop because of work
             if (this->working) {
@@ -85,7 +84,7 @@ void ThreadPool::render_batch(const PixelBatch& batch) const {
     }
 }
 
-PixelBatch ThreadPool::get_batch(int width, int height, unsigned long& batch_index) const {
+PixelBatch ThreadPool::get_batch(unsigned int width, unsigned int height, unsigned long& batch_index) const {
     PixelBatch batch;
 
     batch.x1 = batch_index % width;
@@ -121,7 +120,7 @@ void ThreadPool::add_batch(const PixelBatch& batch) {
     // Wake a thread up
     this->batch_cond.notify_one();
 }
-void ThreadPool::add_batch(int width, int height, const Camera& cam, const RenderWorld& world, Image& out, unsigned long& batch_index) {
+void ThreadPool::add_batch(unsigned int width, unsigned int height, const Camera& cam, const RenderWorld& world, Image& out, unsigned long& batch_index) {
     PixelBatch batch = this->get_batch(width, height, batch_index);
     batch.camera = &cam;
     batch.world = &world;
@@ -132,11 +131,10 @@ void ThreadPool::add_batch(int width, int height, const Camera& cam, const Rende
 
 
 void ThreadPool::wait() {
-    unique_lock<mutex> u_lock(this->batch_lock);
+    unique_lock<mutex> u_lock(this->wake_lock);
 
     // Wait for the conditional variable to be triggered
-    bool& wakeup = this->wakeup;
-    this->wake_cond.wait(u_lock, [wakeup](){ return wakeup; });
+    this->wake_cond.wait(u_lock, [this](){ return !this->batch_queue_full(); });
 }
 
 
@@ -149,7 +147,7 @@ void ThreadPool::stop() {
 
     this->batch_cond.notify_all();
     
-    for (int i = 0; i < this->n_threads; i++) {
+    for (unsigned int i = 0; i < this->n_threads; i++) {
         if (this->pool[i].joinable()) {
             this->pool[i].join();
         }
@@ -160,8 +158,6 @@ void ThreadPool::complete() {
     while (true) {
         {
             unique_lock<mutex> u_lock(this->batch_lock);
-            // cout << "Batch empty? " << this->batch_queue.empty() << endl;
-            // cout << "Threads waiting = " << this->threads_waiting << endl;
             if (this->batch_queue.empty() && this->threads_waiting == this->n_threads) {
                 return;
             }

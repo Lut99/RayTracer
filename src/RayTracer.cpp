@@ -4,7 +4,7 @@
  * Created:
  *   1/31/2020, 2:00:11 PM
  * Last edited:
- *   2/9/2020, 4:47:06 PM
+ *   2/9/2020, 5:47:45 PM
  * Auto updated?
  *   Yes
  *
@@ -73,6 +73,7 @@ void update_camera(Camera* cam, unsigned int screen_width, unsigned int screen_h
 Camera* create_default_camera(double vfov, double aperture, unsigned int screen_width, unsigned int screen_height, unsigned int number_of_rays, bool correct_gamma) {
     Camera* cam = new Camera(Vec3(3, 2, 2), Vec3(0, 0, -1), Vec3(0, 1, 0), vfov, aperture);
     update_camera(cam, screen_width, screen_height, number_of_rays, correct_gamma);
+    cam->recompute();
 
     return cam;
 }
@@ -174,7 +175,7 @@ int main(int argc, char** argv) {
     try {
         aperture = result["aperture"].as<double>();
     } catch (domain_error& opt) {
-        aperture = 0.5;
+        aperture = 0.1;
     } catch (OptionParseException& opt) {
         cerr << "Could not parse aperture: " << opt.what() << endl;
         exit(-1);
@@ -252,12 +253,15 @@ int main(int argc, char** argv) {
     RenderWorld* world;
     Camera *cam = NULL;
     if (scenename.empty()) {
-        cout << endl << "Generating world..." << endl;
+        cout << endl << "Creating default scene..." << endl;
+        cout << "  Generating world..." << endl;
         world = create_default_renderworld();
-        cout << "Done, counting " << world->get_object_count() << " objects" << endl;
+        cout << "  Done, counting " << world->get_object_count() << " objects" << endl;
 
-        cout << "Generating camera..." << endl;
+        cout << "  Generating camera..." << endl;
         cam = create_default_camera(vfov, aperture, screen_width, screen_height, number_of_rays, correct_gamma);
+        cout << "  Done" << endl;
+
         cout << "Done" << endl;
     } else {
         // Open a filestream to the input scene

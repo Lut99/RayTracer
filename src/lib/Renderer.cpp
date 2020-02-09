@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:00:17 PM
  * Last edited:
- *   2/9/2020, 12:32:36 AM
+ *   2/9/2020, 5:42:30 PM
  * Auto updated?
  *   Yes
  *
@@ -64,12 +64,9 @@ Image Renderer::render(RenderWorld* world, Camera* cam) {
             prgrs.set(batch_index);
         }
 
-        // Wait until at least one thread has woken us up
-        pool.wait();
-
-        // If a the queue is full, continue
+        // If a the queue is full, wait for another thread to notify us it has taken an element
         if (pool.batch_queue_full()) {
-            continue;
+            pool.wait();
         }
 
         // Create a new batch and append it
@@ -83,6 +80,11 @@ Image Renderer::render(RenderWorld* world, Camera* cam) {
     // Wait until all threads have been reaped
     pool.complete();
     pool.stop();
+
+    // Update the bar one last time
+    if (this->show_progressbar) {
+        prgrs.set(batch_index);
+    }
 
     #endif
 
@@ -124,7 +126,7 @@ void Renderer::render_animation(RenderWorld* world, Camera* cam, Frames& out) {
 
             // If a the queue is full, continue
             if (pool.batch_queue_full()) {
-                continue;
+                pool.wait();
             }
 
             // Create a new batch and append it
