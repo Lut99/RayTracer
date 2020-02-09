@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 4:48:11 PM
  * Last edited:
- *   2/9/2020, 2:00:23 AM
+ *   2/9/2020, 5:57:01 PM
  * Auto updated?
  *   Yes
  *
@@ -17,10 +17,10 @@
 
 #include <stdexcept>
 
-#include "../include/animations/camera/CameraRotation.hpp"
+#include "include/animations/camera/CameraRotation.hpp"
 
-#include "../include/JSONExceptions.hpp"
-#include "../include/CameraMovement.hpp"
+#include "include/JSONExceptions.hpp"
+#include "include/CameraMovement.hpp"
 
 using namespace std;
 using namespace RayTracer;

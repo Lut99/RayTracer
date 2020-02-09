@@ -69,8 +69,8 @@ $(LIB_DIR)/RenderObject.a: $(LIB_DIR)/RenderObject.o $(LIB_DIR)/objects/Sphere.o
 	ar rvs $(LIB_DIR)/RenderObject.a $(LIB_DIR)/RenderObject.o $(LIB_DIR)/objects/Sphere.o $(LIB_DIR)/objects/RenderObjectCollection.o
 $(LIB_DIR)/Materials.a: $(LIB_DIR)/Material.o $(LIB_DIR)/materials/Lambertian.o $(LIB_DIR)/materials/Metal.o $(LIB_DIR)/materials/Dielectric.o
 	ar rvs $(LIB_DIR)/Materials.a $(LIB_DIR)/Material.o $(LIB_DIR)/materials/Lambertian.o $(LIB_DIR)/materials/Metal.o $(LIB_DIR)/materials/Dielectric.o
-$(LIB_DIR)/Animations.a: $(LIB_DIR)/RenderAnimation.o $(LIB_DIR)/animations/CameraMovement.o $(LIB_DIR)/animations/camera/CameraRotation.o
-	ar rvs $(LIB_DIR)/Animations.a $(LIB_DIR)/RenderAnimation.o $(LIB_DIR)/animations/CameraMovement.o $(LIB_DIR)/animations/camera/CameraRotation.o
+$(LIB_DIR)/Animations.a: $(LIB_DIR)/RenderAnimation.o $(LIB_DIR)/CameraMovement.o $(LIB_DIR)/animations/camera/CameraRotation.o
+	ar rvs $(LIB_DIR)/Animations.a $(LIB_DIR)/RenderAnimation.o $(LIB_DIR)/CameraMovement.o $(LIB_DIR)/animations/camera/CameraRotation.o
 
 
 # MAIN COMPILATION #
@@ -101,5 +101,7 @@ clean:
 	rm -f $(LIB_DIR)/*.o
 	rm -f $(LIB_DIR)/materials/*.o
 	rm -f $(LIB_DIR)/objects/*.o
+	rm -f $(LIB_DIR)/animations/*.o
+	rm -f $(LIB_DIR)/animations/camera/*.o
 	rm -f $(LIB_DIR)/*.a
 	rm -f tests/bin/*.out
