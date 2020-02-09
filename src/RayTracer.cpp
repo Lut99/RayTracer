@@ -4,7 +4,7 @@
  * Created:
  *   1/31/2020, 2:00:11 PM
  * Last edited:
- *   2/9/2020, 2:04:28 AM
+ *   2/9/2020, 4:47:06 PM
  * Auto updated?
  *   Yes
  *
@@ -313,6 +313,8 @@ int main(int argc, char** argv) {
             cam = create_default_camera(vfov, aperture, screen_width, screen_height, number_of_rays, correct_gamma);
         }
         cout << "  Done" << endl;
+
+        cout << "Done" << endl;
     }
 
 
