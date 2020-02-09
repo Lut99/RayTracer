@@ -76,8 +76,8 @@ $(LIB_DIR)/Animations.a: $(LIB_DIR)/RenderAnimation.o $(LIB_DIR)/animations/Came
 # MAIN COMPILATION #
 raytracer: Renderer.o $(LIBRARIES)
 	$(CC) $(ARGS) $(OPTS) -o $(BIN_DIR)/raytracer.$(EXTENSION) $(SRC_DIR)/RayTracer.cpp $(LIB_DIR)/Renderer.o $(LIBRARIES) $(EXT_LIBS)
-scene_creator: $(LIBRARIES)
-	$(CC) $(ARGS) $(OPTS) -o $(BIN_DIR)/scene_creator.$(EXTENSION) $(SRC_DIR)/SceneCreator.cpp $(LIBRARIES)
+scene_creator: $(LIBRARIES) $(LIB_DIR)/Materials.a $(LIB_DIR)/RenderObject.a
+	$(CC) $(ARGS) $(OPTS) -o $(BIN_DIR)/scene_creator.$(EXTENSION) $(SRC_DIR)/SceneCreator.cpp $(LIBRARIES) $(LIB_DIR)/Materials.a $(LIB_DIR)/RenderObject.a
 
 
 # TEST COMPILE RULES #

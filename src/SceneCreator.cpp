@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 4:36:39 PM
  * Last edited:
- *   2/9/2020, 2:10:57 AM
+ *   2/9/2020, 4:10:13 PM
  * Auto updated?
  *   Yes
  *
@@ -70,18 +70,19 @@ int main(int argc, char** argv) {
 
     /* APPEND FROM HERE */
 
-    world.add_object(new Sphere(Vec3(0, 0, -1), 0.5, new Lambertian(Vec3(0.1, 0.2, 0.5))));
-    world.add_object(new Sphere(Vec3(0, -100.5, -1), 100, new Lambertian(Vec3(0.8, 0.8, 0.0))));
-    world.add_object(new Sphere(Vec3(1, 0, -1), 0.5, new Metal(Vec3(0.8, 0.6, 0.2), 0.0)));
-    world.add_object(new Sphere(Vec3(-1, 0, -1), 0.5, new Dielectric(Vec3(1.0, 1.0, 1.0), 1.5)));
+    // world.add_object(new Sphere(Vec3(0, 0, -1), 0.5, new Lambertian(Vec3(0.1, 0.2, 0.5))));
+    // world.add_object(new Sphere(Vec3(0, -100.5, -1), 100, new Lambertian(Vec3(0.8, 0.8, 0.0))));
+    // world.add_object(new Sphere(Vec3(1, 0, -1), 0.5, new Metal(Vec3(0.8, 0.6, 0.2), 0.0)));
+    // world.add_object(new Sphere(Vec3(-1, 0, -1), 0.5, new Dielectric(Vec3(1.0, 1.0, 1.0), 1.5)));
     
-    Camera cam(Vec3(0, 0, 0), Vec3(0, 0, -1), Vec3(0, 1, 0), 90, 0);
+    Camera cam(Vec3(7, 2, 2), Vec3(0, 0, -1), Vec3(0, 1, 0), 50, 0.1);
 
     /* UNTIL HERE */
 
     cout << "Encoding to JSON..." << endl;
     json j;
-    j["world"] = world.to_json();
+    // j["world"] = world.to_json();
+    j["world"] = "random";
 
     /* ENCODE CAMERA */
     j["camera"] = cam.to_json();

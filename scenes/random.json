@@ -16,8 +16,7 @@
             1.0,
             0.0
         ],
-        "vfov": 50
+        "vfov": 50.0
     },
-    "lights": [],
-    "objects": "random"
+    "world": "random"
 }

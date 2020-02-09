@@ -1,6 +1,6 @@
 {
     "camera": {
-        "aperture": 0.2,
+        "aperture": 0.0,
         "lookat": [
             0.0,
             0.0,
@@ -9,86 +9,88 @@
         "lookfrom": [
             3.0,
             3.0,
-            2.0
+            4.0
         ],
         "up": [
             0.0,
             1.0,
             0.0
         ],
-        "vfov": 45
+        "vfov": 45.0
     },
-    "lights": [],
-    "objects": [
-        {
-            "center": [
-                0.0,
-                0.0,
-                -1.0
-            ],
-            "material": {
-                "albedo": [
-                    0.1,
-                    0.2,
-                    0.5
+    "world": {
+        "lights": [],
+        "objects": [
+            {
+                "center": [
+                    0.0,
+                    0.0,
+                    -1.0
                 ],
+                "material": {
+                    "albedo": [
+                        0.1,
+                        0.2,
+                        0.5
+                    ],
+                    "type": 0
+                },
+                "radius": 0.5,
                 "type": 0
             },
-            "radius": 0.5,
-            "type": 0
-        },
-        {
-            "center": [
-                0.0,
-                -100.5,
-                -1.0
-            ],
-            "material": {
-                "albedo": [
-                    0.8,
-                    0.8,
-                    0.0
+            {
+                "center": [
+                    0.0,
+                    -100.5,
+                    -1.0
                 ],
+                "material": {
+                    "albedo": [
+                        0.8,
+                        0.8,
+                        0.0
+                    ],
+                    "type": 0
+                },
+                "radius": 100.0,
                 "type": 0
             },
-            "radius": 100.0,
-            "type": 0
-        },
-        {
-            "center": [
-                1.0,
-                0.0,
-                -1.0
-            ],
-            "material": {
-                "albedo": [
-                    0.8,
-                    0.6,
-                    0.2
-                ],
-                "fuzz": 0.0,
-                "type": 1
-            },
-            "radius": 0.5,
-            "type": 0
-        },
-        {
-            "center": [
-                -1.0,
-                0.0,
-                -1.0
-            ],
-            "material": {
-                "albedo": [
+            {
+                "center": [
                     1.0,
-                    1.0,
-                    1.0
+                    0.0,
+                    -1.0
                 ],
-                "ref_idx": 1.5,
-                "type": 2
+                "material": {
+                    "albedo": [
+                        0.8,
+                        0.6,
+                        0.2
+                    ],
+                    "fuzz": 0.0,
+                    "type": 1
+                },
+                "radius": 0.5,
+                "type": 0
             },
-            "radius": 0.5,
-            "type": 0
-        }
-    ]
+            {
+                "center": [
+                    -1.0,
+                    0.0,
+                    -1.0
+                ],
+                "material": {
+                    "albedo": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "ref_idx": 1.5,
+                    "type": 2
+                },
+                "radius": 0.5,
+                "type": 0
+            }
+        ]
+    }
 }

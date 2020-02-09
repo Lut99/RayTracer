@@ -4,7 +4,7 @@
  * Created:
  *   1/27/2020, 2:30:39 PM
  * Last edited:
- *   2/9/2020, 2:12:19 AM
+ *   2/9/2020, 4:09:21 PM
  * Auto updated?
  *   Yes
  *
@@ -211,6 +211,12 @@ json RenderWorld::to_json() const {
     return j;
 }
 RenderWorld* RenderWorld::from_json(nlohmann::json json_obj) {
+    // SPECIAL CASE: If the json_obj is simply 'random', return the special random scene
+    if (json_obj == "random") {
+        // Generate random objects
+        return new RandomScene();
+    }
+
     // Check if the object has an object type
     if (!json_obj.is_object()) {
         throw InvalidTypeException("RenderWorld", json::object().type_name(), json_obj.type_name());
@@ -222,12 +228,6 @@ RenderWorld* RenderWorld::from_json(nlohmann::json json_obj) {
     }
     if (json_obj["lights"].is_null()) {
         throw MissingFieldException("RenderWorld", "lights");
-    }
-
-    // Handle special cases
-    if (json_obj["objects"] == "random") {
-        // Generate random objects
-        return new RandomScene();
     }
     
     // Check if the fields are arrays
