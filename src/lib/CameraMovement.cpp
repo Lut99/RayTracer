@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 4:48:11 PM
  * Last edited:
- *   2/9/2020, 5:57:01 PM
+ *   2/9/2020, 10:20:27 PM
  * Auto updated?
  *   Yes
  *
@@ -34,7 +34,7 @@ CameraMovement::CameraMovement(CameraMovementType movement_type)
 
 
 void CameraMovement::baseclass_to_json(json& json_obj) const {
-    json_obj["cam_type"] = (unsigned long) this->type;
+    json_obj["type"] = (unsigned long) this->type;
 }
 
 json CameraMovement::to_json() const {

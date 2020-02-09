@@ -76,8 +76,8 @@ $(LIB_DIR)/Animations.a: $(LIB_DIR)/RenderAnimation.o $(LIB_DIR)/CameraMovement.
 # MAIN COMPILATION #
 raytracer: Renderer.o $(LIBRARIES)
 	$(CC) $(ARGS) $(OPTS) -o $(BIN_DIR)/raytracer.$(EXTENSION) $(SRC_DIR)/RayTracer.cpp $(LIB_DIR)/Renderer.o $(LIBRARIES) $(EXT_LIBS)
-scene_creator: $(LIBRARIES) $(LIB_DIR)/Materials.a $(LIB_DIR)/RenderObject.a
-	$(CC) $(ARGS) $(OPTS) -o $(BIN_DIR)/scene_creator.$(EXTENSION) $(SRC_DIR)/SceneCreator.cpp $(LIBRARIES) $(LIB_DIR)/Materials.a $(LIB_DIR)/RenderObject.a
+scene_creator: $(LIBRARIES) $(LIB_DIR)/Materials.a $(LIB_DIR)/RenderObject.a $(LIB_DIR)/Animations.a
+	$(CC) $(ARGS) $(OPTS) -o $(BIN_DIR)/scene_creator.$(EXTENSION) $(SRC_DIR)/SceneCreator.cpp $(LIBRARIES) $(LIB_DIR)/Materials.a $(LIB_DIR)/RenderObject.a $(LIB_DIR)/Animations.a
 
 
 # TEST COMPILE RULES #
@@ -103,5 +103,6 @@ clean:
 	rm -f $(LIB_DIR)/objects/*.o
 	rm -f $(LIB_DIR)/animations/*.o
 	rm -f $(LIB_DIR)/animations/camera/*.o
+	rm -f $(LIB_DIR)/scenes/*.o
 	rm -f $(LIB_DIR)/*.a
 	rm -f tests/bin/*.out

@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 4:55:47 PM
  * Last edited:
- *   2/9/2020, 1:56:52 AM
+ *   2/9/2020, 10:21:09 PM
  * Auto updated?
  *   Yes
  *
@@ -92,9 +92,9 @@ CameraRotation* CameraRotation::from_json(json json_obj) {
     // Try to parse the required fields
     chrono::seconds loop_time;
     try {
-        loop_time = chrono::seconds(json_obj[0].get<long>());
+        loop_time = chrono::seconds(json_obj["loop_time"].get<long>());
     } catch (nlohmann::detail::type_error& e) {
-        throw InvalidTypeException("CameraRotation", "unsigned long", json_obj[0].type_name());
+        throw InvalidTypeException("CameraRotation", "long", json_obj["loop_time"].type_name());
     }
     return new CameraRotation(loop_time);
 }

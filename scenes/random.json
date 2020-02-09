@@ -1,5 +1,9 @@
 {
     "camera": {
+        "animation": {
+            "loop_time": 4,
+            "type": 0
+        },
         "aperture": 0.1,
         "lookat": [
             0.0,
