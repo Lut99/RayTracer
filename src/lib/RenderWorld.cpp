@@ -4,7 +4,7 @@
  * Created:
  *   1/27/2020, 2:30:39 PM
  * Last edited:
- *   2/9/2020, 1:37:14 AM
+ *   2/9/2020, 2:12:19 AM
  * Auto updated?
  *   Yes
  *
@@ -60,9 +60,9 @@ RenderWorld::~RenderWorld() {
     for (std::size_t i = 0; i < this->objects.size(); i++) {
         delete this->objects.at(i);
     }
-    for (std::size_t i = 0; i < this->lights.size(); i++) {
-        delete this->lights.at(i);
-    }
+    // for (std::size_t i = 0; i < this->lights.size(); i++) {
+    //     delete this->lights.at(i);
+    // }
 }
 
 

@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 4:36:39 PM
  * Last edited:
- *   2/3/2020, 5:34:11 PM
+ *   2/9/2020, 2:10:57 AM
  * Auto updated?
  *   Yes
  *
@@ -31,8 +31,6 @@
 #include "lib/include/materials/Lambertian.hpp"
 #include "lib/include/materials/Metal.hpp"
 #include "lib/include/materials/Dielectric.hpp"
-
-#include "lib/include/WorldIO.hpp"
 
 using namespace std;
 using namespace RayTracer;
@@ -76,14 +74,17 @@ int main(int argc, char** argv) {
     world.add_object(new Sphere(Vec3(0, -100.5, -1), 100, new Lambertian(Vec3(0.8, 0.8, 0.0))));
     world.add_object(new Sphere(Vec3(1, 0, -1), 0.5, new Metal(Vec3(0.8, 0.6, 0.2), 0.0)));
     world.add_object(new Sphere(Vec3(-1, 0, -1), 0.5, new Dielectric(Vec3(1.0, 1.0, 1.0), 1.5)));
+    
+    Camera cam(Vec3(0, 0, 0), Vec3(0, 0, -1), Vec3(0, 1, 0), 90, 0);
 
     /* UNTIL HERE */
 
     cout << "Encoding to JSON..." << endl;
-    json j = WorldIO::to_json(world);
+    json j;
+    j["world"] = world.to_json();
 
     /* ENCODE CAMERA */
-    j["camera"] = WorldIO::to_json(Camera(Vec3(0, 0, 0), Vec3(0, 0, -1), Vec3(0, 1, 0), 90, 0));
+    j["camera"] = cam.to_json();
     
     cout << "Writing to file..." << endl;
     ofstream out(json_file);
