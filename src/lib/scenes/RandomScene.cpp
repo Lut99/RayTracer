@@ -4,7 +4,7 @@
  * Created:
  *   1/31/2020, 12:12:03 PM
  * Last edited:
- *   1/31/2020, 12:28:53 PM
+ *   2/13/2020, 4:38:20 PM
  * Auto updated?
  *   Yes
  *
@@ -56,6 +56,8 @@ RandomScene::RandomScene()
                     // Add a refracting sphere
                     this->add_object(new Sphere(center, 0.2,
                         new Dielectric(Vec3(1.0, 1.0, 1.0), 1.5)));
+                    this->add_object(new Sphere(center, -0.15,
+                        new Dielectric(Vec3(1.0, 1.0, 1.0), 1.5)));
                 }
             }
         }
@@ -63,6 +65,7 @@ RandomScene::RandomScene()
 
     // Finally, add the three big spheres
     this->add_object(new Sphere(Vec3(0, 1, 0), 1.0, new Dielectric(Vec3(1.0, 1.0, 1.0), 1.5)));
+    this->add_object(new Sphere(Vec3(0, 1, 0), -0.95, new Dielectric(Vec3(1.0, 1.0, 1.0), 1.5)));
     this->add_object(new Sphere(Vec3(-4, 1, 0), 1.0, new Lambertian(Vec3(1.0, 0.3, 0.0))));
     this->add_object(new Sphere(Vec3(4, 1, 0), 1.0, new Metal(Vec3(0.75, 0.75, 0.75), 0.2)));
 }
