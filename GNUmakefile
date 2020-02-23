@@ -13,12 +13,12 @@ OPTS =
 EXT_LIBS =
 
 # Check if we're on windows
-!IF ($(OS) == Windows_NT)
+ifeq ($(OS), Windows_NT)
 BIN_DIR = bin/win
 LIB_DIR = $(BIN_DIR)/lib
 EXTENSION =exe
 OPTS += -D WINDOWS
-!ENDIF
+endif
 
 LIBRARIES = $(LIB_DIR)/Ray.o $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o $(LIB_DIR)/RenderObject.a $(LIB_DIR)/Random.o $(LIB_DIR)/ProgressBar.o $(LIB_DIR)/Camera.o $(LIB_DIR)/RenderWorld.o $(LIB_DIR)/Materials.a $(LIB_DIR)/scenes/RandomScene.o $(LIB_DIR)/Animations.a
 
