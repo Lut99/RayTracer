@@ -4,42 +4,34 @@ ARGS = -std=c++17 -O2 -Wall -Wextra
 NVCC=nvcc
 NVCC_ARGS = -std=c++17
 
-BIN_DIR = bin/linux
+BIN_DIR = bin/win
 LIB_DIR = $(BIN_DIR)/lib
 SRC_DIR = src
 EXTENSION =out
 
-OPTS =
+OPTS = -D WINDOWS
 EXT_LIBS =
-
-# Check if we're on windows
-!IF ($(OS) == Windows_NT)
-BIN_DIR = bin/win
-LIB_DIR = $(BIN_DIR)/lib
-EXTENSION =exe
-OPTS += -D WINDOWS
-!ENDIF
 
 LIBRARIES = $(LIB_DIR)/Ray.o $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o $(LIB_DIR)/RenderObject.a $(LIB_DIR)/Random.o $(LIB_DIR)/ProgressBar.o $(LIB_DIR)/Camera.o $(LIB_DIR)/RenderWorld.o $(LIB_DIR)/Materials.a $(LIB_DIR)/scenes/RandomScene.o $(LIB_DIR)/Animations.a
 
-ifdef THREADED
-ifdef CUDA
+!IFDEF THREADED
+!IFDEF CUDA
 $(error Cannot run threaded with CUDA)
-endif
+!ENDIF
 OPTS += -D RENDER_THREADED
 LIBRARIES += $(LIB_DIR)/ThreadPool.o
 EXT_LIBS += -lpthread
-endif
+!ENDIF
 
-ifdef CUDA
+!IFDEF CUDA
 CC = $(NVCC)
 ARGS = $(NVCC_ARGS)
 OPTS += -D CAMERA_CUDA
-endif
+!ENDIF
 
-ifdef DEBUG
+!IFDEF DEBUG
 OPTS += -g
-endif
+!ENDIF
 
 
 # GENERAL OBJECT COMPILE RULES #

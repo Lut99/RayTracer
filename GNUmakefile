@@ -16,7 +16,7 @@ EXT_LIBS =
 ifeq ($(OS), Windows_NT)
 BIN_DIR = bin/win
 LIB_DIR = $(BIN_DIR)/lib
-EXTENSION =exe
+EXTENSION = exe
 OPTS += -D WINDOWS
 endif
 
