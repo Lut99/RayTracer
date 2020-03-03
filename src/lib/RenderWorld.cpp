@@ -4,7 +4,7 @@
  * Created:
  *   1/27/2020, 2:30:39 PM
  * Last edited:
- *   2/9/2020, 4:09:21 PM
+ *   3/3/2020, 4:42:27 PM
  * Auto updated?
  *   Yes
  *
@@ -23,6 +23,10 @@
 #include "include/scenes/RandomScene.hpp"
 #include "include/JSONExceptions.hpp"
 #include "include/RenderWorld.hpp"
+
+#ifdef MACOS
+#define sqrtf64 sqrt
+#endif
 
 using namespace std;
 using namespace RayTracer;
@@ -148,7 +152,7 @@ Vec3 RenderWorld::render_pixel(int x, int y, const Camera& cam) const {
     Vec3 avg_col = col / cam.rays;
     if (cam.gamma) {
         // Gamma-correct the avg_colour
-        return Vec3(sqrt(avg_col.x), sqrt(avg_col.y), sqrt(avg_col.z));
+        return Vec3(sqrtf64(avg_col.x), sqrtf64(avg_col.y), sqrtf64(avg_col.z));
     } else {
         return avg_col;
     }

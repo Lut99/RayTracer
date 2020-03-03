@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 4:55:47 PM
  * Last edited:
- *   2/9/2020, 10:21:09 PM
+ *   3/3/2020, 4:54:39 PM
  * Auto updated?
  *   Yes
  *
@@ -19,6 +19,12 @@
 
 #include "../../include/JSONExceptions.hpp"
 #include "../../include/animations/camera/CameraRotation.hpp"
+
+#ifdef MACOS
+#define sinf64 sin
+#define cosf64 cos
+#define acosf64 acos
+#endif
 
 using namespace std;
 using namespace RayTracer;

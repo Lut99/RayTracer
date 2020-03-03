@@ -20,6 +20,14 @@ EXTENSION = exe
 OPTS += -D WINDOWS
 endif
 
+# Check if we're on macos
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+BIN_DIR = bin/macos
+LIB_DIR = $(BIN_DIR)/lib
+OPTS += -D MACOS
+endif
+
 LIBRARIES = $(LIB_DIR)/Ray.o $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o $(LIB_DIR)/RenderObject.a $(LIB_DIR)/Random.o $(LIB_DIR)/ProgressBar.o $(LIB_DIR)/Camera.o $(LIB_DIR)/RenderWorld.o $(LIB_DIR)/Materials.a $(LIB_DIR)/scenes/RandomScene.o $(LIB_DIR)/Animations.a
 
 ifdef THREADED
@@ -42,23 +50,37 @@ OPTS += -g
 endif
 
 
+# FOLDER MK RULES #
+$(LIB_DIR):
+	mkdir $@
+$(LIB_DIR)/objects: $(LIB_DIR)
+	mkdir $@
+$(LIB_DIR)/materials: $(LIB_DIR)
+	mkdir $@
+$(LIB_DIR)/scenes: $(LIB_DIR)
+	mkdir $@
+$(LIB_DIR)/animations: $(LIB_DIR)
+	mkdir $@
+$(LIB_DIR)/animations/camera: $(LIB_DIR)/animations
+	mkdir $@
+
 # GENERAL OBJECT COMPILE RULES #
-$(LIB_DIR)/%.o: $(SRC_DIR)/lib/%.cpp
+$(LIB_DIR)/%.o: $(SRC_DIR)/lib/%.cpp $(LIB_DIR)
 	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
-$(LIB_DIR)/objects/%.o: $(SRC_DIR)/lib/objects/%.cpp
+$(LIB_DIR)/objects/%.o: $(SRC_DIR)/lib/objects/%.cpp $(LIB_DIR)/objects
 	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
-$(LIB_DIR)/materials/%.o: $(SRC_DIR)/lib/materials/%.cpp
+$(LIB_DIR)/materials/%.o: $(SRC_DIR)/lib/materials/%.cpp $(LIB_DIR)/materials
 	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
-$(LIB_DIR)/scenes/%.o: $(SRC_DIR)/lib/scenes/%.cpp
+$(LIB_DIR)/scenes/%.o: $(SRC_DIR)/lib/scenes/%.cpp $(LIB_DIR)/scenes
 	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
-$(LIB_DIR)/animations/%.o: $(SRC_DIR)/lib/animations/%.cpp
+$(LIB_DIR)/animations/%.o: $(SRC_DIR)/lib/animations/%.cpp $(LIB_DIR)/animations
 	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
-$(LIB_DIR)/animations/camera/%.o: $(SRC_DIR)/lib/animations/camera/%.cpp
+$(LIB_DIR)/animations/camera/%.o: $(SRC_DIR)/lib/animations/camera/%.cpp $(LIB_DIR)/animations/camera
 	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
 
 
 # SPECIAL OBJECT COMPILE RULES #
-Renderer.o: $(SRC_DIR)/lib/Renderer.cpp
+Renderer.o: $(SRC_DIR)/lib/Renderer.cpp $(LIB_DIR)
 	$(CC) $(ARGS) $(OPTS) -o $(LIB_DIR)/Renderer.o -c $(SRC_DIR)/lib/Renderer.cpp
 
 
