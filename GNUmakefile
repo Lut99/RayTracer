@@ -52,35 +52,35 @@ endif
 
 # FOLDER MK RULES #
 $(LIB_DIR):
-	mkdir $@
+	mkdir -p $@
 $(LIB_DIR)/objects: $(LIB_DIR)
-	mkdir $@
+	mkdir -p $@
 $(LIB_DIR)/materials: $(LIB_DIR)
-	mkdir $@
+	mkdir -p $@
 $(LIB_DIR)/scenes: $(LIB_DIR)
-	mkdir $@
+	mkdir -p $@
 $(LIB_DIR)/animations: $(LIB_DIR)
-	mkdir $@
+	mkdir -p $@
 $(LIB_DIR)/animations/camera: $(LIB_DIR)/animations
-	mkdir $@
+	mkdir -p $@
 
 # GENERAL OBJECT COMPILE RULES #
-$(LIB_DIR)/%.o: $(SRC_DIR)/lib/%.cpp $(LIB_DIR)
+$(LIB_DIR)/%.o: $(SRC_DIR)/lib/%.cpp | $(LIB_DIR)
 	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
-$(LIB_DIR)/objects/%.o: $(SRC_DIR)/lib/objects/%.cpp $(LIB_DIR)/objects
+$(LIB_DIR)/objects/%.o: $(SRC_DIR)/lib/objects/%.cpp | $(LIB_DIR)/objects
 	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
-$(LIB_DIR)/materials/%.o: $(SRC_DIR)/lib/materials/%.cpp $(LIB_DIR)/materials
+$(LIB_DIR)/materials/%.o: $(SRC_DIR)/lib/materials/%.cpp | $(LIB_DIR)/materials
 	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
-$(LIB_DIR)/scenes/%.o: $(SRC_DIR)/lib/scenes/%.cpp $(LIB_DIR)/scenes
+$(LIB_DIR)/scenes/%.o: $(SRC_DIR)/lib/scenes/%.cpp | $(LIB_DIR)/scenes
 	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
-$(LIB_DIR)/animations/%.o: $(SRC_DIR)/lib/animations/%.cpp $(LIB_DIR)/animations
+$(LIB_DIR)/animations/%.o: $(SRC_DIR)/lib/animations/%.cpp | $(LIB_DIR)/animations
 	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
-$(LIB_DIR)/animations/camera/%.o: $(SRC_DIR)/lib/animations/camera/%.cpp $(LIB_DIR)/animations/camera
+$(LIB_DIR)/animations/camera/%.o: $(SRC_DIR)/lib/animations/camera/%.cpp | $(LIB_DIR)/animations/camera
 	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
 
 
 # SPECIAL OBJECT COMPILE RULES #
-Renderer.o: $(SRC_DIR)/lib/Renderer.cpp $(LIB_DIR)
+Renderer.o: $(SRC_DIR)/lib/Renderer.cpp | $(LIB_DIR)
 	$(CC) $(ARGS) $(OPTS) -o $(LIB_DIR)/Renderer.o -c $(SRC_DIR)/lib/Renderer.cpp
 
 
