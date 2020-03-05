@@ -4,7 +4,7 @@
  * Created:
  *   2/2/2020, 6:25:46 PM
  * Last edited:
- *   2/2/2020, 7:13:11 PM
+ *   3/3/2020, 4:55:00 PM
  * Auto updated?
  *   Yes
  *
@@ -17,6 +17,13 @@
 
 #include "../../src/lib/include/Vec3.hpp"
 #include "../../src/lib/include/Image.hpp"
+
+#ifdef MACOS
+#define sqrtf64 sqrt
+#define sinf64 sin
+#define cosf64 cos
+#define acosf64 acos
+#endif
 
 using namespace std;
 using namespace RayTracer;

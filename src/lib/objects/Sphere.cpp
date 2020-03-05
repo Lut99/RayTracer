@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:36:39 PM
  * Last edited:
- *   2/9/2020, 1:46:16 AM
+ *   3/3/2020, 4:43:14 PM
  * Auto updated?
  *   Yes
  *
@@ -21,6 +21,10 @@
 
 #include "../include/JSONExceptions.hpp"
 #include "../include/objects/Sphere.hpp"
+
+#ifdef MACOS
+#define sqrtf64 sqrt
+#endif
 
 using namespace std;
 using namespace RayTracer;
@@ -71,9 +75,9 @@ bool Sphere::hit(const Ray& ray, double t_min, double t_max, HitRecord& record) 
     // Return the distance the ray has travelled until it hits the closest side of the sphere.
     if (D > 0) {
         // Compute tboth variations of the t. If t - sqrt(D) is true, take that one. Otherwise, take the other.
-        double t = (-b - sqrt(D)) / a;
+        double t = (-b - sqrtf64(D)) / a;
         if (t <= t_min || t >= t_max) {
-            t = (-b + sqrt(D)) / a;
+            t = (-b + sqrtf64(D)) / a;
             if (t <= t_min || t >= t_max) {
                 return false;
             }

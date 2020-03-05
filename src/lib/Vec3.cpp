@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 12:12:44 PM
  * Last edited:
- *   2/4/2020, 4:26:56 PM
+ *   3/3/2020, 4:44:35 PM
  * Auto updated?
  *   Yes
  *
@@ -19,6 +19,10 @@
 
 #include "include/JSONExceptions.hpp"
 #include "include/Vec3.hpp"
+
+#ifdef MACOS
+#define sqrtf64 sqrt
+#endif
 
 using namespace std;
 using namespace RayTracer;

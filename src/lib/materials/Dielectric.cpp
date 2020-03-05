@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:14:41 PM
  * Last edited:
- *   2/9/2020, 1:49:29 AM
+ *   3/3/2020, 4:42:52 PM
  * Auto updated?
  *   Yes
  *
@@ -18,6 +18,10 @@
 #include "../include/Random.hpp"
 #include "../include/JSONExceptions.hpp"
 #include "../include/materials/Dielectric.hpp"
+
+#ifdef MACOS
+#define sqrtf64 sqrt
+#endif
 
 using namespace std;
 using namespace RayTracer;
@@ -87,7 +91,7 @@ bool Dielectric::refract(const Vec3& v, const Vec3& n, double ni_over_nt, Vec3& 
     double D = 1.0 - ni_over_nt * ni_over_nt * (1 - dt * dt);
     // Only refract if there is a real solution to Snell's law
     if (D > 0) {
-        refracted = ni_over_nt * (v_normalized - n * dt) - n * sqrt(D);
+        refracted = ni_over_nt * (v_normalized - n * dt) - n * sqrtf64(D);
         return true;
     }
     return false;
