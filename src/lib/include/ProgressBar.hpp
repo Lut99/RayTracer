@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 4:45:31 PM
  * Last edited:
- *   1/25/2020, 4:26:13 PM
+ *   05/03/2020, 18:13:56
  * Auto updated?
  *   Yes
  *
@@ -37,6 +37,8 @@ namespace std {
             int bar_width;
             int bar_inner_width;
 
+            bool var_width;
+
             chrono::milliseconds last_draw;
             chrono::milliseconds interval;
 
@@ -48,6 +50,9 @@ namespace std {
 
             /* Is called when the progressbar completes. */
             void win();
+
+            /* Returns the width of the terminal */
+            int resize_to_term_width() const;
         public:
             /* The ProgressBar class is useful for visualizing the progress of a file. Displays a bar that slowly fills and a percentage. By default, takes the full width of the console with no text left or right to the bar. The minimum value is 0, and the maximum is 100. The default interval is 500 milliseconds. */
             ProgressBar();

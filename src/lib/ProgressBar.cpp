@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 4:44:56 PM
  * Last edited:
- *   2/2/2020, 6:23:37 PM
+ *   05/03/2020, 18:14:31
  * Auto updated?
  *   Yes
  *
@@ -98,29 +98,11 @@ ProgressBar::ProgressBar(long min_value, long max_value, std::string left_text, 
 }
 
 void ProgressBar::init() {
+    this->var_width = this->width < 0;
     this->progress = this->min;
     this->done = false;
 
     this->last_draw = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch()) - this->interval;
-
-    // Fetch the width of the command line if needed
-    if (this->width < 0) {
-        #ifndef WINDOWS
-
-        struct winsize size;
-        ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
-
-        this->width = size.ws_col;
-
-        #else
-
-        CONSOLE_SCREEN_BUFFER_INFO csbi;
-
-        GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
-        this->width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
-
-        #endif
-    }
 
     // Compute the total width of the bar section. This is defined as the width - 7 (for percentage and spaces on either side), - left.length() - right.length().
     this->bar_width = this->width - 8 - this->left.length() - this->right.length();
@@ -133,6 +115,11 @@ void ProgressBar::init() {
 }
 
 void ProgressBar::draw() const {
+    // If needed, first get the width of the console
+    if (this->var_width) {
+        this->resize_to_term_width();
+    }
+
     cout << '\r';
     cout << this->left;
     cout << " [";
@@ -165,6 +152,24 @@ void ProgressBar::win() {
     // Print endline to finish it up
     cout << endl;
     this->done = true;
+}
+
+int ProgressBar::resize_to_term_width() const {
+    #ifndef WINDOWS
+
+    struct winsize size;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
+
+    this->width = size.ws_col;
+
+    #else
+
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+    this->width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+
+    #endif
 }
 
 void ProgressBar::update(long amount) {
