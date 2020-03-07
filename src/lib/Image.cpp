@@ -21,8 +21,8 @@
 #include <cerrno>
 #include <cstring>
 
-#include "include/Image.hpp"
-#include "include/LodePNG.hpp"
+#include "Image.hpp"
+#include "LodePNG.hpp"
 
 using namespace std;
 using namespace RayTracer;

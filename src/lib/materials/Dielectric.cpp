@@ -15,9 +15,9 @@
  *   is the implementaton file for Dielectric.hpp.
 **/
 
-#include "../include/Random.hpp"
-#include "../include/JSONExceptions.hpp"
-#include "../include/materials/Dielectric.hpp"
+#include "Random.hpp"
+#include "JSONExceptions.hpp"
+#include "Dielectric.hpp"
 
 #ifdef MACOS
 #define sqrtf64 sqrt

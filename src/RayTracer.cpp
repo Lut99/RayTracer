@@ -4,7 +4,7 @@
  * Created:
  *   1/31/2020, 2:00:11 PM
  * Last edited:
- *   2/9/2020, 5:47:45 PM
+ *   07/03/2020, 12:56:31
  * Auto updated?
  *   Yes
  *
@@ -30,21 +30,23 @@
 #include <cerrno>
 #include <cstring>
 
-#include "lib/include/Image.hpp"
+#include "Config.hpp"
 
-#include "lib/include/RenderWorld.hpp"
-#include "lib/include/objects/Sphere.hpp"
-#include "lib/include/Camera.hpp"
+#include "Image.hpp"
 
-#include "lib/include/materials/Lambertian.hpp"
-#include "lib/include/materials/Metal.hpp"
-#include "lib/include/materials/Dielectric.hpp"
+#include "RenderWorld.hpp"
+#include "Sphere.hpp"
+#include "Camera.hpp"
 
-#include "lib/include/animations/camera/CameraRotation.hpp"
+#include "Lambertian.hpp"
+#include "Metal.hpp"
+#include "Dielectric.hpp"
 
-#include "lib/include/ProgressBar.hpp"
-#include "lib/include/cxxopts.hpp"
-#include "lib/include/Renderer.hpp"
+#include "CameraRotation.hpp"
+
+#include "ProgressBar.hpp"
+#include "cxxopts.hpp"
+#include "Renderer.hpp"
 
 using namespace std;
 using namespace RayTracer;
@@ -100,7 +102,7 @@ int main(int argc, char** argv) {
         ("d,dynamic_write", "If given, writes the frame immediately to disk when rendered.")
         ("p,progressbar", "If given, shows a progressbar to indice the render process")
         ("g,gamma", "If given, corrects the gamma before saving")
-        #ifdef RENDER_THREADED
+        #ifdef THREADED
         ("t,threads", "The number of threads this program runs", value<unsigned int>())
         ("b,batch_size", "The batch size for the ThreadPool", value<unsigned int>())
         #endif
@@ -183,7 +185,7 @@ int main(int argc, char** argv) {
     show_progressbar = result.count("progressbar") != 0;
     correct_gamma = result.count("gamma") != 0;
     dynamic_writing = result.count("dynamic_write") != 0;
-    #ifdef RENDER_THREADED
+    #ifdef THREADED
     try {
         n_threads = result["threads"].as<unsigned int>();
     } catch (domain_error& opt) {
@@ -229,7 +231,7 @@ int main(int argc, char** argv) {
         cout << "  Framerate           : " << fps << endl;
     }
     cout << "  Number of rays      : " << number_of_rays << endl;
-    #ifdef RENDER_THREADED
+    #ifdef THREADED
     cout << "  Number of threads   : " << n_threads << endl;
     cout << "  Batch size          : " << batch_size << endl;
     #endif

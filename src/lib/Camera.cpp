@@ -19,10 +19,10 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-#include "include/JSONExceptions.hpp"
-#include "include/ProgressBar.hpp"
-#include "include/Random.hpp"
-#include "include/Camera.hpp"
+#include "JSONExceptions.hpp"
+#include "ProgressBar.hpp"
+#include "Random.hpp"
+#include "Camera.hpp"
 
 using namespace std;
 using namespace RayTracer;

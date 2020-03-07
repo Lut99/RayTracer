@@ -34,3 +34,6 @@
 # Images produced
 *.png
 *.mp4
+
+# CMakeFiles
+build/*

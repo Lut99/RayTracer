@@ -12,10 +12,7 @@
  *   Contains definitions for the CMake options
 **/
 
-#ifndef CONFIG_HPP_IN
-#define CONFIG_HPP_IN
+#define VERSION_MAJOR 1
+#define VERSION_MINOR 0
 
-#define VERSION_MAJOR @RayTracer_VERSION_MAJOR@
-#define VERSION_MINOR @RayTracer_VERSION_MINOR@
-
-#endif
+#define THREADED

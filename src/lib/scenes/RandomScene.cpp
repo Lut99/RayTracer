@@ -4,7 +4,7 @@
  * Created:
  *   1/31/2020, 12:12:03 PM
  * Last edited:
- *   2/13/2020, 5:04:47 PM
+ *   07/03/2020, 11:51:00
  * Auto updated?
  *   Yes
  *
@@ -16,14 +16,14 @@
  *   RandomScene.hpp.
 **/
 
-#include "../include/Random.hpp"
-#include "../include/scenes/RandomScene.hpp"
+#include "Random.hpp"
+#include "RandomScene.hpp"
 
-#include "../include/objects/Sphere.hpp"
+#include "Sphere.hpp"
 
-#include "../include/materials/Lambertian.hpp"
-#include "../include/materials/Metal.hpp"
-#include "../include/materials/Dielectric.hpp"
+#include "Lambertian.hpp"
+#include "Metal.hpp"
+#include "Dielectric.hpp"
 
 using namespace std;
 using namespace RayTracer;

@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:08:28 PM
  * Last edited:
- *   2/9/2020, 1:51:55 AM
+ *   07/03/2020, 11:48:29
  * Auto updated?
  *   Yes
  *
@@ -18,9 +18,9 @@
 #ifndef LAMBERTIAN_HPP
 #define LAMBERTIAN_HPP
 
-#include "../json.hpp"
+#include "json.hpp"
 
-#include "../Material.hpp"
+#include "Material.hpp"
 
 namespace RayTracer {
     class Lambertian: public Material {

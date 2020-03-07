@@ -15,7 +15,7 @@
  *   ProgressBar.hpp.
 **/
 
-#ifndef WINDOWS
+#ifndef win32
 #include <sys/ioctl.h>
 #include <unistd.h>
 #else
@@ -103,21 +103,19 @@ void ProgressBar::init() {
     this->done = false;
 
     this->last_draw = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch()) - this->interval;
-
-    // Compute the total width of the bar section. This is defined as the width - 7 (for percentage and spaces on either side), - left.length() - right.length().
-    this->bar_width = this->width - 8 - this->left.length() - this->right.length();
-    // The inner width is the same minus to, to account for []
-    this->bar_inner_width = this->bar_width - 2;
-    // Check if this is possible
-    if (this->bar_inner_width < 1) {
-        throw runtime_error("Given width " + to_string(this->width) + " is too small for the progress bar.");
-    }
 }
 
 void ProgressBar::draw() const {
     // If needed, first get the width of the console
+    int width = this->width;
     if (this->var_width) {
-        this->resize_to_term_width();
+        width = this->resize_to_term_width();
+    }
+    // The inner width is the same minus to, to account for []
+    int bar_inner_width = width - 8 - this->left.length() - this->right.length() - 2;
+    // Check if this is possible
+    if (bar_inner_width < 1) {
+        throw runtime_error("Given width " + to_string(width) + " is too small for the progress bar.");
     }
 
     cout << '\r';
@@ -126,12 +124,12 @@ void ProgressBar::draw() const {
 
     // Draw as many '=' as we have progress
     double ratio = ((double) (this->progress - this->min) / (double) (this->max) - this->min);
-    int things_to_print = ratio * this->bar_inner_width;
+    int things_to_print = ratio * bar_inner_width;
 
     for (int i = 0; i < things_to_print; i++) {
         cout << '=';
     }
-    for (int i = things_to_print; i < this->bar_inner_width; i++) {
+    for (int i = things_to_print; i < bar_inner_width; i++) {
         cout << ' ';
     }
 
@@ -155,19 +153,19 @@ void ProgressBar::win() {
 }
 
 int ProgressBar::resize_to_term_width() const {
-    #ifndef WINDOWS
+    #ifndef win32
 
     struct winsize size;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
 
-    this->width = size.ws_col;
+    return size.ws_col;
 
     #else
 
     CONSOLE_SCREEN_BUFFER_INFO csbi;
 
     GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
-    this->width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+    return csbi.srWindow.Right - csbi.srWindow.Left + 1;
 
     #endif
 }

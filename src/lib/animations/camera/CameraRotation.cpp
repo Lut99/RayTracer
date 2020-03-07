@@ -17,8 +17,8 @@
 
 #include <math.h>
 
-#include "../../include/JSONExceptions.hpp"
-#include "../../include/animations/camera/CameraRotation.hpp"
+#include "JSONExceptions.hpp"
+#include "CameraRotation.hpp"
 
 #ifdef MACOS
 #define sinf64 sin

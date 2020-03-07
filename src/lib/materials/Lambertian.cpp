@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:08:10 PM
  * Last edited:
- *   2/9/2020, 1:51:52 AM
+ *   07/03/2020, 11:51:21
  * Auto updated?
  *   Yes
  *
@@ -15,9 +15,9 @@
  *   file is the implementation file for Lambertian.hpp.
 **/
 
-#include "../include/Random.hpp"
-#include "../include/JSONExceptions.hpp"
-#include "../include/materials/Lambertian.hpp"
+#include "Random.hpp"
+#include "JSONExceptions.hpp"
+#include "Lambertian.hpp"
 
 using namespace std;
 using namespace RayTracer;

@@ -4,7 +4,7 @@
  * Created:
  *   1/31/2020, 12:12:39 PM
  * Last edited:
- *   1/31/2020, 12:28:51 PM
+ *   07/03/2020, 11:48:57
  * Auto updated?
  *   Yes
  *
@@ -18,7 +18,7 @@
 #ifndef RANDOMSCENE_HPP
 #define RANDOMSCENE_HPP
 
-#include "../RenderWorld.hpp"
+#include "RenderWorld.hpp"
 
 namespace RayTracer {
     class RandomScene: public RenderWorld {

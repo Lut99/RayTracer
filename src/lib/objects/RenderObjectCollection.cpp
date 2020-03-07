@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 2:26:08 PM
  * Last edited:
- *   2/9/2020, 1:43:47 AM
+ *   07/03/2020, 11:51:10
  * Auto updated?
  *   Yes
  *
@@ -17,8 +17,8 @@
 
 #include <stdexcept>
 
-#include "../include/JSONExceptions.hpp"
-#include "../include/objects/RenderObjectCollection.hpp"
+#include "JSONExceptions.hpp"
+#include "RenderObjectCollection.hpp"
 
 using namespace std;
 using namespace RayTracer;

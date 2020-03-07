@@ -22,7 +22,7 @@
 #include <cstring>
 #include <cerrno>
 
-#include "include/Frames.hpp"
+#include "Frames.hpp"
 
 using namespace std;
 using namespace RayTracer;

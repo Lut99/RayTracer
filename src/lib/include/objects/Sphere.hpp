@@ -4,7 +4,7 @@
  * Created:
  *   1/22/2020, 1:37:11 PM
  * Last edited:
- *   2/9/2020, 1:44:27 AM
+ *   07/03/2020, 11:48:47
  * Auto updated?
  *   Yes
  *
@@ -18,10 +18,10 @@
 #ifndef SPHERE_HPP
 #define SPHERE_HPP
 
-#include "../json.hpp"
+#include "json.hpp"
 
-#include "../RenderObject.hpp"
-#include "../Material.hpp"
+#include "RenderObject.hpp"
+#include "Material.hpp"
 
 namespace RayTracer {
     class Sphere: public RenderObject {

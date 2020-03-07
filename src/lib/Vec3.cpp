@@ -17,8 +17,8 @@
 
 #include <stdexcept>
 
-#include "include/JSONExceptions.hpp"
-#include "include/Vec3.hpp"
+#include "JSONExceptions.hpp"
+#include "Vec3.hpp"
 
 #ifdef MACOS
 #define sqrtf64 sqrt

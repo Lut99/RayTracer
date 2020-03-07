@@ -20,10 +20,10 @@
 
 #include <stdexcept>
 
-#include "include/CameraMovement.hpp"
+#include "CameraMovement.hpp"
 
-#include "include/JSONExceptions.hpp"
-#include "include/RenderAnimation.hpp"
+#include "JSONExceptions.hpp"
+#include "RenderAnimation.hpp"
 
 using namespace std;
 using namespace RayTracer;

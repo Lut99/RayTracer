@@ -19,8 +19,8 @@
 #include <math.h>
 #include <stdexcept>
 
-#include "../include/JSONExceptions.hpp"
-#include "../include/objects/Sphere.hpp"
+#include "JSONExceptions.hpp"
+#include "Sphere.hpp"
 
 #ifdef MACOS
 #define sqrtf64 sqrt

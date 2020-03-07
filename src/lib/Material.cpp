@@ -16,13 +16,13 @@
 
 #include <stdexcept>
 
-#include "include/materials/Lambertian.hpp"
-#include "include/materials/Metal.hpp"
-#include "include/materials/Dielectric.hpp"
+#include "Lambertian.hpp"
+#include "Metal.hpp"
+#include "Dielectric.hpp"
 
-#include "include/JSONExceptions.hpp"
-#include "include/Random.hpp"
-#include "include/Material.hpp"
+#include "JSONExceptions.hpp"
+#include "Random.hpp"
+#include "Material.hpp"
 
 using namespace std;
 using namespace RayTracer;

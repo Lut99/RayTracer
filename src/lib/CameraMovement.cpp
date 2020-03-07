@@ -17,10 +17,10 @@
 
 #include <stdexcept>
 
-#include "include/animations/camera/CameraRotation.hpp"
+#include "CameraRotation.hpp"
 
-#include "include/JSONExceptions.hpp"
-#include "include/CameraMovement.hpp"
+#include "JSONExceptions.hpp"
+#include "CameraMovement.hpp"
 
 using namespace std;
 using namespace RayTracer;

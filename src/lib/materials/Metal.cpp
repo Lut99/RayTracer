@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:11:51 PM
  * Last edited:
- *   2/9/2020, 1:49:22 AM
+ *   07/03/2020, 11:50:16
  * Auto updated?
  *   Yes
  *
@@ -15,9 +15,9 @@
  *   particular file is the implementation file for Metal.hpp.
 **/
 
-#include "../include/Random.hpp"
-#include "../include/JSONExceptions.hpp"
-#include "../include/materials/Metal.hpp"
+#include "Random.hpp"
+#include "JSONExceptions.hpp"
+#include "Metal.hpp"
 
 using namespace std;
 using namespace RayTracer;

@@ -4,7 +4,7 @@
  * Created:
  *   2/1/2020, 4:56:07 PM
  * Last edited:
- *   2/9/2020, 2:02:16 AM
+ *   07/03/2020, 11:48:17
  * Auto updated?
  *   Yes
  *
@@ -18,7 +18,7 @@
 #ifndef CAMERAROTATION_HPP
 #define CAMERAROTATION_HPP
 
-#include "../../CameraMovement.hpp"
+#include "CameraMovement.hpp"
 
 namespace RayTracer {
     class CameraRotation: public CameraMovement {

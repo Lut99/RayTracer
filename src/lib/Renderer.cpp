@@ -16,11 +16,13 @@
  *   file for Renderer.hpp.
 **/
 
-#ifdef RENDER_THREADED
-#include "include/ThreadPool.hpp"
+#include "Config.hpp"
+
+#ifdef THREADED
+#include "ThreadPool.hpp"
 #endif
-#include "include/ProgressBar.hpp"
-#include "include/Renderer.hpp"
+#include "ProgressBar.hpp"
+#include "Renderer.hpp"
 
 using namespace std;
 using namespace RayTracer;
@@ -37,7 +39,7 @@ Image Renderer::render(RenderWorld* world, Camera* cam) {
     ProgressBar prgrs(0, cam->width * cam->height - 1);
 
     // Render it (how depends on if the program is threaded or not)
-    #ifndef RENDER_THREADED
+    #ifndef THREADED
 
     for (int y = cam->height-1; y >= 0; y--) {
         for (int x = 0; x < cam->width; x++) {
@@ -92,7 +94,7 @@ Image Renderer::render(RenderWorld* world, Camera* cam) {
 }
 
 void Renderer::render_animation(RenderWorld* world, Camera* cam, Frames& out) {
-    #if RENDER_THREADED
+    #ifdef THREADED
     ThreadPool pool(this->n_threads, this->batch_size);
     #endif
 
@@ -100,7 +102,7 @@ void Renderer::render_animation(RenderWorld* world, Camera* cam, Frames& out) {
         // Render this frame
         ProgressBar prgrs(0, cam->width * cam->height - 1, "(" + to_string(i + 1) + "/" + to_string(out.n_frames) + ")", "");
 
-        #ifndef RENDER_THREADED
+        #ifndef THREADED
 
         for (int y = cam->height-1; y >= 0; y--) {
             for (int x = 0; x < cam->width; x++) {
@@ -151,7 +153,7 @@ void Renderer::render_animation(RenderWorld* world, Camera* cam, Frames& out) {
         cam->update(time_passed);
     }
 
-    #ifdef RENDER_THREADED
+    #ifdef THREADED
     pool.stop();
     #endif
 }

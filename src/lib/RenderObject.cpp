@@ -17,11 +17,11 @@
 
 #include <stdexcept>
 
-#include "include/objects/Sphere.hpp"
-#include "include/objects/RenderObjectCollection.hpp"
+#include "Sphere.hpp"
+#include "RenderObjectCollection.hpp"
 
-#include "include/JSONExceptions.hpp"
-#include "include/RenderObject.hpp"
+#include "JSONExceptions.hpp"
+#include "RenderObject.hpp"
 
 using namespace std;
 using namespace RayTracer;

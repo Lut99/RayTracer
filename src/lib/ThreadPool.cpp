@@ -17,7 +17,7 @@
 
 #include <iostream>
 
-#include "include/ThreadPool.hpp"
+#include "ThreadPool.hpp"
 
 using namespace std;
 using namespace RayTracer;

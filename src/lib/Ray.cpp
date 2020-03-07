@@ -13,7 +13,7 @@
  *   the implementation for Ray.hpp.
 **/
 
-#include "include/Ray.hpp"
+#include "Ray.hpp"
 
 using namespace std;
 using namespace RayTracer;

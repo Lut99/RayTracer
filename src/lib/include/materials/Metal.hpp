@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:12:18 PM
  * Last edited:
- *   2/9/2020, 1:49:06 AM
+ *   07/03/2020, 11:48:32
  * Auto updated?
  *   Yes
  *
@@ -18,8 +18,8 @@
 #ifndef METAL_HPP
 #define METAL_HPP
 
-#include "../json.hpp"
-#include "../Material.hpp"
+#include "json.hpp"
+#include "Material.hpp"
 
 namespace RayTracer {
     class Metal: public Material {

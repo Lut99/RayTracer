@@ -17,7 +17,7 @@
 #include <random>
 #include <functional>
 
-#include "include/Random.hpp"
+#include "Random.hpp"
 
 double RayTracer::random_double() {
     static std::uniform_real_distribution<double> distribution(0.0, 1.0);

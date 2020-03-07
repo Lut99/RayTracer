@@ -20,9 +20,9 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "include/scenes/RandomScene.hpp"
-#include "include/JSONExceptions.hpp"
-#include "include/RenderWorld.hpp"
+#include "RandomScene.hpp"
+#include "JSONExceptions.hpp"
+#include "RenderWorld.hpp"
 
 #ifdef MACOS
 #define sqrtf64 sqrt

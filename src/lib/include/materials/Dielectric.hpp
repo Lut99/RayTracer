@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 7:15:28 PM
  * Last edited:
- *   2/9/2020, 1:49:45 AM
+ *   07/03/2020, 11:48:26
  * Auto updated?
  *   Yes
  *
@@ -18,8 +18,8 @@
 #ifndef DIELECTRIC_HPP
 #define DIELECTRIC_HPP
 
-#include "../json.hpp"
-#include "../Material.hpp"
+#include "json.hpp"
+#include "Material.hpp"
 
 namespace RayTracer {
     class Dielectric: public Material {
