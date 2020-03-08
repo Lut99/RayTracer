@@ -27,10 +27,6 @@
 #include "Image.hpp"
 #include "Camera.hpp"
 
-#ifndef CAMERA_THREADS
-#define CAMERA_THREADS 0
-#endif
-
 namespace RayTracer {
     struct PixelBatch {
         int x1;
