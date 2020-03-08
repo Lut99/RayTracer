@@ -78,7 +78,7 @@ Metal* Metal::from_json(json json_obj) {
     double fuzz;
     try {
         fuzz = json_obj["fuzz"].get<double>();
-    } catch (nlohmann::detail::type_error& e) {
+    } catch (nlohmann::detail::type_error&) {
         throw InvalidFieldFormat("Metal", "fuzz", "double", json_obj["fuzz"].type_name());
     }
 

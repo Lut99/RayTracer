@@ -54,7 +54,7 @@ Material* Material::from_json(json json_obj) {
     MaterialType type;
     try {
         type = (MaterialType) json_obj["type"].get<unsigned long>();
-    } catch (nlohmann::detail::type_error& e) {
+    } catch (nlohmann::detail::type_error&) {
         throw InvalidFieldFormat("Material", "type", "unsigned long", json_obj["type"].type_name());
     }
 

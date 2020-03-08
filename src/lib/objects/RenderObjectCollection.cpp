@@ -30,7 +30,7 @@ Vec3 RenderObjectCollection::compute_center(vector<RenderObject*> objects) const
     for (std::size_t i = 0; i < objects.size(); i++) {
         average += objects[i]->center;
     }
-    return average / objects.size();
+    return average / (double) objects.size();
 }
 
 RenderObjectCollection::RenderObjectCollection(vector<RenderObject*> objects)

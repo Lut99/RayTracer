@@ -20,8 +20,14 @@
 using namespace std;
 
 
+#ifdef _WIN32
 string std::string_error(errno_t errnum) {
     char errmsg[94];
     strerror_s(errmsg, 94, errnum);
     return string(errmsg);
 }
+#else
+string std::string_error(int errnum) {
+    return string(strerror(errnum));
+}
+#endif

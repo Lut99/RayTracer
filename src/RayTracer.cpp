@@ -128,7 +128,7 @@ int main(int argc, char** argv) {
 
     try {
         screen_width = result["width"].as<unsigned int>();
-    } catch (domain_error& opt) {
+    } catch (domain_error&) {
         screen_width = 1000;
     } catch (OptionParseException& opt) {
         cerr << "Could not parse image width: " << opt.what() << endl;
@@ -136,7 +136,7 @@ int main(int argc, char** argv) {
     }
     try {
         screen_height = result["height"].as<unsigned int>();
-    } catch (domain_error& opt) {
+    } catch (domain_error&) {
         screen_height = 500;
     } catch (OptionParseException& opt) {
         cerr << "Could not parse image height: " << opt.what() << endl;
@@ -144,7 +144,7 @@ int main(int argc, char** argv) {
     }
     try {
         number_of_rays = result["rays"].as<unsigned int>();
-    } catch (domain_error& opt) {
+    } catch (domain_error&) {
         number_of_rays = 500;
     } catch (OptionParseException& opt) {
         cerr << "Could not parse number of rays: " << opt.what() << endl;
@@ -152,7 +152,7 @@ int main(int argc, char** argv) {
     }
     try {
         vfov = result["vfov"].as<unsigned int>();
-    } catch (domain_error& opt) {
+    } catch (domain_error&) {
         vfov = 90;
     } catch (OptionParseException& opt) {
         cerr << "Could not parse field of view: " << opt.what() << endl;
@@ -160,7 +160,7 @@ int main(int argc, char** argv) {
     }
     try {
         fps = result["framerate"].as<unsigned int>();
-    } catch (domain_error& opt) {
+    } catch (domain_error&) {
         fps = 30;
     } catch (OptionParseException& opt) {
         cerr << "Could not parse framerate: " << opt.what() << endl;
@@ -168,7 +168,7 @@ int main(int argc, char** argv) {
     }
     try {
         n_frames = result["n_frames"].as<unsigned int>();
-    } catch (domain_error& opt) {
+    } catch (domain_error&) {
         n_frames = 1;
     } catch (OptionParseException& opt) {
         cerr << "Could not parse number of frames: " << opt.what() << endl;
@@ -176,7 +176,7 @@ int main(int argc, char** argv) {
     }
     try {
         aperture = result["aperture"].as<double>();
-    } catch (domain_error& opt) {
+    } catch (domain_error&) {
         aperture = 0.1;
     } catch (OptionParseException& opt) {
         cerr << "Could not parse aperture: " << opt.what() << endl;
@@ -188,7 +188,7 @@ int main(int argc, char** argv) {
     #ifdef THREADED
     try {
         n_threads = result["threads"].as<unsigned int>();
-    } catch (domain_error& opt) {
+    } catch (domain_error&) {
         n_threads = 16;
     } catch (OptionParseException& opt) {
         cerr << "Could not parse number of threads: " << opt.what() << endl;
@@ -196,7 +196,7 @@ int main(int argc, char** argv) {
     }
     try {
         batch_size = result["batch_size"].as<unsigned int>();
-    } catch (domain_error& opt) {
+    } catch (domain_error&) {
         batch_size = 1000;
     } catch (OptionParseException& opt) {
         cerr << "Could not parse batch size: " << opt.what() << endl;

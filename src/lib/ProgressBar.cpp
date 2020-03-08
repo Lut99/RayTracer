@@ -107,12 +107,12 @@ void ProgressBar::init() {
 
 void ProgressBar::draw() const {
     // If needed, first get the width of the console
-    int width = this->width;
+    size_t width = this->width;
     if (this->var_width) {
         width = this->resize_to_term_width();
     }
     // The inner width is the same minus to, to account for []
-    int bar_inner_width = width - 8 - this->left.length() - this->right.length() - 2;
+    size_t bar_inner_width = width - 8 - this->left.length() - this->right.length() - 2;
     // Check if this is possible
     if (bar_inner_width < 1) {
         throw runtime_error("Given width " + to_string(width) + " is too small for the progress bar.");
@@ -124,7 +124,7 @@ void ProgressBar::draw() const {
 
     // Draw as many '=' as we have progress
     double ratio = ((double) (this->progress - this->min) / (double) (this->max) - this->min);
-    int things_to_print = ratio * bar_inner_width;
+    int things_to_print = (int) (ratio * bar_inner_width);
 
     for (int i = 0; i < things_to_print; i++) {
         cout << '=';

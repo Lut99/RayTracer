@@ -144,12 +144,12 @@ void Image::to_png(std::string path) {
     // Generate a 0-255, four channel vector
     std::vector<unsigned char> raw_image;
     raw_image.resize(this->width * this->height * 4);
-    for (std::size_t y = 0; y < this->height; y++) {
-        for (std::size_t x = 0; x < this->width; x++) {
+    for (unsigned int y = 0; y < this->height; y++) {
+        for (unsigned int x = 0; x < this->width; x++) {
             // Store the data as 0-255 Red Green Blue Alhpa
-            raw_image[4 * (y * this->width + x) + 0] = 255 * this->operator[](y)[x][0];
-            raw_image[4 * (y * this->width + x) + 1] = 255 * this->operator[](y)[x][1];
-            raw_image[4 * (y * this->width + x) + 2] = 255 * this->operator[](y)[x][2];
+            raw_image[4 * (y * this->width + x) + 0] = (char) (255.0 * this->operator[](y)[x][0]);
+            raw_image[4 * (y * this->width + x) + 1] = (char) (255.0 * this->operator[](y)[x][1]);
+            raw_image[4 * (y * this->width + x) + 2] = (char) (255.0 * this->operator[](y)[x][2]);
             raw_image[4 * (y * this->width + x) + 3] = 255;
         }
     }

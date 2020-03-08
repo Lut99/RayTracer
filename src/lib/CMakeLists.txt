@@ -18,6 +18,7 @@ add_library(RenderAnimation ${CMAKE_SOURCE_DIR}/src/lib/RenderAnimation.cpp)
 add_library(Renderer ${CMAKE_SOURCE_DIR}/src/lib/Renderer.cpp)
 add_library(RenderObject ${CMAKE_SOURCE_DIR}/src/lib/RenderObject.cpp)
 add_library(RenderWorld ${CMAKE_SOURCE_DIR}/src/lib/RenderWorld.cpp)
+add_library(StringError ${CMAKE_SOURCE_DIR}/src/lib/StringError.cpp)
 add_library(Vec3 ${CMAKE_SOURCE_DIR}/src/lib/Vec3.cpp)
 
 # Add them to be linked to the raytracer executable
@@ -34,13 +35,8 @@ list(APPEND EXTRA_LIBS RenderAnimation)
 list(APPEND EXTRA_LIBS Renderer)
 list(APPEND EXTRA_LIBS RenderObject)
 list(APPEND EXTRA_LIBS RenderWorld)
+list(APPEND EXTRA_LIBS StringError)
 list(APPEND EXTRA_LIBS Vec3)
-
-# Optionally, if on windows, add strerrorlen
-if(WIN32)
-    add_library(StringError ${CMAKE_SOURCE_DIR}/src/lib/StringError.cpp)
-    list(APPEND EXTRA_LIBS StringError)
-endif()
 
 # Optionally, add ThreadPool
 if(THREADED)

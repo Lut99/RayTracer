@@ -60,7 +60,7 @@ RenderAnimation* RenderAnimation::from_json(json json_obj) {
     RenderAnimationType type;
     try {
         type = (RenderAnimationType) json_obj["type"].get<unsigned long>();
-    } catch (nlohmann::detail::type_error& e) {
+    } catch (nlohmann::detail::type_error&) {
         throw InvalidFieldFormat("RenderAnimation", "type", "unsigned long", json_obj["type"].type_name());
     }
 

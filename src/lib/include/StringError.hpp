@@ -21,8 +21,13 @@
 
 
 namespace std {
+    #ifdef _WIN32
     /* C++ wrapper for strerror_s and the matching strerrorlen_s. */
     std::string string_error(errno_t errnum);
+    #else
+    /* C++ wrapper for strerror_s and the matching strerrorlen_s. */
+    std::string string_error(int errnum);
+    #endif
 }
 
 #endif

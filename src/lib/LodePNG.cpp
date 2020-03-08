@@ -125,8 +125,6 @@ static void lodepng_memcpy(void* LODEPNG_RESTRICT dst,
 /* does not check memory out of bounds, do not use on untrusted data */
 static size_t lodepng_strlen(const char* a) {
   const char* orig = a;
-  /* avoid warning about unused function in case of disabled COMPILE... macros */
-  (void)lodepng_strlen;
   while(*a) a++;
   return (size_t)(a - orig);
 }
@@ -742,7 +740,7 @@ static unsigned HuffmanTree_makeTable(HuffmanTree* tree) {
   size = headsize;
   for(i = 0; i < headsize; ++i) {
     unsigned l = maxlens[i];
-    if(l > FIRSTBITS) size += (1u << (l - FIRSTBITS));
+    if(l > FIRSTBITS) size += (unsigned long) (1u << (l - FIRSTBITS));
   }
   tree->table_len = (unsigned char*)lodepng_malloc(size * sizeof(*tree->table_len));
   tree->table_value = (unsigned short*)lodepng_malloc(size * sizeof(*tree->table_value));
@@ -760,8 +758,8 @@ static unsigned HuffmanTree_makeTable(HuffmanTree* tree) {
     unsigned l = maxlens[i];
     if(l <= FIRSTBITS) continue;
     tree->table_len[i] = l;
-    tree->table_value[i] = pointer;
-    pointer += (1u << (l - FIRSTBITS));
+    tree->table_value[i] = (unsigned short) pointer;
+    pointer += (unsigned long) (1u << (l - FIRSTBITS));
   }
   lodepng_free(maxlens);
 
@@ -784,7 +782,7 @@ static unsigned HuffmanTree_makeTable(HuffmanTree* tree) {
         unsigned index = reverse | (j << l);
         if(tree->table_len[index] != 16) return 55; /*invalid tree: long symbol shares prefix with short symbol*/
         tree->table_len[index] = l;
-        tree->table_value[index] = i;
+        tree->table_value[index] = (unsigned short) i;
       }
     } else {
       /*long symbol, shares prefix with other long symbols in first lookup table, needs second lookup*/
@@ -801,7 +799,7 @@ static unsigned HuffmanTree_makeTable(HuffmanTree* tree) {
         unsigned reverse2 = reverse >> FIRSTBITS; /* l - FIRSTBITS bits */
         unsigned index2 = start + (reverse2 | (j << (l - FIRSTBITS)));
         tree->table_len[index2] = l;
-        tree->table_value[index2] = i;
+        tree->table_value[index2] = (unsigned short) i;
       }
     }
   }
@@ -3701,7 +3699,7 @@ void lodepng_compute_color_stats(LodePNGColorStats* stats,
   if(!numcolors_done) {
     for(i = 0; i < stats->numcolors; i++) {
       const unsigned char* color = &stats->palette[i * 4];
-      color_tree_add(&tree, color[0], color[1], color[2], color[3], i);
+      color_tree_add(&tree, color[0], color[1], color[2], color[3], (unsigned int) i);
     }
   }
 
@@ -4664,7 +4662,7 @@ static unsigned readChunk_iCCP(LodePNGInfo* info, const LodePNGDecompressSetting
                           length, zlibsettings);
   if(!error) {
     if(decoded.size) {
-      info->iccp_profile_size = decoded.size;
+      info->iccp_profile_size = (unsigned int) decoded.size;
       info->iccp_profile = (unsigned char*)lodepng_malloc(decoded.size);
       if(info->iccp_profile) {
         lodepng_memcpy(info->iccp_profile, decoded.data, decoded.size);
@@ -5399,7 +5397,7 @@ static size_t ilog2i(size_t i) {
   l = ilog2(i);
   /* approximate i*log2(i): l is integer logarithm, ((i - (1u << l)) << 1u)
   linearly approximates the missing fractional part multiplied by i */
-  return i * l + ((i - (1u << l)) << 1u);
+  return i * l + (unsigned long) ((i - (unsigned long) (1u << l)) << 1u);
 }
 
 static unsigned filter(unsigned char* out, const unsigned char* in, unsigned w, unsigned h,

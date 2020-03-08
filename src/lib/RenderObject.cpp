@@ -75,7 +75,7 @@ RenderObject* RenderObject::from_json(json json_obj) {
     RenderObjectType type;
     try {
         type = (RenderObjectType) json_obj["type"].get<unsigned long>();
-    } catch (nlohmann::detail::type_error& e) {
+    } catch (nlohmann::detail::type_error&) {
         throw InvalidFieldFormat("RenderObject", "type", "unsigned long", json_obj["type"].type_name());
     }
     // If the animation field is defined, parse it as such
