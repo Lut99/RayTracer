@@ -24,7 +24,7 @@
 #include "JSONExceptions.hpp"
 #include "RenderWorld.hpp"
 
-#ifdef MACOS
+#if defined MACOS || defined _WIN32
 #define sqrtf64 sqrt
 #endif
 

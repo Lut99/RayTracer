@@ -56,7 +56,7 @@ CameraMovement* CameraMovement::from_json(json json_obj) {
     CameraMovementType cam_type;
     try {
         cam_type = (CameraMovementType) json_obj["type"].get<unsigned long>();
-    } catch (nlohmann::detail::type_error& e) {
+    } catch (nlohmann::detail::type_error&) {
         throw InvalidFieldFormat("CameraMovement", "type", "unsigned long", json_obj["type"].type_name());
     }
 

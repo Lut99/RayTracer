@@ -19,7 +19,7 @@
 #include "JSONExceptions.hpp"
 #include "Dielectric.hpp"
 
-#ifdef MACOS
+#if defined MACOS || defined _WIN32
 #define sqrtf64 sqrt
 #endif
 
@@ -135,7 +135,7 @@ Dielectric* Dielectric::from_json(json json_obj) {
     double ref_idx;
     try {
         ref_idx = json_obj["ref_idx"].get<double>();
-    } catch (nlohmann::detail::type_error& e) {
+    } catch (nlohmann::detail::type_error&) {
         throw InvalidFieldFormat("Dielectric", "ref_idx", "double", json_obj["ref_idx"].type_name());
     }
 

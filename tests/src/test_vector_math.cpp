@@ -13,12 +13,14 @@
  *   outputs to Images using the Image class.
 **/
 
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <iostream>
 
 #include "../../src/lib/include/Vec3.hpp"
 #include "../../src/lib/include/Image.hpp"
 
-#ifdef MACOS
+#if defined MACOS || defined _WIN32
 #define sqrtf64 sqrt
 #define sinf64 sin
 #define cosf64 cos

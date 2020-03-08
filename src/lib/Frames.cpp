@@ -19,10 +19,9 @@
 
 #include <iostream>
 #include <fstream>
-#include <cstring>
-#include <cerrno>
 
 #include "Frames.hpp"
+#include "StringError.hpp"
 
 using namespace std;
 using namespace RayTracer;
@@ -39,7 +38,7 @@ Frames::Frames(unsigned int width, unsigned int height, unsigned int num_of_fram
     // Touch a file in the temp dir to make sure that the director exists
     ofstream temp_check(temp_dir + "/out1.png");
     if (!temp_check.is_open()) {
-        cerr << "temp_dir existance check failed: " << strerror(errno) << endl;
+        cerr << "temp_dir existance check failed: " << string_error(errno) << endl;
         exit(-1);
     }
     temp_check.close();

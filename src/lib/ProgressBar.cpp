@@ -15,7 +15,7 @@
  *   ProgressBar.hpp.
 **/
 
-#ifndef win32
+#ifndef _WIN32
 #include <sys/ioctl.h>
 #include <unistd.h>
 #else
@@ -153,7 +153,7 @@ void ProgressBar::win() {
 }
 
 int ProgressBar::resize_to_term_width() const {
-    #ifndef win32
+    #ifndef _WIN32
 
     struct winsize size;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);

@@ -36,6 +36,12 @@ list(APPEND EXTRA_LIBS RenderObject)
 list(APPEND EXTRA_LIBS RenderWorld)
 list(APPEND EXTRA_LIBS Vec3)
 
+# Optionally, if on windows, add strerrorlen
+if(WIN32)
+    add_library(StringError ${CMAKE_SOURCE_DIR}/src/lib/StringError.cpp)
+    list(APPEND EXTRA_LIBS StringError)
+endif()
+
 # Optionally, add ThreadPool
 if(THREADED)
     add_library(ThreadPool ${CMAKE_SOURCE_DIR}/src/lib/ThreadPool.cpp)

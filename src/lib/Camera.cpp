@@ -17,7 +17,7 @@
 
 #include <iostream>
 #define _USE_MATH_DEFINES
-#include <math.h>
+#include <cmath>
 
 #include "JSONExceptions.hpp"
 #include "ProgressBar.hpp"
@@ -155,7 +155,7 @@ Camera* Camera::from_json(nlohmann::json json_obj) {
     try {
         vfov = json_obj["vfov"].get<double>();
         aperture = json_obj["aperture"].get<double>();
-    } catch (nlohmann::detail::type_error& e) {
+    } catch (nlohmann::detail::type_error&) {
         throw InvalidFieldFormat("Camera", "vfov or aperture", "double", json_obj[0].type_name());
     }
     // Only parse the animation if it is present

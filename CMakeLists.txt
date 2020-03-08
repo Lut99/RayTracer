@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 # Set the project name
 project(RayTracer VERSION 1.0)
 
-option(THREADED "If given, compiles with multithread options" ON)
+option(THREADED "If given, compiles with multithread options" OFF)
 
 configure_file(Config.hpp.in ${CMAKE_SOURCE_DIR}/src/lib/include/Config.hpp)
 

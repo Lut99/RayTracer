@@ -22,7 +22,7 @@
 #include "JSONExceptions.hpp"
 #include "Sphere.hpp"
 
-#ifdef MACOS
+#if defined MACOS || defined _WIN32
 #define sqrtf64 sqrt
 #endif
 
@@ -140,7 +140,7 @@ Sphere* Sphere::from_json(json json_obj) {
     double radius;
     try {
         radius = json_obj["radius"].get<double>();
-    } catch (nlohmann::detail::type_error& e) {
+    } catch (nlohmann::detail::type_error&) {
         throw InvalidFieldFormat("Sphere", "radius", "double", json_obj["radius"].type_name());
     }
     Material* mat = Material::from_json(json_obj["material"]);

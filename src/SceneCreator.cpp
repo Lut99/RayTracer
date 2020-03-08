@@ -4,7 +4,7 @@
  * Created:
  *   1/29/2020, 4:36:39 PM
  * Last edited:
- *   2/9/2020, 10:11:10 PM
+ *   08/03/2020, 15:52:32
  * Auto updated?
  *   Yes
  *
@@ -33,6 +33,8 @@
 #include "lib/include/materials/Dielectric.hpp"
 
 #include "lib/include/animations/camera/CameraRotation.hpp"
+
+#include "StringError.hpp"
 
 using namespace std;
 using namespace RayTracer;
@@ -93,7 +95,7 @@ int main(int argc, char** argv) {
     cout << "Writing to file..." << endl;
     ofstream out(json_file);
     if (!out.is_open()) {
-        cerr << "Could not open file: " << strerror(errno) << endl;
+        cerr << "Could not open file: " << string_error(errno) << endl;
         exit(-1);
     }
     out << j.dump(4) << endl;

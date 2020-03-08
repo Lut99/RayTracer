@@ -20,7 +20,7 @@
 #include "JSONExceptions.hpp"
 #include "Vec3.hpp"
 
-#ifdef MACOS
+#if defined MACOS || defined _WIN32
 #define sqrtf64 sqrt
 #endif
 
@@ -166,7 +166,7 @@ Vec3 Vec3::from_json(json json_obj) {
         to_return.x = json_obj[0].get<double>();
         to_return.y = json_obj[1].get<double>();
         to_return.z = json_obj[2].get<double>();
-    } catch (nlohmann::detail::type_error& e) {
+    } catch (nlohmann::detail::type_error&) {
         throw InvalidTypeException("Vec3", "double", json_obj[0].type_name());
     }
     return to_return;

@@ -4,7 +4,7 @@
  * Created:
  *   1/31/2020, 2:00:11 PM
  * Last edited:
- *   07/03/2020, 12:56:31
+ *   08/03/2020, 15:52:16
  * Auto updated?
  *   Yes
  *
@@ -27,8 +27,6 @@
 #include <iostream>
 #include <limits>
 #include <chrono>
-#include <cerrno>
-#include <cstring>
 
 #include "Config.hpp"
 
@@ -47,6 +45,8 @@
 #include "ProgressBar.hpp"
 #include "cxxopts.hpp"
 #include "Renderer.hpp"
+
+#include "StringError.hpp"
 
 using namespace std;
 using namespace RayTracer;
@@ -270,7 +270,7 @@ int main(int argc, char** argv) {
         cout << endl << "Loading JSON..." << endl;
         ifstream scene_file(scenename);
         if (!scene_file.is_open()) {
-            cerr << "Could not open file: " << strerror(errno) << endl;
+            cerr << "Could not open file: " << string_error(errno) << endl;
             exit(-1);
         }
 

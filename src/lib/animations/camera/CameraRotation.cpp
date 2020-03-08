@@ -15,12 +15,13 @@
  *   particular file is the implementation file for CameraRotation.hpp.
 **/
 
-#include <math.h>
+#define _USE_MATH_DEFINES
+#include <cmath>
 
 #include "JSONExceptions.hpp"
 #include "CameraRotation.hpp"
 
-#ifdef MACOS
+#if defined MACOS || defined _WIN32
 #define sinf64 sin
 #define cosf64 cos
 #define acosf64 acos
@@ -99,7 +100,7 @@ CameraRotation* CameraRotation::from_json(json json_obj) {
     chrono::seconds loop_time;
     try {
         loop_time = chrono::seconds(json_obj["loop_time"].get<long>());
-    } catch (nlohmann::detail::type_error& e) {
+    } catch (nlohmann::detail::type_error&) {
         throw InvalidTypeException("CameraRotation", "long", json_obj["loop_time"].type_name());
     }
     return new CameraRotation(loop_time);
