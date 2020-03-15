@@ -26,7 +26,7 @@ using namespace nlohmann;
 
 
 /* Takes four vectors for bounding boxes and enlarges the first Vec's to encompass the second one. */
-void SurroundBox(Vec3& box_A1, Vec3& box_A2, const Vec3& box_B1, const Vec3& box_B2) {
+void surroundBox(Vec3& box_A1, Vec3& box_A2, const Vec3& box_B1, const Vec3& box_B2) {
     // For each of the three dimensions, find the smallest and put that in
     //   box_A1. The larger is put in box_A2.
     for (int i = 0; i < 3; i++) {
@@ -133,7 +133,7 @@ bool RenderObjectCollection::compute_hit_box() {
             return false;
         }
 
-        SurroundBox(this->hit_1, this->hit_2, this->objects.at(i)->hit_1, this->objects.at(i)->hit_2);
+        surroundBox(this->hit_1, this->hit_2, this->objects.at(i)->hit_1, this->objects.at(i)->hit_2);
     }
 
     return true;
