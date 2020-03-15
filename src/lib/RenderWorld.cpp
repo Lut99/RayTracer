@@ -180,8 +180,8 @@ RenderWorld& RenderWorld::operator=(RenderWorld other) {
 
 RenderWorld& RenderWorld::operator=(RenderWorld&& other) {
     // Simply shallow copy the vectors
-    this->objects = other.objects;
-    this->lights = other.lights;
+    this->objects = std::move(other.objects);
+    this->lights = std::move(other.lights);
 
     // Now fill the object's vectors with empty ones to avoid deallocation of the objects
     other.objects = vector<RenderObject*>();
