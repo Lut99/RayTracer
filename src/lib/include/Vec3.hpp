@@ -65,6 +65,8 @@ namespace RayTracer {
 
             /* Provides array-like access to the three vector values. */
             double& operator[](const int index);
+            /* Constant, integer-based access to the vector values. */
+            double get(const int index) const;
 
             /* Returns the length of the vector. */
             double length() const;

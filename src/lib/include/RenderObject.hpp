@@ -50,6 +50,10 @@ namespace RayTracer {
             const RenderObjectType type;
             Vec3 center;
 
+            Vec3 hit_1;
+            Vec3 hit_2;
+            bool has_hitbox;
+
             /* Default deconstructor for the RenderObject class, except that it's virtual so that baseclasses can improve upon this. */
             virtual ~RenderObject() = default;
             /* The clone method returns a reference to a new RenderObject method. This is purely virtual, and should be implemented by the derived classes as if it were a copy constructor. */
@@ -57,6 +61,11 @@ namespace RayTracer {
 
             /* The RenderObject class is virtual, and should not be used by yourself. Only derived classes should call this function. */
             RenderObject(const Vec3& center, const RenderObjectType type);
+
+            /* A quick check if the bounding box of the object has been hit by a ray. The bounding box limits should be computed at the object's init. Note that the normal hit function is needed for more accuracy. */
+            virtual bool quick_hit(const Ray& ray, double t_min, double t_max);
+            /* Virtual for the derived classes to recompute the hit boxes. */
+            virtual bool compute_hit_box() = 0;
 
             /* Virtual for the derived classes to determine whether they have been hit by a ray or not. */
             virtual bool hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const = 0;

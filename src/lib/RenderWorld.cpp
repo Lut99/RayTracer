@@ -116,7 +116,8 @@ Vec3 RenderWorld::bounce_ray(const Ray& ray, int depth) const {
     double t_best = numeric_limits<double>::max();
     bool hit = false;
     for (std::size_t i = 0; i < this->objects.size(); i++) {
-        if (this->objects.at(i)->hit(ray, 0.0, t_best, record)) {
+        // Do the quick hit first, then refine with the normal hit function
+        if (/*this->objects.at(i)->quick_hit(ray, 0.0, t_best) && */this->objects.at(i)->hit(ray, 0.0, t_best, record)) {
             // Store this hit as the best one
             t_best = record.t;
             hit = true;

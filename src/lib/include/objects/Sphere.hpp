@@ -40,6 +40,9 @@ namespace RayTracer {
             /* The clone method returns a reference to a new RenderObject method. */
             virtual RenderObject* clone() const;
 
+            /* Computes a hitbox for the sphere. */
+            virtual bool compute_hit_box();
+
             /* Computes whether given Ray hits this Sphere. If it doesn't, return a t of -1. If it does, returns the length of the Ray until it hits the Sphere. Not that t_min and t_max are exclusive. */
             virtual bool hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const;
 

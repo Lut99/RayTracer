@@ -124,6 +124,16 @@ double& Vec3::operator[](int index) {
     }
     throw out_of_range("Index " + to_string(index) + " is out of range for Vec3");
 }
+double Vec3::get(const int index) const {
+    if (index == 0) {
+        return this->x;
+    } else if (index == 1) {
+        return this->y;
+    } else if (index == 2) {
+        return this->z;
+    }
+    throw out_of_range("Index " + to_string(index) + " is out of range for Vec3");
+}
 
 double Vec3::length() const {
     return sqrtf64(this->x * this->x + this->y * this->y + this->z * this->z);

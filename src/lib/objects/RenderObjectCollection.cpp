@@ -25,6 +25,43 @@ using namespace RayTracer;
 using namespace nlohmann;
 
 
+/* Takes four vectors for bounding boxes and enlarges the first Vec's to encompass the second one. */
+void SurroundBox(Vec3& box_A1, Vec3& box_A2, const Vec3& box_B1, const Vec3& box_B2) {
+    // For each of the three dimensions, find the smallest and put that in
+    //   box_A1. The larger is put in box_A2.
+    for (int i = 0; i < 3; i++) {
+        double a1 = box_A1.get(i);
+        double a2 = box_A2.get(i);
+        double b1 = box_B1.get(i);
+        double b2 = box_B2.get(i);
+
+        // Order the A-box values
+        double min = a1;
+        double max = a2;
+        if (min > max) {
+            min = max;
+            max = a1;
+        }
+
+        // Add the B-box values
+        if (b1 < min) {
+            min = b1;
+        } else if (b1 > max) {
+            max = b1;
+        }
+        if (b2 < min) {
+            min = b2;
+        } else if (b2 > max) {
+            max = b2;
+        }
+
+        // Set the values and return
+        box_A1[i] = min;
+        box_A2[i] = max;
+    }
+}
+
+
 Vec3 RenderObjectCollection::compute_center(vector<RenderObject*> objects) const {
     Vec3 average;
     for (std::size_t i = 0; i < objects.size(); i++) {
@@ -37,11 +74,69 @@ RenderObjectCollection::RenderObjectCollection(vector<RenderObject*> objects)
     : RenderObject(this->compute_center(objects), render_object_collection)
 {
     // Store this vector by copying
-    this->objects = objects;
+    this->objects = vector<RenderObject*>(objects);
+
+    // Be sure to compute the hitbox
+    this->has_hitbox = this->compute_hit_box();
+}
+RenderObjectCollection::RenderObjectCollection(const RenderObjectCollection& other)
+    : RenderObject(other.center, render_object_collection)
+{
+    // Copy the vector of the other
+    this->objects = vector<RenderObject*>(other.objects);
+
+    // Copy the hitbox vectors if needed
+    this->has_hitbox = other.has_hitbox;
+    if (this->has_hitbox) {
+        this->hit_1 = Vec3(other.hit_1);
+        this->hit_2 = Vec3(other.hit_2);
+    }
+}
+RenderObjectCollection::RenderObjectCollection(RenderObjectCollection&& other)
+    : RenderObject(other.center, render_object_collection)
+{
+    // Steal the vector
+    this->objects = std::move(other.objects);
+    other.objects = vector<RenderObject*>();
+
+    // Also steal the vectors (if needed)
+    this->has_hitbox = other.has_hitbox;
+    if (this->has_hitbox) {
+        this->hit_1 = other.hit_1;
+        this->hit_2 = other.hit_2;
+    }
 }
 
 RenderObject* RenderObjectCollection::clone() const {
     return (RenderObject*) new RenderObjectCollection(*this);
+}
+
+
+
+bool RenderObjectCollection::compute_hit_box() {
+    // If there are no elements, there is no box
+    size_t s = this->size();
+    if (s < 1) {
+        return false;
+    }
+
+    // Otherwise, get the box of the first one if it has one
+    if (!this->objects.at(0)->has_hitbox) {
+        return false;
+    }
+    this->hit_1 = this->objects.at(0)->hit_1;
+    this->hit_2 = this->objects.at(0)->hit_2;
+
+    // Combine the boxes into an increasingly larger box
+    for (size_t i = 1; i < s; i++) {
+        if (!this->objects.at(i)->has_hitbox) {
+            return false;
+        }
+
+        SurroundBox(this->hit_1, this->hit_2, this->objects.at(i)->hit_1, this->objects.at(i)->hit_2);
+    }
+
+    return true;
 }
 
 

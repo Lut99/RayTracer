@@ -36,6 +36,9 @@ Sphere::Sphere(const Vec3& center, double radius, Material* material)
 {
     this->radius = radius;
     this->material = material;
+
+    // Be sure to compute the hitbox
+    this->has_hitbox = this->compute_hit_box();
 }
 
 Sphere::Sphere(const Sphere& other)
@@ -43,6 +46,13 @@ Sphere::Sphere(const Sphere& other)
 {
     this->radius = other.radius;
     this->material = other.material->clone();
+
+    // Also copy the hitbox
+    this->has_hitbox = other.has_hitbox;
+    if (this->has_hitbox) {
+        this->hit_1 = other.hit_1;
+        this->hit_2 = other.hit_2;
+    }
 }
 
 Sphere::Sphere(Sphere&& other)
@@ -50,8 +60,14 @@ Sphere::Sphere(Sphere&& other)
 {
     this->radius = other.radius;
     this->material = other.material;
-
     other.material = nullptr;
+
+    // Also copy the hitbox
+    this->has_hitbox = other.has_hitbox;
+    if (this->has_hitbox) {
+        this->hit_1 = other.hit_1;
+        this->hit_2 = other.hit_2;
+    }
 }
 
 Sphere::~Sphere() {
@@ -60,6 +76,14 @@ Sphere::~Sphere() {
 
 RenderObject* Sphere::clone() const {
     return (RenderObject*) new Sphere(*this);
+}
+
+
+
+bool Sphere::compute_hit_box() {
+    this->hit_1 = this->center - Vec3(this->radius, this->radius, this->radius);
+    this->hit_2 = this->center + Vec3(this->radius, this->radius, this->radius);
+    return true;
 }
 
 

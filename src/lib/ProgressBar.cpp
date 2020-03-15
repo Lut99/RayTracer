@@ -124,12 +124,12 @@ void ProgressBar::draw() const {
 
     // Draw as many '=' as we have progress
     double ratio = ((double) (this->progress - this->min) / (double) (this->max) - this->min);
-    int things_to_print = (int) (ratio * bar_inner_width);
+    size_t things_to_print = (size_t) (ratio * bar_inner_width);
 
-    for (int i = 0; i < things_to_print; i++) {
+    for (size_t i = 0; i < things_to_print; i++) {
         cout << '=';
     }
-    for (int i = things_to_print; i < bar_inner_width; i++) {
+    for (size_t i = things_to_print; i < bar_inner_width; i++) {
         cout << ' ';
     }
 

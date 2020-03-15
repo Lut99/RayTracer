@@ -33,10 +33,17 @@ namespace RayTracer {
         public:
             /* The RenderObjectCollection can contain multiple RenderObjects and treat those as if they were one. */
             RenderObjectCollection(std::vector<RenderObject*> objects);
+            /* Copy constructor for RenderObjectCollection. */
+            RenderObjectCollection(const RenderObjectCollection& other);
+            /* Move constructor for RenderObjectCollection. */
+            RenderObjectCollection(RenderObjectCollection&& other);
             virtual ~RenderObjectCollection() = default;
 
             /* The clone method returns a reference to a new RenderObject method. */
             virtual RenderObject* clone() const;
+
+            /* Computes a hitbox for all child elements. Note that this might return false if one of the children has no hitbox. */
+            virtual bool compute_hit_box();
 
             /* Returns the closest hit object from the internal collection of objects. */
             virtual bool hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const;
