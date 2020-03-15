@@ -147,7 +147,7 @@ bool RenderObjectCollection::hit(const Ray& ray, double t_min, double t_max, Hit
     bool hit = false;
     // Loop until we found the hit with the smallest t. By overriding t_max, we can easily and elegantly do this.
     for (std::size_t i = 0; i < this->objects.size(); i++) {
-        if (this->objects[i]->hit(ray, t_min, t_best, temp_record)) {
+        if (this->objects[i]->quick_hit(ray, t_min, t_best) && this->objects[i]->hit(ray, t_min, t_best, temp_record)) {
             hit = true;
             t_best = temp_record.t;
             record = temp_record;
