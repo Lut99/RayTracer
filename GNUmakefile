@@ -28,27 +28,22 @@ LIB_DIR = $(BIN_DIR)/lib
 OPTS += -D MACOS
 endif
 
-LIBRARIES = $(LIB_DIR)/Ray.o $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o $(LIB_DIR)/RenderObject.a $(LIB_DIR)/Random.o $(LIB_DIR)/ProgressBar.o $(LIB_DIR)/Camera.o $(LIB_DIR)/RenderWorld.o $(LIB_DIR)/Materials.a $(LIB_DIR)/scenes/RandomScene.o $(LIB_DIR)/Animations.a
+LIBRARIES = $(LIB_DIR)/Ray.o $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o $(LIB_DIR)/RenderObject.a $(LIB_DIR)/Random.o $(LIB_DIR)/ProgressBar.o $(LIB_DIR)/Camera.o $(LIB_DIR)/RenderWorld.o $(LIB_DIR)/Materials.a $(LIB_DIR)/scenes/RandomScene.o $(LIB_DIR)/Animations.a $(LIB_DIR)/StringError.o
+INCLUDES = -I $(SRC_DIR)/lib/include/ -I $(SRC_DIR)/lib/include/objects/ -I $(SRC_DIR)/lib/include/materials/ -I $(SRC_DIR)/lib/include/animations/camera -I $(SRC_DIR)/lib/include/scenes/
+OPTS += $(INCLUDES)
 
 ifdef THREADED
-ifdef CUDA
-$(error Cannot run threaded with CUDA)
-endif
-OPTS += -D RENDER_THREADED
+OPTS += -D THREADED
 LIBRARIES += $(LIB_DIR)/ThreadPool.o
 EXT_LIBS += -lpthread
-endif
-
-ifdef CUDA
-CC = $(NVCC)
-ARGS = $(NVCC_ARGS)
-OPTS += -D CAMERA_CUDA
 endif
 
 ifdef DEBUG
 OPTS += -g
 endif
 
+.PHONY: default
+default: raytracer
 
 # FOLDER MK RULES #
 $(LIB_DIR):
@@ -80,8 +75,8 @@ $(LIB_DIR)/animations/camera/%.o: $(SRC_DIR)/lib/animations/camera/%.cpp | $(LIB
 
 
 # SPECIAL OBJECT COMPILE RULES #
-Renderer.o: $(SRC_DIR)/lib/Renderer.cpp | $(LIB_DIR)
-	$(CC) $(ARGS) $(OPTS) -o $(LIB_DIR)/Renderer.o -c $(SRC_DIR)/lib/Renderer.cpp
+$(LIB_DIR)/RayTracer.o: $(SRC_DIR)/RayTracer.cpp | $(LIB_DIR)
+	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
 
 
 # ARCHIVE RULES #
@@ -96,8 +91,8 @@ $(LIB_DIR)/Animations.a: $(LIB_DIR)/RenderAnimation.o $(LIB_DIR)/CameraMovement.
 
 
 # MAIN COMPILATION #
-raytracer: Renderer.o $(LIBRARIES)
-	$(CC) $(ARGS) $(OPTS) -o $(BIN_DIR)/raytracer.$(EXTENSION) $(SRC_DIR)/RayTracer.cpp $(LIB_DIR)/Renderer.o $(LIBRARIES) $(EXT_LIBS)
+raytracer: $(LIB_DIR)/RayTracer.o $(LIB_DIR)/Renderer.o $(LIBRARIES)
+	$(CC) $(ARGS) $(OPTS) -o $(BIN_DIR)/raytracer.$(EXTENSION) $(LIB_DIR)/RayTracer.o $(LIB_DIR)/Renderer.o $(LIBRARIES) $(EXT_LIBS)
 scene_creator: $(LIBRARIES) $(LIB_DIR)/Materials.a $(LIB_DIR)/RenderObject.a $(LIB_DIR)/Animations.a
 	$(CC) $(ARGS) $(OPTS) -o $(BIN_DIR)/scene_creator.$(EXTENSION) $(SRC_DIR)/SceneCreator.cpp $(LIBRARIES) $(LIB_DIR)/Materials.a $(LIB_DIR)/RenderObject.a $(LIB_DIR)/Animations.a
 

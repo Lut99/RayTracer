@@ -28,8 +28,6 @@
 #include <limits>
 #include <chrono>
 
-#include "Config.hpp"
-
 #include "Image.hpp"
 
 #include "RenderWorld.hpp"

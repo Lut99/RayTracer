@@ -16,8 +16,6 @@
  *   file for Renderer.hpp.
 **/
 
-#include "Config.hpp"
-
 #ifdef THREADED
 #include "ThreadPool.hpp"
 #endif
