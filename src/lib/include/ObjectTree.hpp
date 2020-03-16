@@ -4,7 +4,7 @@
  * Created:
  *   3/15/2020, 5:02:00 PM
  * Last edited:
- *   3/16/2020, 4:57:25 PM
+ *   3/16/2020, 6:02:19 PM
  * Auto updated?
  *   Yes
  *
@@ -37,7 +37,7 @@ namespace RayTracer {
             virtual ~ObjectTreeNode() = 0;
 
             /* Virtual for the hit function of a node. Returns the RenderObject it hits, or nullptr if nothing is hit. */
-            virtual RenderObject* hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const = 0;
+            virtual bool hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const = 0;
 
             /* Virtual clone function. Note that this allocates a new ObjectTreeNode. */
             virtual ObjectTreeNode* clone() const = 0;
@@ -59,8 +59,8 @@ namespace RayTracer {
             /* Deconstructor for the ObjectTreeBranch. */
             ~ObjectTreeBranch();
 
-            /* Returns the hit object in one of the leaf nodes. Returns nullptr if nothing in this node is hit. */
-            virtual RenderObject* hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const;
+            /* Returns if either of the leaf nodes is hit. */
+            virtual bool hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const;
 
             /* Copy assignment operator for the ObjectTreeBranch. */
             ObjectTreeBranch& operator=(ObjectTreeBranch other);
@@ -87,8 +87,8 @@ namespace RayTracer {
             /* Deconstructor for ObjectTreeLeaf. */
             ~ObjectTreeLeaf();
 
-            /* Returns the pointer to the inner object if it is hit, or nullptr otherwise. */
-            virtual RenderObject* hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const;
+            /* Returns whether the inner object is hit, and stores a reference to it in hitrecord. */
+            virtual bool hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const;
 
             /* Copy assignment operator for the ObjectTreeLeaf. */
             ObjectTreeLeaf& operator=(ObjectTreeLeaf other);
@@ -104,7 +104,7 @@ namespace RayTracer {
     class ObjectTree {
         private:
             /* A linear vector of RenderObject that allow the repeated construction of the tree. */
-            std::map<size_t, RenderObject*> objects;
+            std::vector<RenderObject*> objects;
 
             /* The root of the tree. */
             ObjectTreeNode* root;
@@ -128,19 +128,19 @@ namespace RayTracer {
             size_t add(RenderObject* obj);
             /* Remove a RenderObject. Returns true if succesfull, or false if not (if the obj doesn't exist, for example). This overload finds the object by pointer. */
             bool remove(RenderObject* obj);
-            /* Remove a RenderObject. Returns true if succesfull, or false if not (if the obj doesn't exist, for example). This overload finds the object by uid. */
-            bool remove(const size_t obj);
 
             /* Optimize the current tree. */
             void optimize();
 
-            /* Hit a ray with the tree, and return a reference to the closest hit. Returns nullptr upon no hit. Note that it performs a dready loop-traversal if the tree is not optimised. */
-            RenderObject* hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const;
+            /* Hit a ray with the tree, and return a reference to the closest hit. Returns if hit. Note that it performs a dready loop-traversal if the tree is not optimised. */
+            bool hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const;
 
             /* Copy assignment operator for the ObjectTreeLeaf. */
             ObjectTree& operator=(ObjectTree other);
             /* Move assignment operator for the ObjectTreeLeaf. */
             ObjectTree& operator=(ObjectTree&& other);
+            /* Swap operator for ObjectTree. */
+            friend void swap(ObjectTree& first, ObjectTree& second);
 
             /* Returns the number of elements in the tree. */
             size_t size() const;
@@ -150,6 +150,8 @@ namespace RayTracer {
     void swap(ObjectTreeBranch& first, ObjectTreeBranch& second);
     /* Swap operator for ObjectTreeLeaf. */
     void swap(ObjectTreeLeaf& first, ObjectTreeLeaf& second);
+    /* Swap operator for ObjectTree. */
+    void swap(ObjectTree& first, ObjectTree& second);
 }
 
 #endif

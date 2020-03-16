@@ -46,7 +46,7 @@ void RenderObject::baseclass_to_json(nlohmann::json& json_obj) const {
 
 
 
-bool RenderObject::quick_hit(const Ray& ray, double t_min, double t_max) {
+bool RenderObject::quick_hit(const Ray& ray, double t_min, double t_max) const {
     // If there is no bounding box, quickly quit
     if (!this->has_hitbox) { return false; }
     // Fetch the correct order of the hits

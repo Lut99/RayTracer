@@ -4,7 +4,7 @@
  * Created:
  *   3/15/2020, 5:02:00 PM
  * Last edited:
- *   3/16/2020, 5:09:10 PM
+ *   3/16/2020, 6:05:22 PM
  * Auto updated?
  *   Yes
  *
@@ -17,11 +17,22 @@
 **/
 
 #include <map>
+#include <limits>
+#include <iostream>
 
 #include "ObjectTree.hpp"
 
 using namespace std;
 using namespace RayTracer;
+
+
+/***** TOOLS *****/
+
+/* Clusters a given list of RenderObjects into two new lists in such a way that each list is a cluster of objects that are closest to each other. */
+void cluster(const vector<RenderObject*>& total, vector<RenderObject*>& left, vector<RenderObject*> right) {
+    
+}
+
 
 
 /***** OBJECT TREE BRANCH *****/
@@ -40,6 +51,20 @@ ObjectTreeBranch::ObjectTreeBranch(ObjectTreeBranch&& other)
     // Fill the other's nodes with nullptr
     other.left = nullptr;
     other.right = nullptr;
+}
+
+ObjectTreeBranch::~ObjectTreeBranch() {
+    // Delete the two children nodes
+    if (this->left != nullptr) { delete this->left; }
+    if (this->right != nullptr) { delete this->right; }
+}
+
+
+
+bool ObjectTreeBranch::hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const {
+    // Check if it hits in either, and use shortcircuit boolean logic to make
+    //   sure we get the correct one
+    return this->left->hit(ray, t_min, t_max, record) || this->right->hit(ray, t_min, t_max, record);
 }
 
 
@@ -65,6 +90,13 @@ ObjectTreeBranch& ObjectTreeBranch::operator=(ObjectTreeBranch&& other) {
 
 
 
+ObjectTreeNode* ObjectTreeBranch::clone() const {
+    // Allocate a new tree leaf
+    return (ObjectTreeNode*) (new ObjectTreeBranch(*this));
+}
+
+
+
 /***** OBJECT TREE LEAF *****/
 
 ObjectTreeLeaf::ObjectTreeLeaf(const ObjectTreeLeaf& other)
@@ -76,6 +108,17 @@ ObjectTreeLeaf::ObjectTreeLeaf(ObjectTreeLeaf&& other)
     : obj(other.obj),
     ObjectTreeNode(true)
 {}
+
+ObjectTreeLeaf::~ObjectTreeLeaf() {
+    // Nothing
+}
+
+
+
+bool ObjectTreeLeaf::hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const {
+    // Check if the internal object has been quick hit and, if it has, store it
+    return this->obj->quick_hit(ray, t_min, t_max) && this->obj->hit(ray, t_min, t_max, record);
+}
 
 
 
@@ -96,6 +139,12 @@ ObjectTreeLeaf& ObjectTreeLeaf::operator=(ObjectTreeLeaf&& other) {
     return *this;
 }
 
+
+
+ObjectTreeNode* ObjectTreeLeaf::clone() const {
+    // Allocate a new tree leaf
+    return (ObjectTreeNode*) (new ObjectTreeLeaf(*this));
+}
 
 
 /***** OBJECT TREE *****/
@@ -120,6 +169,10 @@ ObjectTree::ObjectTree(ObjectTree&& other)
     uid(other.uid)
 {}
 
+ObjectTree::~ObjectTree() {
+    if (this->root != nullptr) { delete this->root; }
+}
+
 
 
 size_t ObjectTree::add(RenderObject* obj) {
@@ -133,10 +186,10 @@ size_t ObjectTree::add(RenderObject* obj) {
 
 bool ObjectTree::remove(RenderObject* obj) {
     // Check if a node with this pointer is present
-    for (map<size_t, RenderObject*>::iterator iter = this->objects.begin(); iter != this->objects.end(); ++iter) {
-        if (iter->second == obj) {
+    for (size_t i = 0; i < this->objects.size(); i++) {
+        if (this->objects.at(i) == obj) {
             // Remove it and then quit
-            this->objects.erase(iter);
+            this->objects.erase(this->objects.begin() + i);
 
             this->is_optimised = false;
             
@@ -146,21 +199,76 @@ bool ObjectTree::remove(RenderObject* obj) {
     return false;
 }
 
-bool ObjectTree::remove(const size_t obj) {
-    // Check if a node with this key is present
-    map<size_t, RenderObject*>::iterator it;
-    it = this->objects.find(obj);
-    if (it == this->objects.end()) {
-        return false;
+
+
+void ObjectTree::optimize() {
+    // Start by removing any existing trees
+    if (this->root != nullptr) {
+        delete this->root;
     }
 
-    // Remove it
-    this->objects.erase(it);
+    // We do this by clustering our list of elements into two and then letting
+    //   the ObjectTreeBranch do the rest
+    vector<RenderObject*> left;
+    vector<RenderObject*> right;
+    cluster(this->objects, left, right);
+}
 
-    // Update the optimised flag
-    this->is_optimised = false;
 
-    return true;
+
+bool ObjectTree::hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const {
+    // Do different things depending if we're optimised or not
+    if (this->is_optimised) {
+        // Simply use the tree structure
+        return this->root->hit(ray, t_min, t_max, record);
+    }
+
+    cerr << "WARNING: ObjectTree @ " << this << " is not optimised." << endl;
+
+    // Otherwise, do it loop-wise
+    double t_best = t_max;
+    bool hit = false;
+    for (size_t i = 0; i < this->objects.size(); i++) {
+        // Fetch the correct item from the list
+        RenderObject* obj = this->objects.at(i);
+        if (obj->quick_hit(ray, t_min, t_best) && obj->hit(ray, t_min, t_best, record)) {
+            t_best = record.t;
+            hit = true;
+        }
+    }
+
+    // Return if we hit or not
+    return hit;
+}
+
+
+
+ObjectTree& ObjectTree::operator=(ObjectTree other) {
+    if (this != &other) {
+        // Copy by swapping
+        swap(*this, other);
+    }
+    return *this;
+}
+
+ObjectTree& ObjectTree::operator=(ObjectTree&& other) {
+    if (this != &other) {
+        // Steal the elements
+        this->objects = std::move(other.objects);
+        this->root = std::move(other.root);
+        this->is_optimised = other.is_optimised;
+        this->uid = other.uid;
+
+        other.objects = vector<RenderObject*>();
+        other.root = nullptr;
+    }
+    return *this;
+}
+
+
+
+size_t ObjectTree::size() const {
+    return this->objects.size();
 }
 
 
@@ -177,4 +285,12 @@ void RayTracer::swap(ObjectTreeLeaf& first, ObjectTreeLeaf& second) {
     using std::swap;
 
     swap(first.obj, second.obj);
+}
+void RayTracer::swap(ObjectTree& first, ObjectTree& second) {
+    using std::swap;
+
+    swap(first.objects, second.objects);
+    swap(first.root, second.root);
+    swap(first.is_optimised, second.is_optimised);
+    swap(first.uid, second.uid);
 }

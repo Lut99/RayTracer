@@ -63,7 +63,7 @@ namespace RayTracer {
             RenderObject(const Vec3& center, const RenderObjectType type);
 
             /* A quick check if the bounding box of the object has been hit by a ray. The bounding box limits should be computed at the object's init. Note that the normal hit function is needed for more accuracy. */
-            virtual bool quick_hit(const Ray& ray, double t_min, double t_max);
+            virtual bool quick_hit(const Ray& ray, double t_min, double t_max) const;
             /* Virtual for the derived classes to recompute the hit boxes. */
             virtual bool compute_hit_box() = 0;
 
