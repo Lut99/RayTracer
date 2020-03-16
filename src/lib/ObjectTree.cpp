@@ -4,7 +4,7 @@
  * Created:
  *   3/15/2020, 5:02:00 PM
  * Last edited:
- *   3/15/2020, 6:29:55 PM
+ *   3/16/2020, 5:09:10 PM
  * Auto updated?
  *   Yes
  *
@@ -15,6 +15,8 @@
  *   shuffled in the most optimal way.
  *   The most optimal way here is defined as //TBD
 **/
+
+#include <map>
 
 #include "ObjectTree.hpp"
 
@@ -121,24 +123,44 @@ ObjectTree::ObjectTree(ObjectTree&& other)
 
 
 size_t ObjectTree::add(RenderObject* obj) {
-    this->objects.push_back(obj);
+    this->objects[this->uid] = obj;
 
     // Be sure to mark the tree as non-optimised anymore
     this->is_optimised = false;
 
-    size_t to_ret = this->uid;
-    this->uid++;
-
-    return to_ret;
+    return this->uid++;
 }
 
 bool ObjectTree::remove(RenderObject* obj) {
-    // Search for the node
-    
+    // Check if a node with this pointer is present
+    for (map<size_t, RenderObject*>::iterator iter = this->objects.begin(); iter != this->objects.end(); ++iter) {
+        if (iter->second == obj) {
+            // Remove it and then quit
+            this->objects.erase(iter);
+
+            this->is_optimised = false;
+            
+            return true;
+        }
+    }
+    return false;
 }
 
 bool ObjectTree::remove(const size_t obj) {
-    
+    // Check if a node with this key is present
+    map<size_t, RenderObject*>::iterator it;
+    it = this->objects.find(obj);
+    if (it == this->objects.end()) {
+        return false;
+    }
+
+    // Remove it
+    this->objects.erase(it);
+
+    // Update the optimised flag
+    this->is_optimised = false;
+
+    return true;
 }
 
 

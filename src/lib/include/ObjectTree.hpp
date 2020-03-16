@@ -4,7 +4,7 @@
  * Created:
  *   3/15/2020, 5:02:00 PM
  * Last edited:
- *   3/15/2020, 6:27:44 PM
+ *   3/16/2020, 4:57:25 PM
  * Auto updated?
  *   Yes
  *
@@ -104,7 +104,7 @@ namespace RayTracer {
     class ObjectTree {
         private:
             /* A linear vector of RenderObject that allow the repeated construction of the tree. */
-            std::vector<RenderObject*> objects;
+            std::map<size_t, RenderObject*> objects;
 
             /* The root of the tree. */
             ObjectTreeNode* root;
