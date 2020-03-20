@@ -50,8 +50,7 @@ Sphere::Sphere(const Sphere& other)
     // Also copy the hitbox
     this->has_hitbox = other.has_hitbox;
     if (this->has_hitbox) {
-        this->hit_1 = other.hit_1;
-        this->hit_2 = other.hit_2;
+        this->box = BoundingBox(other.box);
     }
 }
 
@@ -65,8 +64,7 @@ Sphere::Sphere(Sphere&& other)
     // Also copy the hitbox
     this->has_hitbox = other.has_hitbox;
     if (this->has_hitbox) {
-        this->hit_1 = other.hit_1;
-        this->hit_2 = other.hit_2;
+        this->box = other.box;
     }
 }
 
@@ -81,8 +79,8 @@ RenderObject* Sphere::clone() const {
 
 
 bool Sphere::compute_hit_box() {
-    this->hit_1 = this->center - Vec3(this->radius, this->radius, this->radius);
-    this->hit_2 = this->center + Vec3(this->radius, this->radius, this->radius);
+    this->box.p1 = this->center - Vec3(this->radius, this->radius, this->radius);
+    this->box.p2 = this->center + Vec3(this->radius, this->radius, this->radius);
     return true;
 }
 

@@ -4,7 +4,7 @@
  * Created:
  *   3/15/2020, 5:02:00 PM
  * Last edited:
- *   3/16/2020, 6:02:19 PM
+ *   3/20/2020, 1:02:22 PM
  * Auto updated?
  *   Yes
  *
@@ -28,14 +28,18 @@
 namespace RayTracer {
     class ObjectTreeNode {
         protected:
-            ObjectTreeNode(bool is_leaf) :is_leaf(is_leaf) {};
+            ObjectTreeNode(bool is_leaf, BoundingBox box) :is_leaf(is_leaf), box(box) {};
         public:
             /* Signifies if the node is a leaf node or not. */
             bool is_leaf;
+            /* The BoundingBox of the branch for quick hitting. */
+            BoundingBox box;
 
             /* Overridable deconstructor */
             virtual ~ObjectTreeNode() = 0;
 
+            /* Quick hit check to see if the bounding box is hit. */
+            virtual bool quick_hit(const Ray& ray, double t_min, double t_max) const = 0;
             /* Virtual for the hit function of a node. Returns the RenderObject it hits, or nullptr if nothing is hit. */
             virtual bool hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const = 0;
 
@@ -51,7 +55,7 @@ namespace RayTracer {
             ObjectTreeNode* right;
         public:
             /* The ObjectTreeBranch is a node that branches into two subtrees. More concretely, it represents a hitbox over multiple RenderObject. */
-            ObjectTreeBranch(const ObjectTreeNode& left, const ObjectTreeNode& right);
+            ObjectTreeBranch(const std::vector<RenderObject*> elements);
             /* Copy constructor for ObjectTreeBranch. */
             ObjectTreeBranch(const ObjectTreeBranch& other);
             /* Move constructor for ObjectTreeBranch. */
@@ -59,6 +63,8 @@ namespace RayTracer {
             /* Deconstructor for the ObjectTreeBranch. */
             ~ObjectTreeBranch();
 
+            /* Quick hit check to see if the bounding box is hit. */
+            virtual bool quick_hit(const Ray& ray, double t_min, double t_max) const;
             /* Returns if either of the leaf nodes is hit. */
             virtual bool hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const;
 
@@ -87,6 +93,8 @@ namespace RayTracer {
             /* Deconstructor for ObjectTreeLeaf. */
             ~ObjectTreeLeaf();
 
+            /* Quick hit check to see if the bounding box is hit. */
+            virtual bool quick_hit(const Ray& ray, double t_min, double t_max) const;
             /* Returns whether the inner object is hit, and stores a reference to it in hitrecord. */
             virtual bool hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const;
 
@@ -124,8 +132,8 @@ namespace RayTracer {
             /* Deconstructor for the ObjectTree. */
             ~ObjectTree();
 
-            /* Add a new object to the tree (in a dumb way). The return value is a unique ID of that RenderObject. */
-            size_t add(RenderObject* obj);
+            /* Add a new object to the tree (in a dumb way). The return value is it has succeeded, i.e., if the obj had a hitbox or not. */
+            bool add(RenderObject* obj);
             /* Remove a RenderObject. Returns true if succesfull, or false if not (if the obj doesn't exist, for example). This overload finds the object by pointer. */
             bool remove(RenderObject* obj);
 

@@ -47,34 +47,9 @@ void RenderObject::baseclass_to_json(nlohmann::json& json_obj) const {
 
 
 bool RenderObject::quick_hit(const Ray& ray, double t_min, double t_max) const {
-    // If there is no bounding box, quickly quit
     if (!this->has_hitbox) { return false; }
-    // Fetch the correct order of the hits
-    for (int i = 0; i < 3; i++) {
-        double t0 = this->hit_1.x;
-        double t1 = this->hit_2.x;
-        if (t0 > t1) {
-            t1 = t0;
-            t0 = this->hit_2.x;
-        }
 
-        // Compute the t's
-        t0 = (t0 - ray.origin.get(i)) / ray.direction.get(i);
-        t1 = (t1 - ray.origin.get(i)) / ray.direction.get(i);
-
-        // Mix in the given min and max t values
-        if (t0 > t_min) {
-            t_min = t0;
-        }
-        if (t1 < t_max) {
-            t_max = t1;
-        }
-
-        if (t_max <= t_min) {
-            return false;
-        }
-    }
-    return true;
+    return this->box.hit(ray, t_min, t_max);
 }
 
 

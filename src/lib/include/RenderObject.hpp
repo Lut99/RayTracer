@@ -27,6 +27,7 @@
 #include "HitRecord.hpp"
 #include "Material.hpp"
 #include "RenderAnimation.hpp"
+#include "BoundingBox.hpp"
 
 namespace RayTracer {
     class RenderAnimation;
@@ -50,8 +51,7 @@ namespace RayTracer {
             const RenderObjectType type;
             Vec3 center;
 
-            Vec3 hit_1;
-            Vec3 hit_2;
+            BoundingBox box;
             bool has_hitbox;
 
             /* Default deconstructor for the RenderObject class, except that it's virtual so that baseclasses can improve upon this. */
