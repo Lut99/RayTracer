@@ -4,7 +4,7 @@
  * Created:
  *   3/15/2020, 5:02:00 PM
  * Last edited:
- *   3/20/2020, 1:01:58 PM
+ *   3/20/2020, 1:03:38 PM
  * Auto updated?
  *   Yes
  *
@@ -31,7 +31,9 @@ using namespace RayTracer;
 
 /* Sorting function for the x-axis. */
 bool sort_x(RenderObject* obj_1, RenderObject* obj_2) { return obj_1->center.x < obj_2->center.x; }
+/* Sorting function for the y-axis. */
 bool sort_y(RenderObject* obj_1, RenderObject* obj_2) { return obj_1->center.y < obj_2->center.y; }
+/* Sorting function for the z-axis. */
 bool sort_z(RenderObject* obj_1, RenderObject* obj_2) { return obj_1->center.z < obj_2->center.z; }
 
 /* Clusters a given list of RenderObjects into two new lists in such a way that each list is a cluster of objects that are closest to each other. */
