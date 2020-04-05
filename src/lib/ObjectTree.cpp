@@ -4,7 +4,7 @@
  * Created:
  *   3/15/2020, 5:02:00 PM
  * Last edited:
- *   3/20/2020, 1:03:38 PM
+ *   4/5/2020, 2:41:10 PM
  * Auto updated?
  *   Yes
  *
@@ -310,13 +310,13 @@ bool ObjectTree::remove(RenderObject* obj) {
 
 
 void ObjectTree::optimize() {
-    // Make sure there are things to optimize
-    if (this->size() == 0) { return; }
-
     // Start by removing any existing trees
     if (this->root != nullptr) {
         delete this->root;
     }
+
+    // Make sure there are things to optimize
+    if (this->size() == 0) { return; }
 
     if (this->size() == 1) {
         // If there is only one element, make a leaf
