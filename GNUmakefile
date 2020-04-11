@@ -27,7 +27,7 @@ LIB_DIR = $(BIN_DIR)/lib
 OPTS += -D MACOS
 endif
 
-LIBRARIES = $(LIB_DIR)/Ray.o $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o $(LIB_DIR)/RenderObject.a $(LIB_DIR)/Random.o $(LIB_DIR)/ProgressBar.o $(LIB_DIR)/Camera.o $(LIB_DIR)/RenderWorld.o $(LIB_DIR)/Materials.a $(LIB_DIR)/scenes/RandomScene.o $(LIB_DIR)/Animations.a $(LIB_DIR)/StringError.o
+LIBRARIES = $(LIB_DIR)/Ray.o $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o $(LIB_DIR)/RenderObject.a $(LIB_DIR)/Random.o $(LIB_DIR)/ProgressBar.o $(LIB_DIR)/Camera.o $(LIB_DIR)/RenderWorld.o $(LIB_DIR)/Materials.a $(LIB_DIR)/scenes/RandomScene.o $(LIB_DIR)/Animations.a $(LIB_DIR)/StringError.o $(LIB_DIR)/BoundingBox.o $(LIB_DIR)/ObjectTree.o
 INCLUDES = -I $(SRC_DIR)/lib/include/ -I $(SRC_DIR)/lib/include/objects/ -I $(SRC_DIR)/lib/include/materials/ -I $(SRC_DIR)/lib/include/animations/camera -I $(SRC_DIR)/lib/include/scenes/
 OPTS += $(INCLUDES)
 

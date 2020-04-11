@@ -34,77 +34,38 @@ using namespace nlohmann;
 
 
 RenderWorld::RenderWorld() {
-    // Nothing much, really
+    this->objects = new ObjectTree();
 }
 RenderWorld::RenderWorld(const RenderWorld& other) {
-    // Deepcopy the vectors
-
-    // Deepcopy the objects
-    for (size_t i = 0; i < other.objects.size(); i++) {
-        this->objects.push_back(other.objects.at(i)->clone());
-    }
-
-    // Deepcopy the lights
-    // for (size_t i = 0; i < other.lights.size(); i++) {
-    //     this->lights.push_back(other.lights.at(i)->clone());
-    // }
+    this->objects = new ObjectTree(*other.objects);
 }
-RenderWorld::RenderWorld(RenderWorld&& other) {
-    // Simply shallow copy the vectors
-    this->objects = other.objects;
-    this->lights = other.lights;
 
+RenderWorld::RenderWorld(RenderWorld&& other) {
     // Now fill the object's vectors with empty ones to avoid deallocation of the objects
-    other.objects = vector<RenderObject*>();
-    other.lights = vector<int*>();
+    other.objects = other.objects;
+
+    // Empty the reference in the other list
+    other.objects = nullptr;
 }
 
 RenderWorld::~RenderWorld() {
-    // Undeclare everything in the vectors
-    for (std::size_t i = 0; i < this->objects.size(); i++) {
-        delete this->objects.at(i);
-    }
-    // for (std::size_t i = 0; i < this->lights.size(); i++) {
-    //     delete this->lights.at(i);
-    // }
+    // Simply delete the list which will deallocate the objects
+    delete this->objects;
 }
 
 
 
 void RenderWorld::add_object(RenderObject* obj) {
-    this->objects.push_back(obj);
+    this->objects->add(obj);
+
+    // Make sure the tree remains optimised
+    this->objects->optimize();
 }
 
-void RenderWorld::add_light(int* light) {
-    
-}
 
-
-
-RenderObject& RenderWorld::get_object(unsigned int obj_index) const {
-    // Check if not out of bounds
-    if (obj_index >= this->objects.size()) {
-        throw out_of_range("Object index " + to_string(obj_index) + " is out of range for World with " + to_string(this->objects.size()) + " objects.");
-    }
-
-    // Return the object
-    return *this->objects.at(obj_index);
-}
-int& RenderWorld::get_light(unsigned int light_index) const {
-    // Check if not out of bounds
-    if (light_index >= this->lights.size()) {
-        throw out_of_range("Light index " + to_string(light_index) + " is out of range for World with " + to_string(this->lights.size()) + " lights.");
-    }
-
-    // Return the object
-    return *this->lights.at(light_index);
-}
 
 std::size_t RenderWorld::get_object_count() const {
-    return this->objects.size();
-}
-std::size_t RenderWorld::get_light_count() const {
-    return this->lights.size();
+    return this->objects->size();
 }
 
 
@@ -113,16 +74,7 @@ std::size_t RenderWorld::get_light_count() const {
 Vec3 RenderWorld::bounce_ray(const Ray& ray, int depth) const {
     // Find the hit with the smallest hit
     HitRecord record;
-    double t_best = numeric_limits<double>::max();
-    bool hit = false;
-    for (std::size_t i = 0; i < this->objects.size(); i++) {
-        // Do the quick hit first, then refine with the normal hit function
-        if (this->objects.at(i)->quick_hit(ray, 0.0, t_best) && this->objects.at(i)->hit(ray, 0.0, t_best, record)) {
-            // Store this hit as the best one
-            t_best = record.t;
-            hit = true;
-        }
-    }
+    bool hit = this->objects->hit(ray, 0.0, numeric_limits<double>::max(), record);
 
     // Check if a hit occured
     if (hit) {
@@ -161,9 +113,11 @@ Vec3 RenderWorld::render_pixel(int x, int y, const Camera& cam) const {
 
 void RenderWorld::update(chrono::milliseconds time_passed) {
     // Loop through all objects and update them
-    for (size_t i = 0; i < this->objects.size(); i++) {
-        this->objects[i]->update(time_passed);
+    for (size_t i = 0; i < this->objects->size(); i++) {
+        this->objects->operator[](i)->update(time_passed);
     }
+    // Re-optimise the tree
+    this->objects->optimize();
 }
 
 
@@ -180,12 +134,10 @@ RenderWorld& RenderWorld::operator=(RenderWorld other) {
 
 RenderWorld& RenderWorld::operator=(RenderWorld&& other) {
     // Simply shallow copy the vectors
-    this->objects = std::move(other.objects);
-    this->lights = std::move(other.lights);
+    this->objects = other.objects;
 
     // Now fill the object's vectors with empty ones to avoid deallocation of the objects
-    other.objects = vector<RenderObject*>();
-    other.lights = vector<int*>();
+    other.objects = nullptr;
 
     // Return a reference to this
     return *this;
@@ -195,7 +147,6 @@ void RayTracer::swap(RenderWorld& first, RenderWorld& second) {
     using std::swap;
 
     swap(first.objects, second.objects);
-    swap(first.lights, second.lights);
 }
 
 
@@ -203,15 +154,10 @@ void RayTracer::swap(RenderWorld& first, RenderWorld& second) {
 json RenderWorld::to_json() const {
     json j;
     j["objects"] = json::array();
-    j["lights"] = json::array();
 
-    for (size_t i = 0; i < this->objects.size(); i++) {
-        j["objects"][i] = this->objects[i]->to_json();
+    for (size_t i = 0; i < this->objects->size(); i++) {
+        j["objects"][i] = this->objects->operator[](i)->to_json();
     }
-
-    // for (size_t i = 0; i < this->lights.size(); i++) {
-    //     j["lights"][i] = this->lights[i].to_json();
-    // }
 
     return j;
 }
@@ -231,16 +177,10 @@ RenderWorld* RenderWorld::from_json(nlohmann::json json_obj) {
     if (json_obj["objects"].is_null()) {
         throw MissingFieldException("RenderWorld", "objects");
     }
-    if (json_obj["lights"].is_null()) {
-        throw MissingFieldException("RenderWorld", "lights");
-    }
     
     // Check if the fields are arrays
     if (!json_obj["objects"].is_array()) {
         throw InvalidFieldFormat("RenderWorld", "objects", json::array().type_name(), json_obj["objects"].type_name());
-    }
-    if (!json_obj["lights"].is_array()) {
-        throw InvalidFieldFormat("RenderWorld", "lights", json::array().type_name(), json_obj["lights"].type_name());
     }
 
     // Parse all the items in this array
@@ -250,13 +190,6 @@ RenderWorld* RenderWorld::from_json(nlohmann::json json_obj) {
     for (std::size_t i = 0; i < json_obj["objects"].size(); i++) {
         world->add_object(RenderObject::from_json(json_obj["objects"][i]));
     }
-    
-    // Parse the lights
-    /*
-    for (std::size_t i = 0; i < json_obj["lights"].size(); i++) {
-        world->add_light(RenderLight::from_json(json_obj["lights"][i]));
-    }
-    **/
 
     return world;
 }

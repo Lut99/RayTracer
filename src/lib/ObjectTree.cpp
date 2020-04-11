@@ -4,7 +4,7 @@
  * Created:
  *   3/15/2020, 5:02:00 PM
  * Last edited:
- *   3/20/2020, 1:03:38 PM
+ *   11/04/2020, 17:30:35
  * Auto updated?
  *   Yes
  *
@@ -20,11 +20,27 @@
 #include <iostream>
 #include <algorithm>
 
+#include <iostream>
+
 #include "ObjectTree.hpp"
 #include "BoundingBox.hpp"
 
 using namespace std;
 using namespace RayTracer;
+
+
+void print_vec(string name, const vector<RenderObject*>& vec) {
+    cout << name << " {";
+    for (size_t i = 0; i < vec.size(); i++) {
+        if (i > 0) { cout << ", "; }
+        cout << vec.at(i);
+    }
+    cout << "}" << endl;
+}
+
+void print_bbox(string name, const BoundingBox& bbox) {
+    cout << name << " has size " << bbox.size() << endl;
+}
 
 
 /***** TOOLS *****/
@@ -37,7 +53,7 @@ bool sort_y(RenderObject* obj_1, RenderObject* obj_2) { return obj_1->center.y <
 bool sort_z(RenderObject* obj_1, RenderObject* obj_2) { return obj_1->center.z < obj_2->center.z; }
 
 /* Clusters a given list of RenderObjects into two new lists in such a way that each list is a cluster of objects that are closest to each other. */
-void cluster(const vector<RenderObject*>& total, vector<RenderObject*>& left, vector<RenderObject*> right) {
+void cluster(const vector<RenderObject*>& total, vector<RenderObject*>& left, vector<RenderObject*>& right) {
     // Nothing to be done if empty
     if (total.size() == 0) { return; }
 
@@ -50,34 +66,38 @@ void cluster(const vector<RenderObject*>& total, vector<RenderObject*>& left, ve
     sort(ordered_z.begin(), ordered_z.end(), sort_z);
 
     // For each of them, compute the largest boundingbox sizes
+    size_t const half_size = total.size() / 2;
     BoundingBox bx1, bx2, by1, by2, bz1, bz2;
-    for (size_t i = 0; i <= (total.size() / 2); i++) {
+    for (size_t i = 0; i < half_size; i++) {
         bx1.merge(ordered_x.at(i)->box);
         by1.merge(ordered_y.at(i)->box);
         bz1.merge(ordered_z.at(i)->box);
     }
-    for (size_t i = (total.size() / 2) + 1; i < total.size(); i++) {
+    for (size_t i = half_size; i < total.size(); i++) {
         bx2.merge(ordered_x.at(i)->box);
         by2.merge(ordered_y.at(i)->box);
         bz2.merge(ordered_z.at(i)->box);
     }
 
-    // Set the splits with the smallest BB
+    // Set the splits with the smallest total BB
     double sx = bx1.size() + bx2.size();
     double sy = by1.size() + by2.size();
     double sz = bz1.size() + bz2.size();
     if (sx <= sy && sx <= sz) {
         // x is smallest
-        left = vector<RenderObject*>(ordered_x.begin(), ordered_x.begin() + (total.size() / 2));
-        right = vector<RenderObject*>(ordered_x.begin() + (total.size() / 2), ordered_x.end());
+        vector<RenderObject*>::iterator halfway = ordered_x.begin() + half_size;
+        left = vector<RenderObject*>(ordered_x.begin(), halfway);
+        right = vector<RenderObject*>(halfway, ordered_x.end());
     } else if (sy <= sx && sy <= sz) {
         // y is smallest
-        left = vector<RenderObject*>(ordered_y.begin(), ordered_y.begin() + (total.size() / 2));
-        right = vector<RenderObject*>(ordered_y.begin() + (total.size() / 2), ordered_y.end());
+        vector<RenderObject*>::iterator halfway = ordered_y.begin() + half_size;
+        left = vector<RenderObject*>(ordered_y.begin(), halfway);
+        right = vector<RenderObject*>(halfway, ordered_y.end());
     } else {
         // z is smallest
-        left = vector<RenderObject*>(ordered_z.begin(), ordered_z.begin() + (total.size() / 2));
-        right = vector<RenderObject*>(ordered_z.begin() + (total.size() / 2), ordered_z.end());
+        vector<RenderObject*>::iterator halfway = ordered_z.begin() + half_size;
+        left = vector<RenderObject*>(ordered_z.begin(), halfway);
+        right = vector<RenderObject*>(halfway, ordered_z.end());
     }
 }
 
@@ -92,14 +112,14 @@ ObjectTreeBranch::ObjectTreeBranch(const std::vector<RenderObject*> elements)
     std::vector<RenderObject*> left;
     std::vector<RenderObject*> right;
     cluster(elements, left, right);
-
+    
     // Construct leaves instead if only one element is left
-    if (left.size() <= 1) {
+    if (left.size() == 1) {
         this->left = (ObjectTreeNode*) new ObjectTreeLeaf(left.at(0));
     } else {
         this->left = (ObjectTreeNode*) new ObjectTreeBranch(left);
     }
-    if (right.size() <= 1) {
+    if (right.size() == 1) {
         this->right = (ObjectTreeNode*) new ObjectTreeLeaf(right.at(0));
     } else {
         this->right = (ObjectTreeNode*) new ObjectTreeBranch(right);
@@ -111,15 +131,15 @@ ObjectTreeBranch::ObjectTreeBranch(const std::vector<RenderObject*> elements)
 }
 
 ObjectTreeBranch::ObjectTreeBranch(const ObjectTreeBranch& other)
-    : left(other.left->clone()),
-    right(other.right->clone()),
-    ObjectTreeNode(false, other.box)
+    : ObjectTreeNode(false, other.box),
+    left(other.left->clone()),
+    right(other.right->clone())
 {}
 
 ObjectTreeBranch::ObjectTreeBranch(ObjectTreeBranch&& other)
-    : left(other.left),
-    right(other.right),
-    ObjectTreeNode(false, other.box)
+    : ObjectTreeNode(false, other.box),
+    left(other.left),
+    right(other.right)
 {
     // Fill the other's nodes with nullptr
     other.left = nullptr;
@@ -194,18 +214,18 @@ ObjectTreeNode* ObjectTreeBranch::clone() const {
 /***** OBJECT TREE LEAF *****/
 
 ObjectTreeLeaf::ObjectTreeLeaf(RenderObject* obj)
-    : obj(obj),
-    ObjectTreeNode(true, obj->box)
+    : ObjectTreeNode(true, obj->box),
+    obj(obj)
 {}
 
 ObjectTreeLeaf::ObjectTreeLeaf(const ObjectTreeLeaf& other)
-    : obj(other.obj),
-    ObjectTreeNode(true, other.box)
+    : ObjectTreeNode(true, obj->box),
+    obj(other.obj)
 {}
 
 ObjectTreeLeaf::ObjectTreeLeaf(ObjectTreeLeaf&& other)
-    : obj(other.obj),
-    ObjectTreeNode(true, other.box)
+    : ObjectTreeNode(true, obj->box),
+    obj(other.obj)
 {}
 
 ObjectTreeLeaf::~ObjectTreeLeaf() {
@@ -274,6 +294,11 @@ ObjectTree::ObjectTree(ObjectTree&& other)
 
 ObjectTree::~ObjectTree() {
     if (this->root != nullptr) { delete this->root; }
+
+    // ALso delete all objects
+    for (size_t i = 0; i < this->objects.size(); i++) {
+        delete this->objects.at(i);
+    }
 }
 
 
@@ -311,7 +336,7 @@ bool ObjectTree::remove(RenderObject* obj) {
 
 void ObjectTree::optimize() {
     // Make sure there are things to optimize
-    if (this->size() == 0) { return; }
+    if (this->size() == 0 || this->is_optimised) { return; }
 
     // Start by removing any existing trees
     if (this->root != nullptr) {
@@ -378,6 +403,15 @@ ObjectTree& ObjectTree::operator=(ObjectTree&& other) {
         other.root = nullptr;
     }
     return *this;
+}
+
+
+
+RenderObject* ObjectTree::operator[](size_t index) {
+    if (index >= this->objects.size()) {
+        throw std::out_of_range(string("Index ") + to_string(index) + string(" is out of range for ObjectTree with size ") + to_string(this->objects.size()));
+    }
+    return this->objects.at(index);
 }
 
 

@@ -4,7 +4,7 @@
  * Created:
  *   3/15/2020, 5:02:00 PM
  * Last edited:
- *   3/20/2020, 1:02:22 PM
+ *   11/04/2020, 17:07:10
  * Auto updated?
  *   Yes
  *
@@ -36,7 +36,7 @@ namespace RayTracer {
             BoundingBox box;
 
             /* Overridable deconstructor */
-            virtual ~ObjectTreeNode() = 0;
+            virtual ~ObjectTreeNode() {};
 
             /* Quick hit check to see if the bounding box is hit. */
             virtual bool quick_hit(const Ray& ray, double t_min, double t_max) const = 0;
@@ -149,6 +149,9 @@ namespace RayTracer {
             ObjectTree& operator=(ObjectTree&& other);
             /* Swap operator for ObjectTree. */
             friend void swap(ObjectTree& first, ObjectTree& second);
+
+            /* Provides a reference to an RenderObject. Note that the tree is not optimised because it will not break, but boxes might be invalidated if the position of the object changed so try to call optimise afterwards. */
+            RenderObject* operator[](size_t index);
 
             /* Returns the number of elements in the tree. */
             size_t size() const;

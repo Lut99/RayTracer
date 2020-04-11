@@ -27,16 +27,15 @@
 #include "json.hpp"
 #include "Vec3.hpp"
 #include "RenderObject.hpp"
+#include "ObjectTree.hpp"
 #include "Camera.hpp"
 #include "RenderAnimation.hpp"
 
 namespace RayTracer {
     class RenderWorld {
         private:
-            /* List that stores the objects in this world. */
-            std::vector<RenderObject*> objects;
-            /* List that stores all light objects in the world. */
-            std::vector<int*> lights;
+            /* Optimisable list that stores the RenderObjects in the world. */
+            ObjectTree* objects;
         public:
             /* The RenderWorld class describes the world, and serves as the root for the object hiearchy. */
             RenderWorld();
@@ -48,18 +47,9 @@ namespace RayTracer {
 
             /* Adds a RenderObject to the world. Note that anything added this way will be deallocated automatically. */
             void add_object(RenderObject* obj);
-            /* Adds a RenderLight to the world. Note that anything added this way will be deallocated automatically. */
-            void add_light(int* light);
-
-            /* Returns a reference to an object for modification */
-            RenderObject& get_object(unsigned int obj_index) const;
-            /* Returns a reference to a camera object for modification */
-            int& get_light(unsigned int light_index) const;
 
             /* Returns the number of objects defined in the RenderWorld. */
             std::size_t get_object_count() const;
-            /* Returns the number of light objects defined in the RenderWorld. */
-            std::size_t get_light_count() const;
 
             /* Computes the colour of a shot ray. The depth variable makes sure that, in the case of very reflective surfaces, we only do this at max 50 times. */
             Vec3 bounce_ray(const Ray& ray, int depth=0) const;
