@@ -4,7 +4,7 @@
  * Created:
  *   3/20/2020, 11:59:34 AM
  * Last edited:
- *   3/20/2020, 12:46:29 PM
+ *   11/04/2020, 18:12:56
  * Auto updated?
  *   Yes
  *
@@ -17,6 +17,7 @@
 **/
 
 #include <cmath>
+#include <iostream>
 
 #include "BoundingBox.hpp"
 
@@ -31,29 +32,26 @@ using namespace RayTracer;
 bool BoundingBox::hit(const Ray& ray, double t_min, double t_max) const {
     // Fetch the correct order of the hits
     for (int i = 0; i < 3; i++) {
-        double t0 = this->p1.get(i);
-        double t1 = this->p2.get(i);
-        if (t0 > t1) {
-            t1 = t0;
-            t0 = this->p2.get(i);
-        }
-
         // Compute the t's
-        t0 = (t0 - ray.origin.get(i)) / ray.direction.get(i);
-        t1 = (t1 - ray.origin.get(i)) / ray.direction.get(i);
+        double invD = 1.0 / ray.direction.get(i);
+        double t0 = (this->p1.get(i) - ray.origin.get(i)) * invD;
+        double t1 = (this->p2.get(i) - ray.origin.get(i)) * invD;
+        if (invD < 0.0) {
+            std::swap(t0, t1);
+        }
 
         // Mix in the given min and max t values
-        if (t0 > t_min) {
-            t_min = t0;
-        }
-        if (t1 < t_max) {
-            t_max = t1;
-        }
+        t_min = t0 > t_min ? t0 : t_min;
+        t_max = t1 < t_max ? t1 : t_max;
+
+        cout << "t_min: " << t_min << endl;
+        cout << "t_max: " << t_max << endl;
 
         if (t_max <= t_min) {
             return false;
         }
     }
+    cout << "Hitbox returns true!" << endl;
     return true;
 }
 

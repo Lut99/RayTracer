@@ -4,7 +4,7 @@
  * Created:
  *   3/15/2020, 5:02:00 PM
  * Last edited:
- *   11/04/2020, 18:01:25
+ *   11/04/2020, 18:08:46
  * Auto updated?
  *   Yes
  *
@@ -357,7 +357,7 @@ bool ObjectTree::hit(const Ray& ray, double t_min, double t_max, HitRecord& reco
     // Do different things depending if we're optimised or not
     if (this->is_optimised) {
         // Simply use the tree structure
-        return this->root->hit(ray, t_min, t_max, record);
+        return this->root->quick_hit(ray, t_min, t_max) && this->root->hit(ray, t_min, t_max, record);
     }
 
     cerr << "WARNING: ObjectTree @ " << this << " is not optimised." << endl;
