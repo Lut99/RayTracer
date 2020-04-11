@@ -4,7 +4,7 @@
  * Created:
  *   3/15/2020, 5:02:00 PM
  * Last edited:
- *   11/04/2020, 17:30:35
+ *   11/04/2020, 17:56:54
  * Auto updated?
  *   Yes
  *
@@ -342,6 +342,9 @@ void ObjectTree::optimize() {
     if (this->root != nullptr) {
         delete this->root;
     }
+
+    // Make sure there are things to optimize
+    if (this->size() == 0) { return; }
 
     if (this->size() == 1) {
         // If there is only one element, make a leaf
