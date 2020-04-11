@@ -4,7 +4,7 @@
  * Created:
  *   3/15/2020, 5:02:00 PM
  * Last edited:
- *   11/04/2020, 17:56:54
+ *   11/04/2020, 18:01:25
  * Auto updated?
  *   Yes
  *
@@ -160,25 +160,19 @@ bool ObjectTreeBranch::quick_hit(const Ray& ray, double t_min, double t_max) con
 }
 
 bool ObjectTreeBranch::hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const {
-    // Check if it hits in either, and if so, return the hit
     HitRecord record_r;
     bool hit_left = this->left->quick_hit(ray, t_min, t_max) && this->left->hit(ray, t_min, t_max, record);
     bool hit_right = this->right->quick_hit(ray, t_min, t_max) && this->right->hit(ray, t_min, t_max, record_r);
-    // Return the correct hit based
+    // Note the record if it was a hit
     if (hit_left && hit_right) {
         // Set record to the smallest one
         if (record_r.t < record.t) {
             record = record_r;
         }
-        return true;
-    } else if (hit_left) {
-        return true;
-    } else if (hit_right) {
-        record = record_r;
-        return true;
-    } else {
-        return false;
     }
+    
+    // Return if we actually hit
+    return hit_left || hit_right;
 }
 
 
