@@ -4,7 +4,7 @@
  * Created:
  *   3/15/2020, 5:02:00 PM
  * Last edited:
- *   11/04/2020, 18:08:46
+ *   26/04/2020, 16:04:42
  * Auto updated?
  *   Yes
  *
@@ -169,6 +169,9 @@ bool ObjectTreeBranch::hit(const Ray& ray, double t_min, double t_max, HitRecord
         if (record_r.t < record.t) {
             record = record_r;
         }
+    } else if (hit_right) {
+        // Don't forget to update record
+        record = record_r;
     }
     
     // Return if we actually hit
@@ -233,7 +236,7 @@ bool ObjectTreeLeaf::quick_hit(const Ray& ray, double t_min, double t_max) const
 }
 
 bool ObjectTreeLeaf::hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const {
-    // Check if the internal object has been quick hit and, if it has, store it
+    // Check if the internal object has been hit
     return this->obj->hit(ray, t_min, t_max, record);
 }
 
@@ -330,7 +333,7 @@ bool ObjectTree::remove(RenderObject* obj) {
 
 void ObjectTree::optimize() {
     // Make sure there are things to optimize
-    if (this->size() == 0 || this->is_optimised) { return; }
+    if (this->size() == 0) { return; }
 
     // Start by removing any existing trees
     if (this->root != nullptr) {
@@ -390,14 +393,8 @@ ObjectTree& ObjectTree::operator=(ObjectTree other) {
 
 ObjectTree& ObjectTree::operator=(ObjectTree&& other) {
     if (this != &other) {
-        // Steal the elements
-        this->objects = std::move(other.objects);
-        this->root = std::move(other.root);
-        this->is_optimised = other.is_optimised;
-        this->uid = other.uid;
-
-        other.objects = vector<RenderObject*>();
-        other.root = nullptr;
+        // Copy by swapping
+        swap(*this, other);
     }
     return *this;
 }

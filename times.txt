@@ -39,7 +39,7 @@ MULTITHREADED_BATCHED_NOQUICK (16x, 1000, 500 rays, random.json):
 LINUX:
 
 MULTITHREADED_BATCHED_QUICKHIT_HIEARCHY (16x, 1000, 500 rays, random.json):
-    
+    635.526 seconds???
 MULTITHREADED_BATCHED_QUICKHIT (16x, 1000, 500 rays, random.json):
     224.954 seconds
 MULTITHREADED_BATCHED_NOQUICK (16x, 1000, 500 rays, random.json):

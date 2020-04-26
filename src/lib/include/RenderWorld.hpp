@@ -59,6 +59,9 @@ namespace RayTracer {
             /* Updates all animations in the RenderWorld */
             void update(std::chrono::milliseconds time_passed);
 
+            /* Wraps the internal optimize function of the ObjectTree. */
+            void optimize();
+
             /* Copy assignment operator for the RenderWorld class. */
             RenderWorld& operator=(RenderWorld other);
             /* Move assignment operator for the RenderWorld class. */

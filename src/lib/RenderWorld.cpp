@@ -57,9 +57,6 @@ RenderWorld::~RenderWorld() {
 
 void RenderWorld::add_object(RenderObject* obj) {
     this->objects->add(obj);
-
-    // Make sure the tree remains optimised
-    this->objects->optimize();
 }
 
 
@@ -122,6 +119,11 @@ void RenderWorld::update(chrono::milliseconds time_passed) {
 
 
 
+void RenderWorld::optimize() {
+    this->objects->optimize();
+}
+
+
 
 RenderWorld& RenderWorld::operator=(RenderWorld other) {
     // Only do some stuff if this != other
@@ -164,7 +166,6 @@ json RenderWorld::to_json() const {
 RenderWorld* RenderWorld::from_json(nlohmann::json json_obj) {
     // SPECIAL CASE: If the json_obj is simply 'random', return the special random scene
     if (json_obj == "random") {
-        // Generate random objects
         return new RandomScene();
     }
 
@@ -190,6 +191,9 @@ RenderWorld* RenderWorld::from_json(nlohmann::json json_obj) {
     for (std::size_t i = 0; i < json_obj["objects"].size(); i++) {
         world->add_object(RenderObject::from_json(json_obj["objects"][i]));
     }
+
+    // Optimize the inner tree
+    world->optimize();
 
     return world;
 }

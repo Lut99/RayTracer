@@ -4,7 +4,7 @@
  * Created:
  *   3/20/2020, 11:59:34 AM
  * Last edited:
- *   11/04/2020, 18:12:56
+ *   26/04/2020, 15:28:34
  * Auto updated?
  *   Yes
  *
@@ -44,14 +44,10 @@ bool BoundingBox::hit(const Ray& ray, double t_min, double t_max) const {
         t_min = t0 > t_min ? t0 : t_min;
         t_max = t1 < t_max ? t1 : t_max;
 
-        cout << "t_min: " << t_min << endl;
-        cout << "t_max: " << t_max << endl;
-
         if (t_max <= t_min) {
             return false;
         }
     }
-    cout << "Hitbox returns true!" << endl;
     return true;
 }
 

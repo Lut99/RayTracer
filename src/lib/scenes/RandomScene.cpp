@@ -65,4 +65,7 @@ RandomScene::RandomScene()
     this->add_object(new Sphere(Vec3(0, 1, 0), 1.0, new Dielectric(Vec3(1.0, 1.0, 1.0), 1.5)));
     this->add_object(new Sphere(Vec3(-4, 1, 0), 1.0, new Lambertian(Vec3(1.0, 0.3, 0.0))));
     this->add_object(new Sphere(Vec3(4, 1, 0), 1.0, new Metal(Vec3(0.75, 0.75, 0.75), 0.2)));
+
+    // Optimize the tree
+    this->optimize();
 }
