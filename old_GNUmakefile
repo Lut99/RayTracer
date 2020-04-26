@@ -55,6 +55,8 @@ $(SCENES_BIN):
 	mkdir -p $@
 
 # GENERAL OBJECT COMPILE RULES #
+$(OBJ)/%.o: $(wildcard $(SRC))
+
 $(LIB)/%.o: $(SRC)/lib/%.cpp | $(LIB)
 	$(GXX) $(GXX_ARGS) -o $@ -c $<
 $(LIB)/objects/%.o: $(SRC)/lib/objects/%.cpp | $(LIB)/objects
@@ -109,11 +111,14 @@ scene_creator: $(BIN)/scene_creator.out
 # test_vector_math: $(LIB)/Image.a $(LIB)/Vec3.o
 # 	$(GXX) $(GXX_ARGS) -o tests/bin/test_vector_math.out tests/src/test_vector_math.cpp $(LIB)/Image.a $(LIB)/Vec3.o
 
-$(SCENES_OBJ)/%.o: $(SCENES_SRC)/%.cpp | $(SCENES_OBJ)
-	$(GXX) $(GXX_ARGS) -fPIC -o $@ -c $<
+shared_libraries: $(LIBRARIES_SHARED) = $(pathsubst $(LIB),$(LIB_SHARED),$(LIBRARIES))
 
-$(SCENES_BIN)/random.so: $(SCENES_OBJ)/random.o $(LIB)/Random.o $(LIB)/RenderObject.a $(LIB)/Materials.a $(LIB)/RenderWorld.o | $(SCENES_BIN)
-	$(GXX) $(GXX_ARGS) -shared -o $@ $< $(LIB)/Random.o $(LIB)/RenderObject.a $(LIB)/Materials.a $(LIB)/RenderWorld.o
+$(SCENES_OBJ)/%.o: $(SCENES_SRC)/%.cpp | $(SCENES_OBJ)
+	$(GXX) $(GXX_ARGS) -o $@ -c $<
+
+$(SCENES_BIN)/random.so: 
+$(SCENES_BIN)/random.so: $(SCENES_OBJ)/random.o $(LIBRARIES) | $(SCENES_BIN)
+	$(GXX) $(GXX_ARGS) -shared -o $@ $< $(LIBRARIES)
 
 scenes: $(SCENES_BIN)/random.so
 
