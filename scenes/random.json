@@ -22,5 +22,7 @@
         ],
         "vfov": 50.0
     },
-    "world": "random"
+    "world": {
+        "init": "scenes/init/init_random.so"
+    }
 }

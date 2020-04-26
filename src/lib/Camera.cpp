@@ -127,7 +127,7 @@ json Camera::to_json() const {
 Camera* Camera::from_json(nlohmann::json json_obj) {
     // Check if it is an object
     if (!json_obj.is_object()) {
-        throw InvalidTypeException("Camera", json::object().type_name(), json_obj.type_name());
+        throw InvalidObjectFormat("Camera", json::object().type_name(), json_obj.type_name());
     }
 
     // Next, check if the required fields are present

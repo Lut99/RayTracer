@@ -44,7 +44,7 @@ json CameraMovement::to_json() const {
 CameraMovement* CameraMovement::from_json(json json_obj) {
     // Check if the object has an object type
     if (!json_obj.is_object()) {
-        throw InvalidTypeException("CameraMovement", json::object().type_name(), json_obj.type_name());
+        throw InvalidObjectFormat("CameraMovement", json::object().type_name(), json_obj.type_name());
     }
 
     // Check if the required type field exists and is an array

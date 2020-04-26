@@ -19,6 +19,8 @@
 
 #include <iostream>
 #include <stdexcept>
+#include <cerrno>
+#include <dlfcn.h>
 
 #include "RandomScene.hpp"
 #include "JSONExceptions.hpp"
@@ -164,32 +166,67 @@ json RenderWorld::to_json() const {
     return j;
 }
 RenderWorld* RenderWorld::from_json(nlohmann::json json_obj) {
-    // SPECIAL CASE: If the json_obj is simply 'random', return the special random scene
-    if (json_obj == "random") {
-        return new RandomScene();
-    }
-
     // Check if the object has an object type
     if (!json_obj.is_object()) {
-        throw InvalidTypeException("RenderWorld", json::object().type_name(), json_obj.type_name());
-    }
-
-    // Check if the required field exists and is an array
-    if (json_obj["objects"].is_null()) {
-        throw MissingFieldException("RenderWorld", "objects");
-    }
-    
-    // Check if the fields are arrays
-    if (!json_obj["objects"].is_array()) {
-        throw InvalidFieldFormat("RenderWorld", "objects", json::array().type_name(), json_obj["objects"].type_name());
+        throw InvalidObjectFormat("RenderWorld", json::object().type_name(), json_obj.type_name());
     }
 
     // Parse all the items in this array
     RenderWorld* world = new RenderWorld();
 
-    // Parse the objects
-    for (std::size_t i = 0; i < json_obj["objects"].size(); i++) {
-        world->add_object(RenderObject::from_json(json_obj["objects"][i]));
+    // Parse the objects field if it exists
+    if (!json_obj["objects"].is_null()) {
+        // Check if the fields are arrays
+        if (!json_obj["objects"].is_array()) {
+            delete world;
+            throw InvalidFieldFormat("RenderWorld", "objects", json::array().type_name(), json_obj["objects"].type_name());
+        }
+
+        // Parse the objects
+        for (std::size_t i = 0; i < json_obj["objects"].size(); i++) {
+            world->add_object(RenderObject::from_json(json_obj["objects"][i]));
+        }
+    }
+    
+    // Parse the init function field
+    if (!json_obj["init"].is_null()) {
+        // Check if it is a string
+        if (!json_obj["init"].is_string()) {
+            delete world;
+            throw InvalidFieldFormat("RenderWorld", "init", "string", json_obj["init"].type_name());
+        }
+
+        // Check if there is a file ending in .so with that name
+        std::string path = json_obj["init"].get<std::string>();
+        if (FILE* file = fopen(path.c_str(), "r")) {
+            fclose(file);
+        } else {
+            // Doesn't exist
+            delete world;
+            throw FileIOException("RenderWorld", path, errno);
+        }
+
+        // There is, so try to load it using the dl library
+        void* handle = dlopen(path.c_str(), RTLD_NOW);
+        if (handle == NULL) {
+            throw SOLoadException("RenderWorld", path, errno);
+        }
+        void (*init)(const RenderWorld& world) = (void (*)(const RenderWorld& world)) dlsym(handle, "init");
+        if (init == NULL) {
+            dlclose(handle);
+            throw SOFuncLoadException("RenderWorld", path, "init", errno);
+        }
+
+        // Run the function on the given world
+        try {
+            (*init)(*world);
+        } catch (std::exception& e) {
+            dlclose(handle);
+            throw SORunException("RenderWorld", path, "init", string(e.what()));
+        }
+
+        // Close the library
+        dlclose(handle);
     }
 
     // Optimize the inner tree

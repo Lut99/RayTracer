@@ -143,7 +143,7 @@ json Sphere::to_json() const {
 Sphere* Sphere::from_json(json json_obj) {
     // Check if the object has an object type
     if (!json_obj.is_object()) {
-        throw InvalidTypeException("Sphere", json::object().type_name(), json_obj.type_name());
+        throw InvalidObjectFormat("Sphere", json::object().type_name(), json_obj.type_name());
     }
 
     // Check for the required fields

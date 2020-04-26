@@ -42,7 +42,7 @@ void Material::baseclass_to_json(json& json_obj) const {
 Material* Material::from_json(json json_obj) {
     // Check if the object has an object type
     if (!json_obj.is_object()) {
-        throw InvalidTypeException("Material", json::object().type_name(), json_obj.type_name());
+        throw InvalidObjectFormat("Material", json::object().type_name(), json_obj.type_name());
     }
 
     // Check for the type field

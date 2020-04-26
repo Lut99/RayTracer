@@ -4,7 +4,7 @@
  * Created:
  *   3/15/2020, 5:02:00 PM
  * Last edited:
- *   26/04/2020, 16:04:42
+ *   26/04/2020, 17:57:57
  * Auto updated?
  *   Yes
  *
@@ -332,17 +332,17 @@ bool ObjectTree::remove(RenderObject* obj) {
 
 
 void ObjectTree::optimize() {
-    // Make sure there are things to optimize
-    if (this->size() == 0) { return; }
+    this->is_optimised = true;
 
     // Start by removing any existing trees
     if (this->root != nullptr) {
         delete this->root;
     }
-
+    
     // Make sure there are things to optimize
     if (this->size() == 0) { return; }
 
+    // Create the root node
     if (this->size() == 1) {
         // If there is only one element, make a leaf
         this->root = (ObjectTreeNode*) new ObjectTreeLeaf(this->objects.at(0));
@@ -350,8 +350,6 @@ void ObjectTree::optimize() {
         // Else, make a branch which splits itself
         this->root = (ObjectTreeNode*) new ObjectTreeBranch(this->objects);
     }
-
-    this->is_optimised = true;
 }
 
 
@@ -359,6 +357,9 @@ void ObjectTree::optimize() {
 bool ObjectTree::hit(const Ray& ray, double t_min, double t_max, HitRecord& record) const {
     // Do different things depending if we're optimised or not
     if (this->is_optimised) {
+        // Quit if there is nothing
+        if (this->root == nullptr) { return false; }
+
         // Simply use the tree structure
         return this->root->quick_hit(ray, t_min, t_max) && this->root->hit(ray, t_min, t_max, record);
     }

@@ -1,124 +1,124 @@
-CC=g++
-ARGS = -std=c++17 -O2 -Wall -Wextra
+GXX=g++
+GXX_ARGS = -std=c++17 -O2 -Wall -Wextra
 
-NVCC=nvcc
-NVCC_ARGS = -std=c++17
+BIN = bin/linux
+LIB = $(BIN)/lib
+SRC = src
 
-BIN_DIR = bin/linux
-LIB_DIR = $(BIN_DIR)/lib
-SRC_DIR = src
-EXTENSION =out
+SCENES = scenes
+SCENES_SRC = $(LIB)/scenes
+SCENES_BIN = $(SCENES)/init
 
-OPTS =
-EXT_LIBS =
-
-# Check if we're on windows
-ifeq ($(OS), Windows_NT)
-BIN_DIR = bin/win
-LIB_DIR = $(BIN_DIR)/lib
-EXTENSION = exe
-endif
+EXT_LIBS =-ldl
 
 # Check if we're on macos
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
-BIN_DIR = bin/macos
-LIB_DIR = $(BIN_DIR)/lib
-OPTS += -D MACOS
+BIN = bin/macos
+LIB = $(BIN)/lib
+GXX_ARGS += -D MACOS
 endif
 
-LIBRARIES = $(LIB_DIR)/Ray.o $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o $(LIB_DIR)/RenderObject.a $(LIB_DIR)/Random.o $(LIB_DIR)/ProgressBar.o $(LIB_DIR)/Camera.o $(LIB_DIR)/RenderWorld.o $(LIB_DIR)/Materials.a $(LIB_DIR)/scenes/RandomScene.o $(LIB_DIR)/Animations.a $(LIB_DIR)/StringError.o $(LIB_DIR)/BoundingBox.o $(LIB_DIR)/ObjectTree.o
-INCLUDES = -I $(SRC_DIR)/lib/include/ -I $(SRC_DIR)/lib/include/objects/ -I $(SRC_DIR)/lib/include/materials/ -I $(SRC_DIR)/lib/include/animations/camera -I $(SRC_DIR)/lib/include/scenes/
-OPTS += $(INCLUDES)
+LIBRARIES = $(LIB)/Ray.o $(LIB)/Image.a $(LIB)/Vec3.o $(LIB)/RenderObject.a $(LIB)/Random.o $(LIB)/ProgressBar.o $(LIB)/Camera.o $(LIB)/RenderWorld.o $(LIB)/Materials.a $(LIB)/Animations.a $(LIB)/StringError.o $(LIB)/BoundingBox.o $(LIB)/ObjectTree.o
+INCLUDES = -I $(SRC)/lib/include/ -I $(SRC)/lib/include/objects/ -I $(SRC)/lib/include/materials/ -I $(SRC)/lib/include/animations/camera
+GXX_ARGS += $(INCLUDES)
 
 ifdef THREADED
-OPTS += -D THREADED
-LIBRARIES += $(LIB_DIR)/ThreadPool.o
+GXX_ARGS += -D THREADED
+LIBRARIES += $(LIB)/ThreadPool.o
 EXT_LIBS += -lpthread
 endif
 
 ifdef DEBUG
-OPTS += -g
+GXX_ARGS += -g
 endif
 
-.PHONY: default
+.PHONY: default all clean raytracer scene_creator scenes
 default: raytracer
 
 # FOLDER MK RULES #
-$(LIB_DIR):
+$(LIB):
 	mkdir -p $@
-$(LIB_DIR)/objects: $(LIB_DIR)
+$(LIB)/objects: $(LIB)
 	mkdir -p $@
-$(LIB_DIR)/materials: $(LIB_DIR)
+$(LIB)/materials: $(LIB)
 	mkdir -p $@
-$(LIB_DIR)/scenes: $(LIB_DIR)
+$(LIB)/animations: $(LIB)
 	mkdir -p $@
-$(LIB_DIR)/animations: $(LIB_DIR)
+$(LIB)/animations/camera: $(LIB)/animations
 	mkdir -p $@
-$(LIB_DIR)/animations/camera: $(LIB_DIR)/animations
+$(SCENES):
+	mkdir -p $@
+$(SCENES_BIN): $(SCENES)
 	mkdir -p $@
 
 # GENERAL OBJECT COMPILE RULES #
-$(LIB_DIR)/%.o: $(SRC_DIR)/lib/%.cpp | $(LIB_DIR)
-	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
-$(LIB_DIR)/objects/%.o: $(SRC_DIR)/lib/objects/%.cpp | $(LIB_DIR)/objects
-	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
-$(LIB_DIR)/materials/%.o: $(SRC_DIR)/lib/materials/%.cpp | $(LIB_DIR)/materials
-	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
-$(LIB_DIR)/scenes/%.o: $(SRC_DIR)/lib/scenes/%.cpp | $(LIB_DIR)/scenes
-	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
-$(LIB_DIR)/animations/%.o: $(SRC_DIR)/lib/animations/%.cpp | $(LIB_DIR)/animations
-	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
-$(LIB_DIR)/animations/camera/%.o: $(SRC_DIR)/lib/animations/camera/%.cpp | $(LIB_DIR)/animations/camera
-	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
+$(LIB)/%.o: $(SRC)/lib/%.cpp | $(LIB)
+	$(GXX) $(GXX_ARGS) -o $@ -c $<
+$(LIB)/objects/%.o: $(SRC)/lib/objects/%.cpp | $(LIB)/objects
+	$(GXX) $(GXX_ARGS) -o $@ -c $<
+$(LIB)/materials/%.o: $(SRC)/lib/materials/%.cpp | $(LIB)/materials
+	$(GXX) $(GXX_ARGS) -o $@ -c $<
+$(LIB)/animations/%.o: $(SRC)/lib/animations/%.cpp | $(LIB)/animations
+	$(GXX) $(GXX_ARGS) -o $@ -c $<
+$(LIB)/animations/camera/%.o: $(SRC)/lib/animations/camera/%.cpp | $(LIB)/animations/camera
+	$(GXX) $(GXX_ARGS) -o $@ -c $<
 
 
 # SPECIAL OBJECT COMPILE RULES #
-$(LIB_DIR)/RayTracer.o: $(SRC_DIR)/RayTracer.cpp | $(LIB_DIR)
-	$(CC) $(ARGS) $(OPTS) -o $@ -c $<
+$(LIB)/RayTracer.o: $(SRC)/RayTracer.cpp | $(LIB)
+	$(GXX) $(GXX_ARGS) -o $@ -c $<
 
 
 # ARCHIVE RULES #
-$(LIB_DIR)/Image.a: $(LIB_DIR)/Frames.o $(LIB_DIR)/Image.o $(LIB_DIR)/LodePNG.o
-	ar rvs $(LIB_DIR)/Image.a $(LIB_DIR)/Frames.o $(LIB_DIR)/Image.o $(LIB_DIR)/LodePNG.o
-$(LIB_DIR)/RenderObject.a: $(LIB_DIR)/RenderObject.o $(LIB_DIR)/objects/Sphere.o $(LIB_DIR)/objects/RenderObjectCollection.o
-	ar rvs $(LIB_DIR)/RenderObject.a $(LIB_DIR)/RenderObject.o $(LIB_DIR)/objects/Sphere.o $(LIB_DIR)/objects/RenderObjectCollection.o
-$(LIB_DIR)/Materials.a: $(LIB_DIR)/Material.o $(LIB_DIR)/materials/Lambertian.o $(LIB_DIR)/materials/Metal.o $(LIB_DIR)/materials/Dielectric.o
-	ar rvs $(LIB_DIR)/Materials.a $(LIB_DIR)/Material.o $(LIB_DIR)/materials/Lambertian.o $(LIB_DIR)/materials/Metal.o $(LIB_DIR)/materials/Dielectric.o
-$(LIB_DIR)/Animations.a: $(LIB_DIR)/RenderAnimation.o $(LIB_DIR)/CameraMovement.o $(LIB_DIR)/animations/camera/CameraRotation.o
-	ar rvs $(LIB_DIR)/Animations.a $(LIB_DIR)/RenderAnimation.o $(LIB_DIR)/CameraMovement.o $(LIB_DIR)/animations/camera/CameraRotation.o
+$(LIB)/Image.a: $(LIB)/Frames.o $(LIB)/Image.o $(LIB)/LodePNG.o
+	ar rvs $(LIB)/Image.a $(LIB)/Frames.o $(LIB)/Image.o $(LIB)/LodePNG.o
+$(LIB)/RenderObject.a: $(LIB)/RenderObject.o $(LIB)/objects/Sphere.o $(LIB)/objects/RenderObjectCollection.o
+	ar rvs $(LIB)/RenderObject.a $(LIB)/RenderObject.o $(LIB)/objects/Sphere.o $(LIB)/objects/RenderObjectCollection.o
+$(LIB)/Materials.a: $(LIB)/Material.o $(LIB)/materials/Lambertian.o $(LIB)/materials/Metal.o $(LIB)/materials/Dielectric.o
+	ar rvs $(LIB)/Materials.a $(LIB)/Material.o $(LIB)/materials/Lambertian.o $(LIB)/materials/Metal.o $(LIB)/materials/Dielectric.o
+$(LIB)/Animations.a: $(LIB)/RenderAnimation.o $(LIB)/CameraMovement.o $(LIB)/animations/camera/CameraRotation.o
+	ar rvs $(LIB)/Animations.a $(LIB)/RenderAnimation.o $(LIB)/CameraMovement.o $(LIB)/animations/camera/CameraRotation.o
 
 
 # MAIN COMPILATION #
-raytracer: $(LIB_DIR)/RayTracer.o $(LIB_DIR)/Renderer.o $(LIBRARIES)
-	$(CC) $(ARGS) $(OPTS) -o $(BIN_DIR)/raytracer.$(EXTENSION) $(LIB_DIR)/RayTracer.o $(LIB_DIR)/Renderer.o $(LIBRARIES) $(EXT_LIBS)
-scene_creator: $(LIBRARIES) $(LIB_DIR)/Materials.a $(LIB_DIR)/RenderObject.a $(LIB_DIR)/Animations.a
-	$(CC) $(ARGS) $(OPTS) -o $(BIN_DIR)/scene_creator.$(EXTENSION) $(SRC_DIR)/SceneCreator.cpp $(LIBRARIES) $(LIB_DIR)/Materials.a $(LIB_DIR)/RenderObject.a $(LIB_DIR)/Animations.a
+$(BIN)/raytracer.out: $(LIB)/RayTracer.o $(LIB)/Renderer.o $(LIBRARIES)
+	$(GXX) $(GXX_ARGS) -o $(BIN)/raytracer.out $(LIB)/RayTracer.o $(LIB)/Renderer.o $(LIBRARIES) $(EXT_LIBS)
+raytracer: $(BIN)/raytracer.out
+
+$(BIN)/scene_creator.out: $(LIBRARIES) $(LIB)/Materials.a $(LIB)/RenderObject.a $(LIB)/Animations.a
+	$(GXX) $(GXX_ARGS) -o $(BIN)/scene_creator.out $(SRC)/SceneCreator.cpp $(LIBRARIES) $(LIB)/Materials.a $(LIB)/RenderObject.a $(LIB)/Animations.a
+scene_creator: $(BIN)/scene_creator.out
 
 
 # TEST COMPILE RULES #
-test_image: $(LIB_DIR)/Image.o $(LIB_DIR)/LodePNG.o
-	$(CC) $(ARGS) -o tests/bin/test_image.$(EXTENSION) tests/src/test_image.cpp $(LIB_DIR)/Image.o $(LIB_DIR)/LodePNG.o
+# test_image: $(LIB)/Image.o $(LIB)/LodePNG.o
+# 	$(GXX) $(GXX_ARGS) -o tests/bin/test_image.out tests/src/test_image.cpp $(LIB)/Image.o $(LIB)/LodePNG.o
 
-test_progressbar: $(LIB_DIR)/ProgressBar.o
-	$(CC) $(ARGS) -o tests/bin/test_progressbar.$(EXTENSION) tests/src/test_progressbar.cpp $(LIB_DIR)/ProgressBar.o
+# test_progressbar: $(LIB)/ProgressBar.o
+# 	$(GXX) $(GXX_ARGS) -o tests/bin/test_progressbar.out tests/src/test_progressbar.cpp $(LIB)/ProgressBar.o
 
-test_json: $(LIB_DIR)/Vec3.o $(LIB_DIR)/WorldIO.o
-	$(CC) $(ARGS) -o tests/bin/test_json.$(EXTENSION) tests/src/test_json.cpp $(LIB_DIR)/Vec3.o $(LIB_DIR)/WorldIO.o
+# test_json: $(LIB)/Vec3.o $(LIB)/WorldIO.o
+# 	$(GXX) $(GXX_ARGS) -o tests/bin/test_json.out tests/src/test_json.cpp $(LIB)/Vec3.o $(LIB)/WorldIO.o
 
-test_frames: $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o
-	$(CC) $(ARGS) -o tests/bin/test_frames.$(EXTENSION) tests/src/test_frames.cpp $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o
+# test_frames: $(LIB)/Image.a $(LIB)/Vec3.o
+# 	$(GXX) $(GXX_ARGS) -o tests/bin/test_frames.out tests/src/test_frames.cpp $(LIB)/Image.a $(LIB)/Vec3.o
 
-test_vector_math: $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o
-	$(CC) $(ARGS) -o tests/bin/test_vector_math.$(EXTENSION) tests/src/test_vector_math.cpp $(LIB_DIR)/Image.a $(LIB_DIR)/Vec3.o
+# test_vector_math: $(LIB)/Image.a $(LIB)/Vec3.o
+# 	$(GXX) $(GXX_ARGS) -o tests/bin/test_vector_math.out tests/src/test_vector_math.cpp $(LIB)/Image.a $(LIB)/Vec3.o
+
+$(SCENES_SRC)/%.cpp: $(SCENES_BIN)/%.so | $(SCENES_BIN)
+	# TBD: Compile
+
+all: raytracer scene_creator scenes
 
 clean:
-	rm -f $(BIN_DIR)/*.out
-	rm -f $(LIB_DIR)/*.o
-	rm -f $(LIB_DIR)/materials/*.o
-	rm -f $(LIB_DIR)/objects/*.o
-	rm -f $(LIB_DIR)/animations/*.o
-	rm -f $(LIB_DIR)/animations/camera/*.o
-	rm -f $(LIB_DIR)/scenes/*.o
-	rm -f $(LIB_DIR)/*.a
+	rm -f $(BIN)/*.out
+	rm -f $(LIB)/*.o
+	rm -f $(LIB)/materials/*.o
+	rm -f $(LIB)/objects/*.o
+	rm -f $(LIB)/animations/*.o
+	rm -f $(LIB)/animations/camera/*.o
+	rm -f $(LIB)/scenes/*.o
+	rm -f $(LIB)/*.a
 	rm -f tests/bin/*.out

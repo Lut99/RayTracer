@@ -46,6 +46,8 @@
 
 #include "StringError.hpp"
 
+#include "JSONExceptions.hpp"
+
 using namespace std;
 using namespace RayTracer;
 using namespace cxxopts;
@@ -287,7 +289,12 @@ int main(int argc, char** argv) {
         // Load all the objects (if present)
         if (!j["world"].is_null()) {
             cout << "  Loading world..." << endl;
-            world = RenderWorld::from_json(j["world"]);
+            try {
+                world = RenderWorld::from_json(j["world"]);
+            } catch (JSONException& e) {
+                cerr << e.what() << endl;
+                exit(-1);
+            }
         } else {
             cout << "  Generating world..." << endl;
             world = create_default_renderworld();

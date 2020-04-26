@@ -162,7 +162,7 @@ json Vec3::to_json() const {
 Vec3 Vec3::from_json(json json_obj) {
     // First, check if the json_obj is an array
     if (!json_obj.is_array()) {
-        throw InvalidTypeException("Vec3", json::array().type_name(), json_obj.type_name());
+        throw InvalidObjectFormat("Vec3", json::array().type_name(), json_obj.type_name());
     }
 
     // Next, check for the array length
@@ -177,7 +177,7 @@ Vec3 Vec3::from_json(json json_obj) {
         to_return.y = json_obj[1].get<double>();
         to_return.z = json_obj[2].get<double>();
     } catch (nlohmann::detail::type_error&) {
-        throw InvalidTypeException("Vec3", "double", json_obj[0].type_name());
+        throw InvalidObjectFormat("Vec3", "double", json_obj[0].type_name());
     }
     return to_return;
 }

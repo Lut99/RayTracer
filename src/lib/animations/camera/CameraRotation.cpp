@@ -88,7 +88,7 @@ json CameraRotation::to_json() const {
 CameraRotation* CameraRotation::from_json(json json_obj) {
     // Check if the object has an object type
     if (!json_obj.is_object()) {
-        throw InvalidTypeException("CameraRotation", json::object().type_name(), json_obj.type_name());
+        throw InvalidObjectFormat("CameraRotation", json::object().type_name(), json_obj.type_name());
     }
 
     // Check if the required field exist
@@ -101,7 +101,7 @@ CameraRotation* CameraRotation::from_json(json json_obj) {
     try {
         loop_time = chrono::seconds(json_obj["loop_time"].get<long>());
     } catch (nlohmann::detail::type_error&) {
-        throw InvalidTypeException("CameraRotation", "long", json_obj["loop_time"].type_name());
+        throw InvalidFieldFormat("CameraRotation", "loop_time", "long", json_obj["loop_time"].type_name());
     }
     return new CameraRotation(loop_time);
 }

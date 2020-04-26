@@ -59,7 +59,7 @@ nlohmann::json Lambertian::to_json() const {
 Lambertian* Lambertian::from_json(nlohmann::json json_obj) {
     // Check if the object has an object type
     if (!json_obj.is_object()) {
-        throw InvalidTypeException("Lambertian", json::object().type_name(), json_obj.type_name());
+        throw InvalidObjectFormat("Lambertian", json::object().type_name(), json_obj.type_name());
     }
 
     // Check if there is an albedo field
