@@ -22,7 +22,6 @@
 #include <cerrno>
 #include <dlfcn.h>
 
-#include "RandomScene.hpp"
 #include "JSONExceptions.hpp"
 #include "RenderWorld.hpp"
 
@@ -209,12 +208,12 @@ RenderWorld* RenderWorld::from_json(nlohmann::json json_obj) {
         // There is, so try to load it using the dl library
         void* handle = dlopen(path.c_str(), RTLD_NOW);
         if (handle == NULL) {
-            throw SOLoadException("RenderWorld", path, errno);
+            throw SOLoadException("RenderWorld", path, dlerror());
         }
         void (*init)(const RenderWorld& world) = (void (*)(const RenderWorld& world)) dlsym(handle, "init");
         if (init == NULL) {
             dlclose(handle);
-            throw SOFuncLoadException("RenderWorld", path, "init", errno);
+            throw SOFuncLoadException("RenderWorld", path, "init", dlerror());
         }
 
         // Run the function on the given world

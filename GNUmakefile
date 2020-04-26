@@ -5,9 +5,9 @@ BIN = bin/linux
 LIB = $(BIN)/lib
 SRC = src
 
-SCENES = scenes
-SCENES_SRC = $(LIB)/scenes
-SCENES_BIN = $(SCENES)/init
+SCENES_SRC = $(SRC)/lib/scenes
+SCENES_OBJ = $(LIB)/scenes
+SCENES_BIN = scenes/init
 
 EXT_LIBS =-ldl
 
@@ -37,7 +37,9 @@ endif
 default: raytracer
 
 # FOLDER MK RULES #
-$(LIB):
+$(BIN):
+	mkdir -p $@
+$(LIB): $(BIN)
 	mkdir -p $@
 $(LIB)/objects: $(LIB)
 	mkdir -p $@
@@ -47,9 +49,9 @@ $(LIB)/animations: $(LIB)
 	mkdir -p $@
 $(LIB)/animations/camera: $(LIB)/animations
 	mkdir -p $@
-$(SCENES):
+$(SCENES_OBJ): $(LIB)
 	mkdir -p $@
-$(SCENES_BIN): $(SCENES)
+$(SCENES_BIN):
 	mkdir -p $@
 
 # GENERAL OBJECT COMPILE RULES #
@@ -107,8 +109,13 @@ scene_creator: $(BIN)/scene_creator.out
 # test_vector_math: $(LIB)/Image.a $(LIB)/Vec3.o
 # 	$(GXX) $(GXX_ARGS) -o tests/bin/test_vector_math.out tests/src/test_vector_math.cpp $(LIB)/Image.a $(LIB)/Vec3.o
 
-$(SCENES_SRC)/%.cpp: $(SCENES_BIN)/%.so | $(SCENES_BIN)
-	# TBD: Compile
+$(SCENES_OBJ)/%.o: $(SCENES_SRC)/%.cpp | $(SCENES_OBJ)
+	$(GXX) $(GXX_ARGS) -fPIC -o $@ -c $<
+
+$(SCENES_BIN)/random.so: $(SCENES_OBJ)/random.o $(LIB)/Random.o $(LIB)/RenderObject.a $(LIB)/Materials.a $(LIB)/RenderWorld.o | $(SCENES_BIN)
+	$(GXX) $(GXX_ARGS) -shared -o $@ $< $(LIB)/Random.o $(LIB)/RenderObject.a $(LIB)/Materials.a $(LIB)/RenderWorld.o
+
+scenes: $(SCENES_BIN)/random.so
 
 all: raytracer scene_creator scenes
 
@@ -119,6 +126,7 @@ clean:
 	rm -f $(LIB)/objects/*.o
 	rm -f $(LIB)/animations/*.o
 	rm -f $(LIB)/animations/camera/*.o
-	rm -f $(LIB)/scenes/*.o
 	rm -f $(LIB)/*.a
+	rm -f $(SCENES_OBJ)/*.o
+	rm -f $(SCENES_BIN)/*.so
 	rm -f tests/bin/*.out

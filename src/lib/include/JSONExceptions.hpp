@@ -140,12 +140,12 @@ namespace RayTracer {
 
     class SOLoadException: public IOException {
         public:
-            const int errnum;
+            const std::string err_msg;
 
             /* Exception for when a dynamic link to a library could not be openend */
-            SOLoadException(const std::string object, const std::string file_path, const int error_number)
-                : IOException(object, file_path, "An error occurred loading shared object '" + file_path + "': " + strerror(error_number)),
-                errnum(error_number)
+            SOLoadException(const std::string object, const std::string file_path, const std::string message)
+                : IOException(object, file_path, "An error occurred loading shared object '" + file_path + "': " + message),
+                err_msg(message)
             {}
     };
 
@@ -155,9 +155,9 @@ namespace RayTracer {
             const std::string func;
 
             /* Exception for when a dynamic link to a library could not be openend */
-            SOFuncLoadException(const std::string object, const std::string file_path, const std::string func_name, const int error_number)
-                : SOLoadException(object, file_path, error_number),
-                err_msg("ERROR: " + this->object_name + ": An error occurred loading function '" + func_name+ "' from shared object '" + file_path + "': " + strerror(error_number)),
+            SOFuncLoadException(const std::string object, const std::string file_path, const std::string func_name, const std::string message)
+                : SOLoadException(object, file_path, message),
+                err_msg("ERROR: " + this->object_name + ": An error occurred loading function '" + func_name+ "' from shared object '" + file_path + "': " + message),
                 func(func_name)
             {}
 
