@@ -4,7 +4,7 @@
             "loop_time": 4,
             "type": 0
         },
-        "aperture": 0.1,
+        "aperture": 0.05,
         "lookat": [
             0.0,
             0.0,
