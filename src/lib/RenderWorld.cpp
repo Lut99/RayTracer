@@ -195,6 +195,8 @@ RenderWorld* RenderWorld::from_json(nlohmann::json json_obj) {
             throw InvalidFieldFormat("RenderWorld", "init", "string", json_obj["init"].type_name());
         }
 
+        cout << "Test 1" << endl;
+
         // Check if there is a file ending in .so with that name
         std::string path = json_obj["init"].get<std::string>();
         if (FILE* file = fopen(path.c_str(), "r")) {
@@ -204,6 +206,8 @@ RenderWorld* RenderWorld::from_json(nlohmann::json json_obj) {
             delete world;
             throw FileIOException("RenderWorld", path, errno);
         }
+
+        cout << "Test 2" << endl;
 
         // There is, so try to load it using the dl library
         void* handle = dlopen(path.c_str(), RTLD_NOW);
@@ -216,6 +220,8 @@ RenderWorld* RenderWorld::from_json(nlohmann::json json_obj) {
             throw SOFuncLoadException("RenderWorld", path, "init", dlerror());
         }
 
+        cout << "Test 3" << endl;
+
         // Run the function on the given world
         try {
             (*init)(*world);
@@ -224,8 +230,12 @@ RenderWorld* RenderWorld::from_json(nlohmann::json json_obj) {
             throw SORunException("RenderWorld", path, "init", string(e.what()));
         }
 
+        cout << "Test 4" << endl;
+
         // Close the library
-        dlclose(handle);
+        //dlclose(handle);
+
+        cout << "Test 5" << endl;
     }
 
     // Optimize the inner tree
